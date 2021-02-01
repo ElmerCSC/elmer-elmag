@@ -1,0 +1,34 @@
+!------ Skeleton for body section -----
+Body 1
+  Name = SOL001
+End
+
+Body 2
+  Name = SOL002
+End
+
+Body 3
+  Name = SOL003
+End
+
+!------ Skeleton for boundary section -----
+Boundary Condition 1
+  Name = FAC001
+End
+
+Boundary Condition 2
+  Name = FAC002
+End
+
+Boundary Condition 3
+  Name = FAC003
+End
+
+Boundary Condition 4
+  Name = FAC004
+End
+
+Boundary Condition 5
+  Name = bnry9
+End
+
