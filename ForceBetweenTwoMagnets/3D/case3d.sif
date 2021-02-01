@@ -1,0 +1,179 @@
+! This is a test case for computing the force between two
+! cylindrical magnets on the same axis with constant magnetization.
+! This case originates from discussion on Elmer forum by "JanHook".
+!
+! For larger distances the force has an approximation, see
+! https://en.wikipedia.org/wiki/Force_between_magnets
+! Here the distance x is just 2R which means that the approximation
+! is not that accurate. It seems that we get about 57% of the formula.
+!
+! This is a 3D version. To increase accuracy the "Mesh Levels" may be
+! increased (1 to 3). Also "quadratic approximation" could be used.
+!
+! P.R. 30.1.2020
+
+
+$M=1.15e6  ! magnetization
+$R=1.0e-3  ! radius (after scaling)
+$x=2*R     ! distance between cylindrical magnets
+$L=R       ! length of cylindrical magnets
+$mu0=4*pi*1.0e-7 ! permeability of vacuum
+
+! Force between two cylindrical magnets, approximation x>>R
+$F=(pi*mu0/4)*M^2*R^4*(1/x^2+1/(x+2*L)^2-2/(x+L)^2)
+
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "." "two_bodies3d"
+  Include Path ""
+  Results Directory ""
+End
+
+Simulation
+  Max Output Level = 6
+  Coordinate System = Cartesian 
+  Coordinate Scaling = 1.0e-3 
+  Simulation Type = Steady state
+  Steady State Max Iterations = 1
+  Output Intervals = 1
+  Post File = case.vtu
+
+  vtu: Save Geometry IDs = Logical True
+  vtu: Discontinuous Bodies = Logical True
+
+  Mesh Levels = 1
+End
+
+Constants
+  Permeability of Vacuum = $mu0
+  Permittivity Of Vacuum = 8.8542e-12
+End
+
+Body 1
+  Target Bodies(1) = 1
+  Name = "Body 1"
+  Equation = 1
+  Material = 1
+End
+
+Body 2
+  Target Bodies(1) = 2
+  Name = "Body 2"
+  Equation = 1
+  Material = 2
+End
+
+Body 3
+  Target Bodies(1) = 3
+  Name = "Body 3"
+  Equation = 1
+  Material = 3
+End
+
+Solver 1
+  Equation = MgDyn3D
+  Procedure = "MagnetoDynamics" "WhitneyAVSolver"
+
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Convergence Tolerance = 1.0e-7
+  Nonlinear System Max Iterations = 20
+  Nonlinear System Relaxation Factor = 1
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStabl
+  Linear System Max Iterations = 1000
+  Linear System Convergence Tolerance = 1.0e-10
+  BiCGstabl polynomial degree = 2
+  Linear System Preconditioning = none
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+
+  ! Quadratic Approximation = Logical true
+End
+
+
+Solver 2
+  Equation = MgDynPost
+  Calculate Magnetic Field Strength = True
+
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+
+  Calculate Nodal Fields = False
+  Calculate Elemental Fields = True
+  Calculate Nodal Forces = True
+
+  Nonlinear System Max Iterations = 1
+  Linear System Solver = Iterative
+  Linear System Iterative Method = CG
+  Linear System Max Iterations = 1000
+  Linear System Convergence Tolerance = 1.0e-10
+  Linear System Preconditioning = ILU0
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+End
+
+Solver 3
+  Exec Solver = After All
+  Equation = SaveScalars
+  Procedure = "SaveData" "SaveScalars"
+  Filename = "f3d.dat"
+  Save Component Results = logical true
+
+  File Append = Logical True
+
+! Now we have full 2*pi
+  Expression 1 = Real $F
+
+
+! This chooses the pseudonorm as numbered in output file
+  Show Norm Index = 6
+End
+
+Equation 1
+  Name = "MgDyn"
+  Active Solvers(3) = 1 2 3
+End 
+
+Material 1
+  Name = "Air"
+  Relative Permeability = 1.0
+  Relative Permittivity = 1.0
+End
+
+Material 2
+  Name = "MagnetP"
+  Relative Permeability = 1.0
+  Relative Permittivity = 1.0
+  Magnetization 3 = $M
+End
+
+Material 3
+  Name = "MagnetM"
+  Relative Permeability = 1.0 
+  Relative Permittivity = 1.0
+  Magnetization 3 = $M
+End
+
+Boundary Condition 1
+  Target Boundaries(3) = 1 2 3 
+  Name = "Farfield"
+  AV {e} = 0.0
+End
+
+
+Component 1
+  Name = "Body 2"
+  Master Bodies(1) = 2
+  Calculate Magnetic Force = True
+!  Calculate Magnetic Torque = True
+End
+
+Component 2
+  Name = "Body 3"
+  Master Bodies(1) = 3
+  Calculate Magnetic Force = True
+!  Calculate Magnetic Torque = True
+End
+
+! consistency norms
+Solver 1 :: Reference Norm = 1.62837615E-08
+Solver 3 :: Reference Norm = 6.83305239E-02

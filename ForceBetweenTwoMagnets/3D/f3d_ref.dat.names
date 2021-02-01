@@ -1,0 +1,16 @@
+Elmer version: 8.4
+Elmer revision: 2ddff16
+Elmer compilation date: 2020-01-30
+Solver input file: case3d.sif
+File started at: 2020/01/30 14:24:13
+ 
+Variables in columns of matrix: ./f3d.dat
+   1: res: eddy current power
+   2: res: magnetic field energy
+   3: Expression 1
+   4: component 1: res: magnetic force 1
+   5: component 1: res: magnetic force 2
+   6: component 1: res: magnetic force 3
+   7: component 2: res: magnetic force 1
+   8: component 2: res: magnetic force 2
+   9: component 2: res: magnetic force 3
