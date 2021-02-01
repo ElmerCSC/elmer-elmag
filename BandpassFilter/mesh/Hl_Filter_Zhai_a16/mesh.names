@@ -1,0 +1,6 @@
+! ----- names for bodies -----
+$ Translation_1 = 1
+! ----- names for boundaries -----
+$ inport = 1
+$ outport = 2
+$ pec = 3

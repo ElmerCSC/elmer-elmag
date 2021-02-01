@@ -1,0 +1,18 @@
+!------ Skeleton for body section -----
+Body 1
+  Name = Translation_1
+End
+
+!------ Skeleton for boundary section -----
+Boundary Condition 1
+  Name = inport
+End
+
+Boundary Condition 2
+  Name = outport
+End
+
+Boundary Condition 3
+  Name = pec
+End
+

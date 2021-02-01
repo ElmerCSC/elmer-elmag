@@ -1,0 +1,11 @@
+Elmer version: 9.0
+Elmer revision: 0e01ccb4
+Elmer compilation date: 2021-01-31
+Solver input file: filter_zhai.sif
+File started at: 2021/02/01 21:57:37
+ 
+Variables in columns of matrix: mesh/data.txt
+   1: res: energy functional
+   2: res: energy functional im
+   3: res: integral of div poynting vector
+   4: res: integral of div poynting vector im
