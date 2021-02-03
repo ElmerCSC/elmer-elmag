@@ -9,3 +9,5 @@ Example 2D cases demonstrate typical workflow from very simple static model, thr
 The 2D Induction Machine example describes the static, harmonic and time dependent case, as well as serial and parallel solution of the problem using Elmer. The original model and tutorial can be found on: https://www.researchgate.net/publication/317012206_SEMTEC_Report_Elmer_FEM
 
 The models are prepared within the SEMTEC project during years 2015--2017.
+
+![Magnetic flux density](IM_one_pole_MagFluxDens.png)
