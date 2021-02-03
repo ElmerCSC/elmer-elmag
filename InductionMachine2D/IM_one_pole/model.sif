@@ -1,0 +1,293 @@
+Header
+  Mesh DB "im"
+  Results Directory "results"
+  Include Path "materials"
+End
+
+Simulation
+  Max Output Level = 3
+  Coordinate System = Cartesian
+  Coordinate Scaling = 0.001
+
+!  Steady State Max Iterations = 1
+  Simulation Type = Steady  
+
+!  Mesh Levels = 2
+!  Mesh Keep = 1
+  Use Mesh Names = Logical True
+End
+
+!###############################################################################
+!##################################### Materials ###############################
+!###############################################################################
+
+! Air
+Material 1
+  Relative Permeability = 1
+End
+
+! lamination steel
+Material 2
+  Name = "Iron"
+  INCLUDE el_steel_M800_65A 
+End
+
+!###############################################################################
+!#######################------ Body Force Section ----#######################
+!###############################################################################
+
+Body Force 1
+  Mesh Rotate 3 = Real MATC "10"
+End
+
+! for U+
+Body Force 2
+  Current Density = 3e6
+End
+
+! for V+
+Body Force 3
+  Current Density = -1.5e6
+End
+
+! for W-
+Body Force 4
+  Current Density = 1.5e6
+End
+
+
+!------ Skeleton for body section -----
+Body 1
+  Name = U_plus
+  Equation = 1
+  Material = 1
+  Body Force = 2
+End
+
+Body 2
+  Name = W_minus
+  Equation = 1
+  Material = 1
+  Body Force = 4
+End
+
+Body 3
+  Name = V_plus
+  Equation = 1
+  Material = 1
+  Body Force = 3
+End
+
+Body 4
+  Name = StatorIron
+  Equation = 1
+  Material = 2
+End
+
+Body 5
+  Name = StatorWedges
+  Equation = 1
+  Material = 1
+End
+
+Body 6
+  Name = StatorAirgap
+  Equation = 1
+  Material = 1
+End
+
+Body 7
+  Name = Bar7
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 8
+  Name = Bar8
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 9
+  Name = Bar9
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 10
+  Name = Bar10
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 11
+  Name = RotorIron
+  Equation = 1
+  Material = 2
+  Body Force = 1
+End
+
+Body 12
+  Name = RotorAirgap
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 13
+  Name = Bar1
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 14
+  Name = Bar2
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 15
+  Name = Bar3
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 16
+  Name = Bar4
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 17
+  Name = Bar5
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 18
+  Name = Bar6
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+!###############################################################################
+!#######################------ Solver section -----#######################!
+!###############################################################################
+
+Equation 1 :: Active Solvers(2) = 2 3 
+
+! Rotation of the rotor at the beginning of each time step
+Solver 1
+  Exec Solver = Before simulation
+  Equation = MeshDeform
+  Procedure = "RigidMeshMapper" "RigidMeshMapper"
+End
+
+Solver 2
+  Exec Solver = Always
+  Equation = MgDyn2D
+  Variable = A
+
+  Procedure = "MagnetoDynamics2D" "MagnetoDynamics2D"
+
+  Nonlinear System Convergence Tolerance = 1.0e-4
+  Nonlinear System Max Iterations = 30
+
+  Linear System Solver = Direct
+  Linear System Iterative Method = MUMPS
+
+!  Linear System Solver = Iterative
+!  Linear System Iterative Method = BicgstabL
+!  Linear System Symmetric = True
+!  Linear System Max Iterations = 200
+!  Linear System Preconditioning = ILU2
+!  Linear System Convergence Tolerance = 1e-8
+!  Linear System Residual Output = 50
+End
+
+Solver 3
+  Exec Solver = Always
+  Equation = CalcFields
+  Potential Variable = "A"
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+
+  Calculate Current Density = Logical True 
+  Calculate Magnetic Vector Potential = Logical True
+End
+
+
+Solver 4
+  Exec Solver = after simulation
+  Equation = "ResultOutput"
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = case
+  Output Directory = results
+  Save Geometry Ids = Logical True
+  Vtu Format = Logical True
+
+!  Vector Field 1 = "magnetic flux density e"
+!  Vector Field 2 = "current density e"
+!  Scalar Field 1 = "a"
+  
+  ! for nice visualizations only (interfers with connectivity filter in ParaView
+  ! and alters the field itself a bit)
+!  Discontinuous Bodies = Logical True  
+End 
+
+
+!------ Skeleton for boundary section -----
+Boundary Condition 1
+  Name = OuterStator
+  A = Real 0
+End
+
+Boundary Condition 2
+  Name = StatorRight
+  Mortar BC = Integer 3
+  Mortar BC Static = Logical True
+  Anti Radial Projector = Logical True
+  Galerkin Projector = Logical True
+End
+
+Boundary Condition 3
+  Name = StatorLeft
+End
+
+Boundary Condition 4
+  Name = Sliding_Stator
+  Mortar BC = Integer 5  
+  Anti Rotational Projector = Logical True
+  Galerkin Projector = Logical True
+End
+
+Boundary Condition 5
+  Name = Sliding_Rotor
+End
+
+Boundary Condition 6
+  Name = InnerRotor
+  A = Real 0
+End
+
+Boundary Condition 7
+  Name = RotorRight
+  Mortar BC = Integer 8
+  Mortar BC Static = Logical True
+  Anti Radial Projector = Logical True
+  Galerkin Projector = Logical True
+End
+
+Boundary Condition 8
+  Name = RotorLeft
+End
+
