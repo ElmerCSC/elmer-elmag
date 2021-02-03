@@ -1,0 +1,392 @@
+Component 1
+  Name = String RB1
+  Body = Integer 1
+  Coil Type = String Stranded
+  Number of Turns = Real $4
+End
+
+Component 2
+  Name = String RB2
+  Body = Integer 2
+  Coil Type = String Stranded
+  Number of Turns = Real $4
+End
+
+Component 3
+  Name = String RB3
+  Body = Integer 3
+  Coil Type = String Stranded
+  Number of Turns = Real $4
+End
+
+Component 4
+  Name = String RB4
+  Body = Integer 4
+  Coil Type = String Stranded
+  Number of Turns = Real $4
+End
+
+Component 5
+  Name = String RB5
+  Body = Integer 5
+  Coil Type = String Stranded
+  Number of Turns = Real $4
+End
+
+Component 6
+  Name = String RB6
+  Body = Integer 6
+  Coil Type = String Stranded
+  Number of Turns = Real $4
+End
+
+Component 7
+  Name = String RB7
+  Body = Integer 7
+  Coil Type = String Stranded
+  Number of Turns = Real $4
+End
+
+Component 8
+  Name = String RB8
+  Body = Integer 8
+  Coil Type = String Stranded
+  Number of Turns = Real $4
+End
+
+Component 9
+  Name = String RB9
+  Body = Integer 9
+  Coil Type = String Stranded
+  Number of Turns = Real $4
+End
+
+Component 10
+  Name = String RB10
+  Body = Integer 10
+  Coil Type = String Stranded
+  Number of Turns = Real $4
+End
+
+!----------------------------------------------------------
+! Equations for 10 rotor bars
+!----------------------------------------------------------
+
+$ C.4.source.1 = 0
+
+! init matrices of Ax' + Bx = Source
+$ C.4.variables = 60
+$ C.4.perm = zeros(60)
+$ C.4.A = zeros(60, 60)
+$ C.4.B = zeros(60, 60)
+$ C.4.Mre = zeros(60, 60)
+$ C.4.Mim = zeros(60, 60)
+! define circuit variables
+
+$ C.4.name.1 = "i_component(1)"
+$ C.4.name.2 = "v_component(1)"
+$ C.4.name.3 = "i_r1"
+$ C.4.name.4 = "v_r1"
+$ C.4.name.5 = "i_l1"
+$ C.4.name.6 = "v_l1"
+
+
+$ C.4.name.7 = "i_component(2)"
+$ C.4.name.8 = "v_component(2)"
+$ C.4.name.9 = "i_r2"
+$ C.4.name.10 = "v_r2"
+$ C.4.name.11 = "i_l2"
+$ C.4.name.12 = "v_l2"
+
+
+$ C.4.name.13 = "i_component(3)"
+$ C.4.name.14 = "v_component(3)"
+$ C.4.name.15 = "i_r3"
+$ C.4.name.16 = "v_r3"
+$ C.4.name.17 = "i_l3"
+$ C.4.name.18 = "v_l3"
+
+
+$ C.4.name.19 = "i_component(4)"
+$ C.4.name.20 = "v_component(4)"
+$ C.4.name.21 = "i_r4"
+$ C.4.name.22 = "v_r4"
+$ C.4.name.23 = "i_l4"
+$ C.4.name.24 = "v_l4"
+
+
+$ C.4.name.25 = "i_component(5)"
+$ C.4.name.26 = "v_component(5)"
+$ C.4.name.27 = "i_r5"
+$ C.4.name.28 = "v_r5"
+$ C.4.name.29 = "i_l5"
+$ C.4.name.30 = "v_l5"
+
+
+$ C.4.name.31 = "i_component(6)"
+$ C.4.name.32 = "v_component(6)"
+$ C.4.name.33 = "i_r6"
+$ C.4.name.34 = "v_r6"
+$ C.4.name.35 = "i_l6"
+$ C.4.name.36 = "v_l6"
+
+
+$ C.4.name.37 = "i_component(7)"
+$ C.4.name.38 = "v_component(7)"
+$ C.4.name.39 = "i_r7"
+$ C.4.name.40 = "v_r7"
+$ C.4.name.41 = "i_l7"
+$ C.4.name.42 = "v_l7"
+
+
+$ C.4.name.43 = "i_component(8)"
+$ C.4.name.44 = "v_component(8)"
+$ C.4.name.45 = "i_r8"
+$ C.4.name.46 = "v_r8"
+$ C.4.name.47 = "i_l8"
+$ C.4.name.48 = "v_l8"
+
+
+$ C.4.name.49 = "i_component(9)"
+$ C.4.name.50 = "v_component(9)"
+$ C.4.name.51 = "i_r9"
+$ C.4.name.52 = "v_r9"
+$ C.4.name.53 = "i_l9"
+$ C.4.name.54 = "v_l9"
+
+
+$ C.4.name.55 = "i_component(10)"
+$ C.4.name.56 = "v_component(10)"
+$ C.4.name.57 = "i_r10"
+$ C.4.name.58 = "v_r10"
+$ C.4.name.59 = "i_l10"
+$ C.4.name.60 = "v_l10"
+
+
+! Kirchoff voltage law
+
+!Bar1
+$ C.4.B(2,1) = 1
+$ C.4.B(2,3) = 1
+$ C.4.B(2,5) = -1
+$ C.4.B(2,7) = -1
+
+!Bar2
+$ C.4.B(8,7) = 1
+$ C.4.B(8,9) = 1
+$ C.4.B(8,11) = -1
+$ C.4.B(8,13) = -1
+
+!Bar3
+$ C.4.B(14,13) = 1
+$ C.4.B(14,15) = 1
+$ C.4.B(14,17) = -1
+$ C.4.B(14,19) = -1
+
+!Bar4
+$ C.4.B(20,19) = 1
+$ C.4.B(20,21) = 1
+$ C.4.B(20,23) = -1
+$ C.4.B(20,25) = -1
+
+!Bar5
+$ C.4.B(26,25) = 1
+$ C.4.B(26,27) = 1
+$ C.4.B(26,29) = -1
+$ C.4.B(26,31) = -1
+
+!Bar6
+$ C.4.B(32,31) = 1
+$ C.4.B(32,33) = 1
+$ C.4.B(32,35) = -1
+$ C.4.B(32,37) = -1
+
+!Bar7
+$ C.4.B(38,37) = 1
+$ C.4.B(38,39) = 1
+$ C.4.B(38,41) = -1
+$ C.4.B(38,43) = -1
+
+!Bar8
+$ C.4.B(44,43) = 1
+$ C.4.B(44,45) = 1
+$ C.4.B(44,47) = -1
+$ C.4.B(44,49) = -1
+
+!Bar9
+$ C.4.B(50,49) = 1
+$ C.4.B(50,51) = 1
+$ C.4.B(50,53) = -1
+$ C.4.B(50,55) = -1
+
+!Bar10
+$ C.4.B(56,55) = 1
+$ C.4.B(56,57) = 1
+$ C.4.B(56,59) = -1
+$ C.4.B(56,1) = 1
+
+
+! Kirchoff current law
+
+!Bar1 right knot
+$ C.4.B(0,0) = 1
+$ C.4.B(0,58) = 1
+$ C.4.B(0,2) = -1
+!Bar1 left knot
+$ C.4.B(4,4) = -1
+$ C.4.B(4,56) = 1
+$ C.4.B(4,0) = -1
+
+!Bar2 right knot
+$ C.4.B(6,6) = 1
+$ C.4.B(6,2) = 1
+$ C.4.B(6,8) = -1
+!Bar2 left knot
+$ C.4.B(10,10) = -1
+$ C.4.B(10,4) = 1
+$ C.4.B(10,6) = -1
+
+!Bar3 right knot
+$ C.4.B(12,12) = 1
+$ C.4.B(12,8) = 1
+$ C.4.B(12,14) = -1
+!Bar3 left knot
+$ C.4.B(16,16) = -1
+$ C.4.B(16,10) = 1
+$ C.4.B(16,12) = -1
+
+!Bar4 right knot
+$ C.4.B(18,18) = 1
+$ C.4.B(18,14) = 1
+$ C.4.B(18,20) = -1
+!Bar4 left knot
+$ C.4.B(22,22) = -1
+$ C.4.B(22,16) = 1
+$ C.4.B(22,18) = -1
+
+!Bar5 right knot
+$ C.4.B(24,24) = 1
+$ C.4.B(24,20) = 1
+$ C.4.B(24,26) = -1
+!Bar5 left knot
+$ C.4.B(28,28) = -1
+$ C.4.B(28,22) = 1
+$ C.4.B(28,24) = -1
+
+!Bar6 right knot
+$ C.4.B(30,30) = 1
+$ C.4.B(30,26) = 1
+$ C.4.B(30,32) = -1
+!Bar6 left knot
+$ C.4.B(34,34) = -1
+$ C.4.B(34,28) = 1
+$ C.4.B(34,30) = -1
+
+!Bar7 right knot
+$ C.4.B(36,36) = 1
+$ C.4.B(36,32) = 1
+$ C.4.B(36,38) = -1
+!Bar7 left knot
+$ C.4.B(40,40) = -1
+$ C.4.B(40,34) = 1
+$ C.4.B(40,36) = -1
+
+!Bar8 right knot
+$ C.4.B(42,42) = 1
+$ C.4.B(42,38) = 1
+$ C.4.B(42,44) = -1
+!Bar8 left knot
+$ C.4.B(46,46) = -1
+$ C.4.B(46,40) = 1
+$ C.4.B(46,42) = -1
+
+!Bar9 right knot
+$ C.4.B(48,48) = 1
+$ C.4.B(48,44) = 1
+$ C.4.B(48,50) = -1
+!Bar9 left knot
+$ C.4.B(52,52) = -1
+$ C.4.B(52,46) = 1
+$ C.4.B(52,48) = -1
+
+!Bar10 right knot
+$ C.4.B(54,54) = 1
+$ C.4.B(54,50) = 1
+$ C.4.B(54,56) = -1
+!Bar10 left knot
+$ C.4.B(58,58) = -1
+$ C.4.B(58,52) = 1
+$ C.4.B(58,54) = -1
+
+! Elemental equations
+
+$ C.4.B(3,3) = -1
+$ C.4.B(3,2) = R_er
+$ C.4.A(3,2) = L_er
+$ C.4.B(5,5) = -1
+$ C.4.B(5,4) = R_er
+$ C.4.A(5,4) = L_er
+
+$ C.4.B(9,9) = -1
+$ C.4.B(9,8) = R_er
+$ C.4.A(9,8) = L_er
+$ C.4.B(11,11) = -1
+$ C.4.B(11,10) = R_er
+$ C.4.A(11,10) = L_er
+
+$ C.4.B(15,15) = -1
+$ C.4.B(15,14) = R_er
+$ C.4.A(15,14) = L_er
+$ C.4.B(17,17) = -1
+$ C.4.B(17,16) = R_er
+$ C.4.A(17,16) = L_er
+
+$ C.4.B(21,21) = -1
+$ C.4.B(21,20) = R_er
+$ C.4.A(21,20) = L_er
+$ C.4.B(23,23) = -1
+$ C.4.B(23,22) = R_er
+$ C.4.A(23,22) = L_er
+
+$ C.4.B(27,27) = -1
+$ C.4.B(27,26) = R_er
+$ C.4.A(27,26) = L_er
+$ C.4.B(29,29) = -1
+$ C.4.B(29,28) = R_er
+$ C.4.A(29,28) = L_er
+
+$ C.4.B(33,33) = -1
+$ C.4.B(33,32) = R_er
+$ C.4.A(33,32) = L_er
+$ C.4.B(35,35) = -1
+$ C.4.B(35,34) = R_er
+$ C.4.A(35,34) = L_er
+
+$ C.4.B(39,39) = -1
+$ C.4.B(39,38) = R_er
+$ C.4.A(39,38) = L_er
+$ C.4.B(41,41) = -1
+$ C.4.B(41,40) = R_er
+$ C.4.A(41,40) = L_er
+
+$ C.4.B(45,45) = -1
+$ C.4.B(45,44) = R_er
+$ C.4.A(45,44) = L_er
+$ C.4.B(47,47) = -1
+$ C.4.B(47,46) = R_er
+$ C.4.A(47,46) = L_er
+
+$ C.4.B(51,51) = -1
+$ C.4.B(51,50) = R_er
+$ C.4.A(51,50) = L_er
+$ C.4.B(53,53) = -1
+$ C.4.B(53,52) = R_er
+$ C.4.A(53,52) = L_er
+
+$ C.4.B(57,57) = -1
+$ C.4.B(57,56) = R_er
+$ C.4.A(57,56) = L_er
+$ C.4.B(59,59) = -1
+$ C.4.B(59,58) = R_er
+$ C.4.A(59,58) = L_er
+

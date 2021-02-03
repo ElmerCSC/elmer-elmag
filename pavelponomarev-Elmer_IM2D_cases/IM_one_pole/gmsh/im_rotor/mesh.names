@@ -1,0 +1,18 @@
+! ----- names for bodies -----
+$ Bar1 = 1
+$ Bar2 = 2
+$ Bar3 = 3
+$ Bar4 = 4
+$ Bar5 = 5
+$ Bar6 = 6
+$ Bar7 = 7
+$ Bar8 = 8
+$ Bar9 = 9
+$ Bar10 = 10
+$ RotorIron = 11
+$ RotorAirgap = 12
+! ----- names for boundaries -----
+$ InnerRotor = 1
+$ RotorRight = 2
+$ RotorLeft = 3
+$ Sliding_Rotor = 4

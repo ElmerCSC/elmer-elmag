@@ -1,0 +1,424 @@
+include harmonic_params.dat
+
+Header
+  Mesh DB "im"
+  Results Directory "results"
+  Include Path "materials"
+End
+
+Simulation
+  Max Output Level = 3
+  Coordinate System = Cartesian 2D
+  Coordinate Scaling = 0.001
+
+  Simulation Type = Steady
+  Steady State Max Iterations = 2
+
+  Circuit Model Depth = Real $ l
+  Angular Frequency = Real $ 2*pi*f
+
+  Mesh Levels = 2
+  Mesh Keep = 1
+  Use Mesh Names = Logical True
+End
+
+
+!###############################################################################
+!##################################### Materials ###############################
+!###############################################################################
+
+! Air
+Material 1
+  Relative Permeability = 1
+  Electric Conductivity = 0 
+End
+
+! lamination steel
+Material 2
+  Name = "Iron"
+  Relative Permeability = 300  !Typical value in harmonic analysis is in 50-350
+  Electric Conductivity = 0
+End
+
+! Aluminum
+Material 3
+  Relative Permeability = 1
+  Electric Conductivity = Real $ 24000000*slip
+End
+
+! Copper
+Material 4
+  Relative Permeability = 1
+  Electric Conductivity = 48e6 
+End
+
+!###############################################################################
+!#######################------ Body Force Section ----#######################
+!###############################################################################
+
+
+
+Body Force 1
+  Name = "Circuit"
+
+  ! U-phase voltage peak phase voltage at 0 degrees
+  U_u Re = Real $ sqrt(2)/sqrt(3)*400*cos(0)
+  U_u Im = Real $ sqrt(2)/sqrt(3)*400*sin(0)
+
+  ! V-phase voltage 400/sqrt(3) Vrms at -120 degrees
+  U_v Re = Real $ sqrt(2)/sqrt(3)*400*cos(-120*pi/180)
+  U_v Im = Real $ sqrt(2)/sqrt(3)*400*sin(-120*pi/180)
+
+  ! W-phase voltage 400/sqrt(3) Vrms at +120 degrees
+  U_w Re = Real $ sqrt(2)/sqrt(3)*400*cos(120*pi/180)
+  U_w Im = Real $ sqrt(2)/sqrt(3)*400*sin(120*pi/180)
+End
+
+Body Force 2
+  Mesh Rotate 3 = Real $ r_angle
+End
+
+
+!###############################################################################
+!##################################### Bodies ###############################
+!###############################################################################
+
+Body 1
+  Name = Bar1
+  Equation = 1
+  Material = 3
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+Body 2
+  Name = Bar2
+  Equation = 1
+  Material = 3
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+
+Body 3
+  Name = Bar3
+  Equation = 1
+  Material = 3
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+Body 4
+  Name = Bar4
+  Equation = 1
+  Material = 3
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+Body 5
+  Name = Bar5
+  Equation = 1
+  Material = 3
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+Body 6
+  Name = Bar6
+  Equation = 1
+  Material = 3
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+Body 7
+  Name = Bar7
+  Equation = 1
+  Material = 3
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+Body 8
+  Name = Bar8
+  Equation = 1
+  Material = 3
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+Body 9
+  Name = Bar9
+  Equation = 1
+  Material = 3
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+Body 10
+  Name = Bar10
+  Equation = 1
+  Material = 3
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+Body 11
+  Name = U_plus
+  Equation = 1
+  Material = 4
+End
+
+
+Body 12
+  Name = W_minus
+  Equation = 1
+  Material = 4
+End
+
+
+Body 13
+  Name = V_plus
+  Equation = 1
+  Material = 4
+End
+
+
+Body 14
+  Name = StatorIron
+  Equation = 1
+  Material = 2
+End
+
+Body 15
+  Name = StatorWedges
+  Equation = 1
+  Material = 1
+End
+
+Body 16
+  Name = StatorAirgap
+  Equation = 1
+  Material = 1
+End
+
+Body 17
+  Name = RotorIron
+  Equation = 1
+  Material = 2
+  Body Force = 2
+  Torque Groups = Integer 1
+End
+
+Body 18
+  Name = RotorAirgap
+  Equation = 1
+  Material = 1
+  Body Force = 2
+  R Inner = Real 0.0620
+  R Outer = Real 0.0625
+End
+
+!###############################################################################
+!##################################### Components ###############################
+!###############################################################################
+
+include "cage/cage.definitions"
+
+Component 11
+  Name = String Uplus
+  Body = Integer 11
+  Coil Type = String Stranded
+  Number of Turns = Real $ Nph/2
+  Resistance = Real $ Rs
+End
+
+Component 12
+  Name = String Vplus
+  Body = Integer 13
+  Coil Type = String Stranded
+  Number of Turns = Real $ Nph/2
+  Resistance = Real $ Rs
+End
+
+Component 13
+  Name = String Wminus
+  Body = Integer 12
+  Coil Type = String Stranded
+  Number of Turns = Real $ Nph/2
+  Resistance = Real $ Rs
+End
+
+
+!###############################################################################
+!#######################------ Solver section -----#######################!
+!###############################################################################
+
+Equation 1
+  Active Solvers(4) = 2 3 4 5
+End
+
+Solver 1
+  Exec Solver = Before All
+  Equation = MeshDeform
+  Procedure = "RigidMeshMapper" "RigidMeshMapper"
+End
+
+Solver 2
+  Exec Solver = Always
+  Equation = Circ
+  Variable = X
+  Procedure = "CircuitsAndDynamics" "CircuitsAndDynamicsHarmonic"
+End
+
+Solver 3
+  Exec Solver = Always
+  Equation = MgDyn2D
+  Variable = A[A re:1 A im:1]
+  Procedure = "MagnetoDynamics2D" "MagnetoDynamics2DHarmonic"
+
+!!!!!!!!!!!!!!!!!!!  These are for better convergence for parallel  
+  Stabilize = False
+  Partition Local Constraints = Logical True
+  Nonlinear System Compute Change in Scaled System = Logical True
+  Nonlinear System Convergence Measure = Residual
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  Nonlinear System Convergence Tolerance = 1e-6
+  Nonlinear System Max Iterations = 20
+  Nonlinear System Min Iterations = 1
+  Nonlinear System Relaxation Factor = 1.0
+  Nonlinear System Newton After Iterations = 7
+
+  Export Lagrange Multiplier = Logical True
+
+  Linear System Abort Not Converged = False
+  Linear System Solver = Iterative
+
+  Linear System Complex = Logical True
+  Linear System Iterative Method = bicgstabl
+  Linear System GCR Restart = 1000
+  Bicgstabl Polynomial Degree = 4
+
+  Linear System Preconditioning = Ilu6
+  Linear System Max Iterations = 1500
+  Linear System Residual Output = Integer 20
+  Linear System Convergence Tolerance = 1.0e-7 ! 2.0e-6
+
+  Linear System Symmetric = True
+End
+
+
+! Solvers 4 and 5 are both for B-field calculation
+! Solver 4 returns 2 B-fields as Re and Im magnitudes and calculates torque for 
+! the whole circumference
+! Solver 5 returns 6 X Y Z components of 2 B-fields and calculates torque
+! more precisely using nodal forces (torque groups) ony for the solved domain
+Solver 4
+   Equation = CompB
+   Exec Solver = Always
+   Variable = -nooutput temp
+   Exported Variable 1 = B[B re:2 B im:2]
+   Target Variable="A"
+   Procedure = "MagnetoDynamics2D" "bSolver"
+
+   Discontinuous Galerkin = Logical True
+End
+
+
+Solver 5
+  Exec Solver = Always
+  Equation = CalcFields
+  Potential Variable = "A"
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  ! GNF Torque calculation
+  Calculate Nodal Forces = Logical True
+  Calculate Magnetic Torque = Logical True
+
+  Calculate Current Density = Logical True 
+!  Calculate Electric Field = Logical True
+!  Calculate Magnetic Field Strength = Logical True
+  Calculate Magnetic Vector Potential = Logical True
+End
+
+
+Solver 6
+  Exec Solver = Always
+  Equation = CircOutput
+  Procedure = "CircuitsAndDynamics" "CircuitsOutput"
+End
+
+
+Solver 7
+  Exec Solver = After simulation
+  Equation = "ResultOutput"
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = "harmonic"
+  Output Directory = results
+  Save Geometry Ids = Logical True
+  Vtu Format = Logical True
+  
+  ! better visualization of disconinuous fields
+  !Discontinuous Bodies = Logical True  
+End 
+
+Solver 8
+  Exec Solver = After simulation
+  Equation = scalars
+  Procedure = "SaveData" "SaveScalars"
+  Filename = harmonic_results.dat
+End
+
+!###############################################################################
+!#######################------ Boundary section -----#######################!
+!###############################################################################
+
+Boundary Condition 1
+  Name = OuterStator
+  A re = Real 0
+  A im = Real 0
+End
+
+
+Boundary Condition 2
+  Name = StatorRight
+  Mortar BC = Integer 3
+  Mortar BC Static = Logical True
+  Anti Radial Projector = Logical True
+  Galerkin Projector = Logical True
+End
+
+Boundary Condition 3
+  Name = StatorLeft
+End
+
+Boundary Condition 4
+  Name = Sliding_Stator
+  Mortar BC = Integer 8  
+  Anti Rotational Projector = Logical True
+  Galerkin Projector = Logical True
+End
+
+Boundary Condition 5
+  Name = InnerRotor
+  A re = Real 0
+  A im = Real 0
+End
+
+Boundary Condition 6
+  Name = RotorRight
+  Mortar BC = Integer 7
+  Mortar BC Static = Logical True
+  Anti Radial Projector = Logical True
+  Galerkin Projector = Logical True
+End
+
+Boundary Condition 7
+  Name = RotorLeft
+End
+
+Boundary Condition 8
+  Name = Sliding_Rotor
+End
+
