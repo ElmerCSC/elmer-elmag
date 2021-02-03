@@ -5,14 +5,15 @@ Header
 End
 
 Simulation
-  Max Output Level = 3
+  Max Output Level = 5
   Coordinate System = Cartesian
   Coordinate Scaling = 0.001
 
-!  Steady State Max Iterations = 1
+  Steady State Max Iterations = 1
   Simulation Type = Steady  
 
-!  Mesh Levels = 2
+! Mesh multiplication - This is the simplest way to increase mesh density
+  Mesh Levels = 2
 !  Mesh Keep = 1
   Use Mesh Names = Logical True
 End
@@ -24,12 +25,14 @@ End
 ! Air
 Material 1
   Relative Permeability = 1
+  Relative Permittivity = 1
 End
 
 ! lamination steel
 Material 2
   Name = "Iron"
   INCLUDE el_steel_M800_65A 
+  Relative Permittivity = 1
 End
 
 !###############################################################################
@@ -203,26 +206,31 @@ Solver 2
   Nonlinear System Convergence Tolerance = 1.0e-4
   Nonlinear System Max Iterations = 30
 
-  Linear System Solver = Direct
-  Linear System Iterative Method = MUMPS
+! Linear System Solver = Direct
+! Linear System Iterative Method = MUMPS
 
-!  Linear System Solver = Iterative
-!  Linear System Iterative Method = BicgstabL
-!  Linear System Symmetric = True
-!  Linear System Max Iterations = 200
-!  Linear System Preconditioning = ILU2
-!  Linear System Convergence Tolerance = 1e-8
-!  Linear System Residual Output = 50
+  Linear System Solver = Iterative
+  Linear System Iterative Method = idrs !BicgstabL
+  BiCGStabl Polynomial Degree = 6
+  Linear System Symmetric = True
+  Linear System Max Iterations = 5000
+  Linear System Preconditioning = ILU2
+  Linear System Convergence Tolerance = 1e-8
+  Linear System Residual Output = 50
+
+  Apply Mortar BCs = True
+  Apply Conforming BCs = True
 End
 
 Solver 3
   Exec Solver = Always
   Equation = CalcFields
-  Potential Variable = "A"
   Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
 
   Calculate Current Density = Logical True 
   Calculate Magnetic Vector Potential = Logical True
+
+  Skip Compute Nonlinear Change = Logical True
 End
 
 
@@ -230,8 +238,9 @@ Solver 4
   Exec Solver = after simulation
   Equation = "ResultOutput"
   Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  
   Output File Name = case
-  Output Directory = results
+!  Output Directory = results
   Save Geometry Ids = Logical True
   Vtu Format = Logical True
 
@@ -241,7 +250,7 @@ Solver 4
   
   ! for nice visualizations only (interfers with connectivity filter in ParaView
   ! and alters the field itself a bit)
-!  Discontinuous Bodies = Logical True  
+  Discontinuous Bodies = Logical True  
 End 
 
 
@@ -253,10 +262,12 @@ End
 
 Boundary Condition 2
   Name = StatorRight
-  Mortar BC = Integer 3
-  Mortar BC Static = Logical True
-  Anti Radial Projector = Logical True
-  Galerkin Projector = Logical True
+! Use either conforming BCs (elimination) or mortar projectors (1 or 3 keywords)
+  Conforming BC = 3
+!  Mortar BC = 3
+!  Mortar BC Static = True
+!  Galerkin Projector = True
+  Anti Radial Projector = True
 End
 
 Boundary Condition 3
@@ -265,9 +276,9 @@ End
 
 Boundary Condition 4
   Name = Sliding_Stator
-  Mortar BC = Integer 5  
-  Anti Rotational Projector = Logical True
-  Galerkin Projector = Logical True
+  Mortar BC = 5  
+  Anti Rotational Projector = True
+  Galerkin Projector = True
 End
 
 Boundary Condition 5
@@ -281,13 +292,16 @@ End
 
 Boundary Condition 7
   Name = RotorRight
-  Mortar BC = Integer 8
-  Mortar BC Static = Logical True
-  Anti Radial Projector = Logical True
-  Galerkin Projector = Logical True
+  Conforming BC = 8
+!  Mortar BC = Integer 8
+!  Mortar BC Static = Logical True
+!  Galerkin Projector = Logical True
+  Anti Radial Projector = True
 End
 
 Boundary Condition 8
   Name = RotorLeft
 End
 
+! This is just added to ensure consistency
+Solver 2 :: Reference Norm = 2.54900099E-02
