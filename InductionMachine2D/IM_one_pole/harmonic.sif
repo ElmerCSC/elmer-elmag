@@ -250,7 +250,7 @@ Component 14
 ! they may be used for other purposes, here to group bodies to
 ! compute torque in them.
   Passive Component = Logical True  
-  Master Bodies(10) = integer 1 2 3 4 5 6 7 8 9 10   
+  Master Bodies(11) = integer 1 2 3 4 5 6 7 8 9 10 17
   calculate magnetic force = logical true
   calculate magnetic torque = logical true
 End

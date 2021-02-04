@@ -7,7 +7,7 @@ Header
 End
 
 Simulation
-  Max Output Level = 3
+  Max Output Level = 5
   Coordinate System = Cartesian 2D
   Coordinate Scaling = 0.001
 
@@ -34,6 +34,7 @@ End
 ! Air
 Material 1
   Relative Permeability = 1
+  Relative Permittivity = 1
   Electric Conductivity = 0 
 End
 
@@ -41,7 +42,9 @@ End
 Material 2
   Name = "Iron"
   INCLUDE el_steel_M800_65A
+
   Electric Conductivity = 0 
+  Relative Permittivity = 1
 
   ! C1 Hysteresis k_h
   Harmonic Loss Coefficient 1 = Variable "Frequency"
@@ -69,6 +72,7 @@ End
 ! Aluminum
 Material 3
   Relative Permeability = 1
+  Relative Permittivity = 1
 !  Electric Conductivity = 36e6 ! [1/(Ohm*m)] cold rotor
   Electric Conductivity = 24e6 ! [1/(Ohm*m)] hot rotor
 !  Electric Conductivity = 0 
@@ -77,6 +81,7 @@ End
 ! Copper
 Material 4
   Relative Permeability = 1
+  Relative Permittivity = 1
   Electric Conductivity = 48e6 
 End
 
@@ -101,7 +106,7 @@ Body Force 1
     Real MATC "400*sqrt(2)/sqrt(3)*sin(tx(0)*2*pi*f+2*pi/3)"
 End
 
-Body Force 7
+Body Force 2
   Mesh Rotate 3 = Variable time
     Real MATC "180/pi*2*pi*f/pp*(1-slip)*tx"
 End
@@ -115,80 +120,70 @@ Body 1
   Name = Bar1
   Equation = 1
   Material = 3
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 Body 2
   Name = Bar2
   Equation = 1
   Material = 3
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 Body 3
   Name = Bar3
   Equation = 1
   Material = 3
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 Body 4
   Name = Bar4
   Equation = 1
   Material = 3
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 Body 5
   Name = Bar5
   Equation = 1
   Material = 3
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 Body 6
   Name = Bar6
   Equation = 1
   Material = 3
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 Body 7
   Name = Bar7
   Equation = 1
   Material = 3
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 Body 8
   Name = Bar8
   Equation = 1
   Material = 3
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 Body 9
   Name = Bar9
   Equation = 1
   Material = 3
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 Body 10
   Name = Bar10
   Equation = 1
   Material = 3
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 
@@ -232,15 +227,14 @@ Body 17
   Name = RotorIron
   Equation = 2
   Material = 2
-  Body Force = 7
-  Torque Groups = Integer 1
+  Body Force = 2
 End
 
 Body 18
   Name = RotorAirgap
   Equation = 1
   Material = 1
-  Body Force = 7
+  Body Force = 2
   R Inner = Real 0.0620
   R Outer = Real 0.0625
 End
@@ -274,6 +268,19 @@ Component 13
   Coil Type = String Stranded
   Number of Turns = Real $ Nph/2
   Resistance = Real $ Rs
+End
+
+
+Component 14 
+  Name = string "Moment"
+
+! passive components do not participate in circuit simulation
+! they may be used for other purposes, here to group bodies to
+! compute torque in them.
+  Passive Component = Logical True  
+  Master Bodies(11) = integer 1 2 3 4 5 6 7 8 9 10 17  
+  calculate magnetic force = logical true
+  calculate magnetic torque = logical true
 End
 
 
@@ -390,6 +397,8 @@ Solver 7
   Procedure = "SaveData" "SaveScalars"
   Filename = transient_results.dat
   Output Directory = results
+
+  Save Component Results = Logical True
 !  Save Coordinates(3,2) =  -0.053  0.053  -0.0428 0.046  -0.07   0.07   
 !  Exact Coordinates = True
 End
@@ -522,3 +531,5 @@ Boundary Condition 8
   Name = Sliding_Rotor
 End
 
+! This one ok for serial after 3 timesteps
+!Solver 3 :: Reference Norm = 4.53398380E-01
