@@ -49,8 +49,6 @@ End
 
 
 Solver 1
-  Element = n:1 e:1
-
 ! Default variable name is already "AV"
 !  Variable = -nooutput AV
   Equation = "MGDynamics"
@@ -202,23 +200,20 @@ End
 
 Boundary Condition 4
   Name = "Aplus"
-  Current Density = 50700.0 
-  AV = Real 0
+  Electric Current Density = 50700.0 
   AV {e} = real 0
   Save Scalars = Logical True
 End
 
 Boundary Condition 5
   Name = "Bplus"
-  Current Density = -25350 
-  AV = Real 0
+  Electric Current Density = -25350 
   AV {e} = real 0
 End
 
 Boundary Condition 6
   Name = "Cplus"
-  Current Density = -25350 
-  AV = Real 0
+  Electric Current Density = -25350 
   AV {e} = real 0
 End
 
@@ -235,4 +230,4 @@ Boundary Condition 8
 End
 
 
-Solver 1 :: Reference Norm = 2.54996343E-04
+Solver 1 :: Reference Norm = 8.26093337E-09
