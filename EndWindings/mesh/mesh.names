@@ -1,0 +1,14 @@
+! ----- names for bodies -----
+$ WindingA = 1
+$ WindingB = 2
+$ WindingC = 3
+$ Air = 4
+! ----- names for boundaries -----
+$ Aplus = 1
+$ Bminus = 2
+$ Cplus = 3
+$ Aminus = 4
+$ Bplus = 5
+$ Cminus = 6
+$ Sphere = 7
+$ Plane = 8
