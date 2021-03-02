@@ -1,0 +1,8 @@
+! ----- names for bodies -----
+$ Coil = 1
+$ Plate = 2
+$ Air = 3
+! ----- names for boundaries -----
+$ CoilSkin = 1
+$ PlateSkin = 2
+$ Inf = 3
