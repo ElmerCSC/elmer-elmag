@@ -25,3 +25,5 @@ Exports the solution of the field problem to be displayed in Gmsh and Vtu (Parav
 Find description of the problem under TEAM7_ProblemDescription.pdf
 See results using ElmerSolver under TEAM7_Results.png
 Find data used under TEAM7_A1B1.csv 
+
+![TEAM Problem 7](TEAM7_Results.png)
