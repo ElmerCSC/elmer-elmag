@@ -1,0 +1,200 @@
+! Testing Electromagnetic Analysis Methods (TEAM)
+! Problem 7: Asymmetrical Conductor with a Hole
+! Author: Jonathan Velasco
+! Original date: March 2021
+! jonathan.velasco@csc.fi
+!------------------------------------------------------
+
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "." "TEAM7"
+  Results Directory "res"
+End
+
+Simulation
+  Coordinate System = String "Cartesian 3D"
+  Coordinate Mapping(3) = 1 2 3
+  Simulation Type = String "Transient"
+  Steady State Max Iterations = 1
+  TimeStepping Method = BDF
+  BDF Order = 1
+  Timestep Sizes(1) = Real 0.0025
+  TimeStep Intervals(1) = 16
+  Output Intervals(1) = 1
+  Max Output Level = 7
+End
+
+Constants
+  Permittivity of Vacuum = 8.8542e-12
+  Permeability of Vacuum = 1.256e-6
+End
+
+Body 1
+  Name = "Coil"
+  Target Bodies(1) = 1
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body Force 1
+!   Current Density 1 = Variable "time", "CoilCurrent e 1"
+!       Real MATC "cos(2*3.14*50*tx(0))*tx(1)"
+!   Current Density 2 = Variable "time", "CoilCurrent e 2"
+!       Real MATC "cos(2*3.14*50*tx(0))*tx(1)"
+!   Current Density 3 = Variable "time", "CoilCurrent e 3"
+!       Real MATC "cos(2*3.14*50*tx(0))*tx(1)"     
+  Current Density 1 = Variable "time", "CoilCurrent e 1"
+      Real LUA "cos(2*3.14*50*tx[0])*tx[1]"
+  Current Density 2 = Variable "time", "CoilCurrent e 2"
+      Real LUA "cos(2*3.14*50*tx[0])*tx[1]"
+  Current Density 3 = Variable "time", "CoilCurrent e 3"
+      Real LUA "cos(2*3.14*50*tx[0])*tx[1]"     
+End
+
+Body 2
+  Name = "Air"
+  Target Bodies(1) = 3
+  Equation = 2
+  Material = 1
+End
+
+Body 3
+  Name = "Plate"
+  Target Bodies(1) = 2 
+  Equation = 2
+  Material = 2
+End
+
+Material 1     !---- Non-conducting
+  Name = "Air"
+  Relative Permeability = Real 1.0
+  Relative Permittivity = Real 1.0
+End
+
+
+Material 2    !---- Conducting
+  Name = "Aluminum"
+  Electric Conductivity = 3.526e7
+  Relative Permittivity = 1.0
+  Relative Permeability = 1.0
+End
+
+
+Boundary Condition 1
+  Name = "Infinity"
+  Target Boundaries(1) = 6
+  A {e} = Real 0.0
+! Automated source projection does this
+!  Jfix  = Real 0.0
+End
+
+
+Solver 1
+  Equation = "Coil Solver"
+
+  Exec Solver = "before all"
+  Procedure = "CoilSolver" "CoilSolver"
+  Coil Closed = Logical True
+  Desired Coil Current = Real -2742 
+
+  !Suggested Keywords
+  Normalize Coil Current = Logical True 
+  Narrow Interface = Logical True
+  Save Coil Set = Logical True
+  Save Coil Index = Logical True
+  Calculate Nodal Fields = Logical True
+  Calculate Elemental Fields = Logical True
+  
+  Coil Normal(3) = Real 0. 0. 1.
+End
+
+Solver 2
+  Equation = "MGDynamics Transient"
+  Procedure = "MagnetoDynamics" "WhitneyAVSolver"
+  Variable = "A"
+
+  NonLinear System Max Iterations = 1
+  NonLinear System Relaxation Factor = 1
+
+  Linear System Solver = Iterative
+  Linear System Iterative Method = bicgstabl !idrs !GCR 
+  Linear System GCR Restart = 400 
+  Linear System Convergence Tolerance = 1.e-07
+
+  Linear System preconditioning = none
+  Linear System Max Iterations = 3000
+  Linear System Residual Output = 10
+  Idrs Parameter = 4
+  BicgstabL polynomial degree = 6
+  Steady State Convergence Tolerance = 1e-06
+   
+  Fix Input Current Density = Logical True
+  Automated Source Projection BCs = Logical True !False
+
+! We can have different method and criteria for Jfix
+  jfix: Linear System Solver = Iterative
+  jfix: Linear System Iterative Method = BiCGStabl
+  jfix: Linear System Convergence Tolerance = 1.0e-10
+  jfix: Linear System preconditioning = ILU0
+  jfix: Linear System Max Iterations = 3000
+  jfix: Linear System Residual Output = 10
+End
+
+Solver 3
+  Equation = "MGDynamicsCalc"
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  
+  Potential Variable = String "A"
+  Steady State Convergence Tolerance = 1.0e-6
+  
+  Linear System Solver = Iterative
+  Linear System Symmetric = True
+  Linear System Iterative Method = CG
+  Linear System Max Iterations = 5000
+  Linear System Convergence Tolerance = 1.0e-8
+  Linear System Preconditioning = ILU0
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+
+  Calculate Current Density = Logical True
+  Calculate Nodal Fields = False
+  Calculate Elemental Fields = True
+End
+
+Solver 4
+  Equation = String "ResultOutput" 
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name =  "transient"
+  Discontinuous Bodies = Logical True 
+  Gmsh Format = Logical True
+  Vtu Format = Logical True
+  Save Geometry Ids = Logical True
+  Save Bulk Only = Logical True
+End
+
+Solver 5
+  Equation = "SaveLine" 
+  Procedure = "SaveData" "SaveLine"
+  Filename = "f.dat"
+  Polyline Coordinates(8,3) = 0.0 0.072 0.034 0.288 0.072 0.034 \
+  	   0.0 0.144 0.034 0.288 0.144 0.034 \
+	   0.0 0.072 0.019 0.288 0.072 0.019 \
+	   0.0 0.072 0.0 0.288 0.072 0.0
+  Polyline Divisions(4) = 100 100 100 100
+End
+
+
+Equation 1
+  Name = "MagDyn Coil Only"
+  Active Solvers(4) = 1 2 3 4
+End
+
+Equation 2
+  Name = "MagDyn in Plate + Air"
+  Active Solvers(3) = 2 3 4
+End
+
+Solver 1 :: Reference Norm = 5.81616473E-01
+!Solver 2 :: Reference Norm = 1.53639552E-06 ! 1st timestep
+Solver 2 :: Reference Norm = 2.16794457E-06 ! 16th timestep
