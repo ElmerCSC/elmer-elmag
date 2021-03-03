@@ -6,10 +6,10 @@ mm= 1/1000; //millimters
 
 // Characteristic Lenghts
 // Initial mesh control
-lc_coil  =  15*mm;
-lc_plate = 4*mm; //
-lc_hole  = 4*mm; //8
-lc_air   =   20*mm; //20
+lc_coil  = 20*mm; // used on results shown 15*mm;
+lc_plate = 10*mm;  // 4*mm;
+lc_hole  = 10*mm;  // 4*mm;
+lc_air   = 30*mm; // 20*mm;
 
 // geometrical parameters
 plate_width  = 294*mm;// x-coordinate
@@ -123,13 +123,13 @@ TopOuterCoilSurface[] += news; Plane Surface(news) = {CoilOuterLineLoop[], CoilI
 
 // volumes by extrusion 
 PlateExtrusion[] = Extrude {0, 0, plate_thick} {
-  Line{HoleLines[]}; Line{PlateLines[]}; Surface{TopPlateSurface[0]}; Layers{8}; 
+  Line{HoleLines[]}; Line{PlateLines[]}; Surface{TopPlateSurface[0]}; Layers{5}; 
  };
   
 plate_skin() = Abs(Boundary{ Volume{PlateExtrusion[33]}; });
 
 CoilExtrusion[] =  Extrude {0, 0, coil_height} {
-  Line{CoilInnerLines[]}; Line{CoilOuterLines[]}; Surface{TopOuterCoilSurface[0]};/* Line{ElectrodeLine[{0,1}]};*/ Layers{20}; 
+  Line{CoilInnerLines[]}; Line{CoilOuterLines[]}; Surface{TopOuterCoilSurface[0]};/* Line{ElectrodeLine[{0,1}]};*/ Layers{10}; 
 }; // Line{ElectrodeLine[0]};
 
 coil_skin() = Abs(Boundary{ Volume{CoilExtrusion[65]}; });
