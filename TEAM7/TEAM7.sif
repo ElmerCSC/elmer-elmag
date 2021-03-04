@@ -22,6 +22,9 @@ Simulation
   TimeStep Intervals(1) = 16
   Output Intervals(1) = 1
   Max Output Level = 7
+
+! Let us use names as defined in mesh.names
+  Use Mesh Names = True
 End
 
 Constants
@@ -31,13 +34,13 @@ End
 
 Body 1
   Name = "Coil"
-  Target Bodies(1) = 1
   Equation = 1
   Material = 1
   Body Force = 1
 End
 
 Body Force 1
+! LUA is quite a bit faster than MATC
 !   Current Density 1 = Variable "time", "CoilCurrent e 1"
 !       Real MATC "cos(2*3.14*50*tx(0))*tx(1)"
 !   Current Density 2 = Variable "time", "CoilCurrent e 2"
@@ -54,14 +57,12 @@ End
 
 Body 2
   Name = "Air"
-  Target Bodies(1) = 3
   Equation = 2
   Material = 1
 End
 
 Body 3
   Name = "Plate"
-  Target Bodies(1) = 2 
   Equation = 2
   Material = 2
 End
@@ -82,11 +83,9 @@ End
 
 
 Boundary Condition 1
-  Name = "Infinity"
-  Target Boundaries(1) = 6
+  Name = "Inf"
   A {e} = Real 0.0
-! Automated source projection does this
-!  Jfix  = Real 0.0
+  Jfix  = Real 0.0
 End
 
 
@@ -98,14 +97,23 @@ Solver 1
   Coil Closed = Logical True
   Desired Coil Current = Real -2742 
 
-  !Suggested Keywords
   Normalize Coil Current = Logical True 
   Narrow Interface = Logical True
-  Save Coil Set = Logical True
-  Save Coil Index = Logical True
+  Save Coil Set = Logical False
+  Save Coil Index = Logical False
   Calculate Nodal Fields = Logical True
   Calculate Elemental Fields = Logical True
-  
+
+  Linear System Solver = Iterative
+  Linear System Iterative Method = idrs
+  Linear System Convergence Tolerance = 1.e-08
+  Linear System preconditioning = ILU0
+  Linear System Max Iterations = 3000
+  Linear System Residual Output = 1
+  Idrs Parameter = 4
+
+  Nonlinear System Consistent Norm = True
+
   Coil Normal(3) = Real 0. 0. 1.
 End
 
@@ -116,6 +124,7 @@ Solver 2
 
   NonLinear System Max Iterations = 1
   NonLinear System Relaxation Factor = 1
+  Nonlinear System Consistent Norm = True
 
   Linear System Solver = Iterative
   Linear System Iterative Method = bicgstabl !idrs !GCR 
@@ -128,9 +137,8 @@ Solver 2
   Idrs Parameter = 4
   BicgstabL polynomial degree = 6
   Steady State Convergence Tolerance = 1e-06
-   
+
   Fix Input Current Density = Logical True
-  Automated Source Projection BCs = Logical True !False
 
 ! We can have different method and criteria for Jfix
   jfix: Linear System Solver = Iterative
@@ -147,7 +155,8 @@ Solver 3
   
   Potential Variable = String "A"
   Steady State Convergence Tolerance = 1.0e-6
-  
+  Nonlinear System Consistent Norm = True
+ 
   Linear System Solver = Iterative
   Linear System Symmetric = True
   Linear System Iterative Method = CG
@@ -195,6 +204,6 @@ Equation 2
   Active Solvers(3) = 2 3 4
 End
 
-Solver 1 :: Reference Norm = 5.81616473E-01
-!Solver 2 :: Reference Norm = 1.53639552E-06 ! 1st timestep
-Solver 2 :: Reference Norm = 2.16794457E-06 ! 16th timestep
+Solver 1 :: Reference Norm = 5.81616403E-01
+!Solver 2 :: Reference Norm = 1.53656235E-06 ! 1st timestep
+Solver 2 :: Reference Norm = 2.15104858E-06 ! 16th timestep

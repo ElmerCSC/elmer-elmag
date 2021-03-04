@@ -1,7 +1,7 @@
 load res/f.dat
 time=10;
 line=1;
-bzi=25;
+bzi=22;
 xi=5;
 tmax=max(f(:,1));
 
