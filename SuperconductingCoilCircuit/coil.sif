@@ -25,7 +25,7 @@ Simulation
   TimeStepping Method = BDF
   BDF Order = 1
   Timestep Sizes(1) = Real 0.1
-  TimeStep Intervals(1) = Integer 3
+  TimeStep Intervals(1) = Integer 10
   Output Intervals(1) = Integer 1
   Max Output Level = 5
 End
@@ -60,13 +60,13 @@ Component 1    !---- Coil
   Name = String "Coil"
   Coil Type = String "test"
   Master Bodies(1) = Integer 1
-  Desired Current Density = Real 1
+  Desired Current Density = Real 1.0
   Coil Type = String stranded
   Coil Use W Vector = Logical True
   W Vector Variable Name = String "CoilCurrent e"
-  Number of Turns = Real 1
-  Electrode Area = Real 1
-  Resistance = Real 0
+  Number of Turns = Real 1.0
+  Electrode Area = Real 1.0
+  Resistance = Real 0.0
 End
 
 Material 1     !---- Dummy
@@ -77,11 +77,10 @@ End
 
 Body Force 1   !---- Source and circuit
   Name = "Source and circuit"
-!  Current Density 1 = Equals "CoilCurrent e 1"
-!  Current Density 2 = Equals "CoilCurrent e 2"
-!  Current Density 3 = Equals "CoilCurrent e 3"
-  S1 = Variable time
-    Real MATC "1e6*tx"
+  ! --- Coil area A = 0.0064 m^2, J = 1e8 A/m^2, I = J*A = 64e4 A
+  S1 = Real 64.0e4
+  !Variable time
+  !      Real MATC "64.0e4"
 End
 
 Boundary Condition 1
@@ -113,7 +112,7 @@ Solver 1  !---- CoilSolver, CoilSolver
   Linear System Residual Output = 1
   ! When we normalize, we introduce propably some divergence that
   ! does not impress the solver very much... Helmholtz projection needed?
-  Normalize Coil Current = Logical False
+  Normalize Coil Current = Logical True ! necessary to have a uniform current across the coil
   Nonlinear System Consistent Norm = Logical True
   Coil Closed = Logical True
   Narrow Interface = Logical True
@@ -137,7 +136,8 @@ Solver 3  !---- MagnetoDynamics, WhitneyAVSolver
    Equation = "MGDynamics"
    Variable = "A"
    Procedure = "MagnetoDynamics" "WhitneyAVSolver"
-   NonLinear System Relaxation Factor=1
+   
+   NonLinear System Relaxation Factor = 1
    Export Lagrange Multiplier = Logical True
    Linear System Solver = Iterative
    Linear System Iterative Method = BicgstabL
@@ -180,14 +180,12 @@ Solver 5  !---- CircuitsAndDynamics, CircuitsOutput
 End
 
 Solver 6  !---- ResultOuputSolve, ResultOuputSolver
-!   Exec Solver = After timestep
-   Exec Solver = Never
+   Exec Solver = After timestep
    Equation = "ResultOutput"
    Procedure = "ResultOutputSolve" "ResultOutputSolver"
    
    Vtu Format = Logical True
    Binary Output = Logical True
-!   Discontinuous Bodies = Logical True
    
    Output File Name = File "coil"
    
@@ -196,7 +194,6 @@ End
 
 Solver 7  !---- SaveData, SaveScalars (Write circuit variables to file)
    Exec Solver = After timestep
-   !Exec Solver = Never
    Equation = "sv"
    Procedure = "SaveData" "SaveScalars"
    Filename = "coil.dat"
@@ -204,12 +201,12 @@ End
 
 Equation 1
   Name = "MagnetoDynamic for coil"
-  Active Solvers(4) = 1 2 3 4
+  Active Solvers(4) = 1 2 3 4 6
 End
 
 Equation 2
   Name = "MagnetoDynamic for air"
-  Active Solvers(2) = 3 4
+  Active Solvers(2) = 3 4 6
 End
 
 Solver 3 :: Reference Norm = Real 8.82413861E-04
