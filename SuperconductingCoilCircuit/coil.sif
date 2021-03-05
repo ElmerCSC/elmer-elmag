@@ -25,7 +25,7 @@ Simulation
   TimeStepping Method = BDF
   BDF Order = 1
   Timestep Sizes(1) = Real 0.1
-  TimeStep Intervals(1) = Integer 10
+  TimeStep Intervals(1) = Integer 3
   Output Intervals(1) = Integer 1
   Max Output Level = 5
 End
@@ -78,7 +78,7 @@ End
 Body Force 1   !---- Source and circuit
   Name = "Source and circuit"
   ! --- Coil area A = 0.0064 m^2, J = 1e8 A/m^2, I = J*A = 64e4 A
-  S1 = Real 64.0e4
+  S1 = Real 1.0e8
   !Variable time
   !      Real MATC "64.0e4"
 End
@@ -171,6 +171,7 @@ Solver 4  !---- MagnetoAndDynamics, MagnetoDynamicsCalcFields
   Discontinuous Bodies = Logical True
   
   Calculate Elemental Fields = Logical True
+  Calculate Current Density = Logical True
 End
 
 Solver 5  !---- CircuitsAndDynamics, CircuitsOutput
@@ -209,9 +210,3 @@ Equation 2
   Active Solvers(2) = 3 4 6
 End
 
-Solver 3 :: Reference Norm = Real 8.82413861E-04
-Solver 3 :: Reference Norm Tolerance = Real 1E-03
-Solver 4 :: Reference Norm = Real 4.71459285E-01
-Solver 4 :: Reference Norm Tolerance = Real 1E-03
-$fprintf( stderr, "TEST CASE 1\n");
-RUN
