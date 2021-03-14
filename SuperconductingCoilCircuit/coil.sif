@@ -25,7 +25,7 @@ Simulation
   TimeStepping Method = BDF
   BDF Order = 1
   Timestep Sizes(1) = Real 0.1
-  TimeStep Intervals(1) = Integer 3
+  TimeStep Intervals(1) = Integer 20
   Output Intervals(1) = Integer 1
   Max Output Level = 5
 End
@@ -78,9 +78,11 @@ End
 Body Force 1   !---- Source and circuit
   Name = "Source and circuit"
   ! --- Coil area A = 0.0064 m^2, J = 1e8 A/m^2, I = J*A = 64e4 A
-  S1 = Real 1.0e8
-  !Variable time
-  !      Real MATC "64.0e4"
+  ! Fermi-Dirac distribution to represent the current interruption in the circuit
+  $td = 1 ! detection time
+  $t0 = 0.05 ! fast current decay
+  $Je = 1.0e8 ! engineering curent density
+  IS1 = Variable time; Real MATC "Je/(exp((tx-td)/t0)+1)"
 End
 
 Boundary Condition 1
@@ -112,7 +114,7 @@ Solver 1  !---- CoilSolver, CoilSolver
   Linear System Residual Output = 1
   ! When we normalize, we introduce propably some divergence that
   ! does not impress the solver very much... Helmholtz projection needed?
-  Normalize Coil Current = Logical True ! necessary to have a uniform current across the coil
+  Normalize Coil Current = Logical False ! necessary to have a uniform current across the coil
   Nonlinear System Consistent Norm = Logical True
   Coil Closed = Logical True
   Narrow Interface = Logical True
