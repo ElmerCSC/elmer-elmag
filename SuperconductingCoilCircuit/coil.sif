@@ -114,7 +114,7 @@ Solver 1  !---- CoilSolver, CoilSolver
   Linear System Residual Output = 1
   ! When we normalize, we introduce propably some divergence that
   ! does not impress the solver very much... Helmholtz projection needed?
-  Normalize Coil Current = Logical False ! necessary to have a uniform current across the coil
+  Normalize Coil Current = Logical True ! necessary to have a uniform current across the coil
   Nonlinear System Consistent Norm = Logical True
   Coil Closed = Logical True
   Narrow Interface = Logical True
@@ -146,7 +146,7 @@ Solver 3  !---- MagnetoDynamics, WhitneyAVSolver
    Linear System preconditioning = none
    Linear System Convergence Tolerance = 1.e-8
    Linear System Max Iterations = 3000
-   Linear System Residual Output = 1000
+   Linear System Residual Output = 10
    Linear System ILUT Tolerance=1e-8
    BicgstabL polynomial degree = 6
    Steady State Convergence Tolerance = 1e-08
