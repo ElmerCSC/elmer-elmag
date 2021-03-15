@@ -1,7 +1,7 @@
 Elmer version: 9.0
-Elmer compilation date: 2021-03-03
+Elmer compilation date: 2021-03-07
 Solver input file: coil.sif
-File started at: 2021/03/05 09:23:18
+File started at: 2021/03/12 19:39:16
  
 Variables in columns of matrix: RESU/coil.dat
    1: res: eddy current power
