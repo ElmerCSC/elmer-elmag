@@ -4,4 +4,4 @@ A superconductinf coil can experience a sudden loss of its superconducting state
 
 The external circuit is made of a DC power source supplying a current to a coil modelling by FEM in parallel with an external resistance. A resistance, repesenting the current leads, is provided in the circuit between the power supply and the coil. Two control "k1" and "k2" are shown in case it is required to model the switching between one part of the circuit and the other (C1a and C1b) upon a condition in the voltage across the coil. it is part of a classic detection and protection system for superconducting coils.
 
-
+![Comparison Elmerfem and Onelab (Gmsh/GetDP)](comparison.png)
