@@ -52,3 +52,6 @@ $RECYCLE.BIN/
 *.msp
 # Windows shortcuts
 *.lnk
+# paraview results
+*.vtu
+TEST.PASSED

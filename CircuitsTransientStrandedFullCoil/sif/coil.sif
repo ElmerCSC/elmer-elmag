@@ -101,7 +101,7 @@ Solver 1  !---- CoilSolver, CoilSolver
   Linear System Residual Output = 1
   ! When we normalize, we introduce propably some divergence that
   ! does not impress the solver very much... Helmholtz projection needed?
-  Normalize Coil Current = Logical False 
+  Normalize Coil Current = Logical True
   Nonlinear System Consistent Norm = Logical True
   Coil Closed = Logical True
   Narrow Interface = Logical True
@@ -191,9 +191,13 @@ Equation 2
   Name = "MagnetoDynamic for air"
   Active Solvers(2) = 3 4
 End
-Solver 3 :: Reference Norm = Real 8.82413861E-04
+Solver 3 :: Reference Norm = Real 3.55250580E-03
 Solver 3 :: Reference Norm Tolerance = Real 1E-03
-Solver 4 :: Reference Norm = Real 4.71459285E-01
+Solver 4 :: Reference Norm = Real 1.06341356E-05
 Solver 4 :: Reference Norm Tolerance = Real 1E-03
 $fprintf( stderr, "TEST CASE 1\n");
 RUN
+
+WARNING:: CompareToReferenceSolution: Solver 3 FAILED:  Norm = 3.55250580E-03  RefNorm = 8.82413861E-04
+CompareToReferenceSolution: Relative Error to reference norm: 3.025895E+00
+WARNING:: CompareToReferenceSolution: Solver 4 FAILED:  Norm = 1.06341356E-05  RefNorm = 4.71459285E-01
