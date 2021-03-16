@@ -32,7 +32,7 @@ $ C.1.source.3 = "IS1"
 ! Define network cycles:
 !-------------------------
 $Rcl1 = 0.01
-$Rd1 = 0.001
+$Rd1 = 1.0
 !Voltage relations:
 $ C.1.B(0,1) = 1
 $ C.1.B(0,2) = Rcl1
