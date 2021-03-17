@@ -41,6 +41,7 @@ title('Bz along line A1-B1');
 xlabel('x(m)');
 ylabel('Bz (T)');
 legend ('Elmer', 'Team7')
+pause;
 
 
 
