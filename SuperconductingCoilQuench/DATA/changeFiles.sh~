@@ -1,8 +1,0 @@
-#!/bin/bash
-
-
-for f in *.txt
-do
-    bf=basename $f
-    [ -f "$f" ] && sed 's/,/ /g' $f > $bf.dat
-done
