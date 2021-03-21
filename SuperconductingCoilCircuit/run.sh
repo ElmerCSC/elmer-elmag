@@ -3,4 +3,4 @@
 echo " "
 rm ./RESU/coil_*
 echo "*** ElmerSolver ***"
-ElmerSolver coil.sif
+ElmerSolver coil_1.sif

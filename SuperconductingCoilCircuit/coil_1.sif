@@ -26,9 +26,9 @@ Simulation
   Steady State Max Iterations = 1
   TimeStepping Method = BDF
   BDF Order = 1
-  Timestep Sizes(1) = Real 0.1
-  TimeStep Intervals(1) = Integer 20
-  Output Intervals(1) = Integer 1
+  Timestep Sizes(1) = Real 10.0
+  TimeStep Intervals(1) = Integer 500
+  Output Intervals(1) = Integer 10
   Max Output Level = 5
   
   !Output File = case.result ! bug tries to locate in /RESU/MESH ?
