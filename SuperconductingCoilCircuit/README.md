@@ -1,3 +1,8 @@
+# NOTES!!!
+
+FOR RUNNING THE CASES YOU NEED THE LATEST (https://github.com/ElmerCSC/elmerfem/commit/824778ae6b0ba788cff3b8aecf0c474fdcf5648e) FROM: https://github.com/ElmerCSC/elmerfem/tree/CoilSolverGUI 
+This is needed because the normalized current is regularized and the patch for that is in the afforementioned branch.
+
 #Electromagnetic model of a superconducting coil connected to an external circuit.
 
 Background: A superconducting coil can experience a sudden loss of its superconducting state and may enter what is referred to as a "quench". A quench is ignited by a local dissipation of energy within the body of the coil followed by a rapid heat dissipation leading to a propagating heat front throughout the winding infusing further dissipation. All the magnetic energy stored in the coil is then released within the body of the coil. To avoid the burnout of the coil, a detection and protection system is required to detect quickly the quench and act upon it by dumping the coil energy in an external resistor. The FEM model deals with the electromagnetic and thermal behavior of the coil while the external circuit model deals with the energy and dumping of the coil energy.
