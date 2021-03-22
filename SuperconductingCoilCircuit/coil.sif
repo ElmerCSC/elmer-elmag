@@ -1,9 +1,4 @@
-! Simple case for testing the stranded coil in transient 3D simulation.
-! This case is the first ever to use the coil solver to connect a full
-! coil to circuits. The wire density vector is given via wire vector instead
-! of wire potential using "Coil Use W Vector = Logical True" keyword in
-! the component section. Why this option? -You can compute your wires
-! in a full coil without cuts which you cannot do using wire potential.
+! A test case for circuits to power a super conducting magnet (ramp-up)
 !
 ! Test case authors: Eelis Takala, Frederic Trillaud
 ! Original date: October 2020
@@ -24,8 +19,13 @@ Simulation
   Steady State Max Iterations = 1
   TimeStepping Method = BDF
   BDF Order = 1
-  Timestep Sizes(1) = Real 0.1
-  TimeStep Intervals(1) = Integer 500
+  ! --- Coil area A = 0.0064 m^2, N = 8153, Je = 1.274e8 A/m^2, NI = Je*A = 815360 A-t, and I = 100.007 A
+  $ I = 100 ! providing the current
+  $ ramp_rate = 20 ! A/s
+  $ ramp_time = I/ramp_rate
+  $ nof_tsteps = 1
+  Timestep Sizes(1) = Real $ ramp_time/nof_tsteps
+  TimeStep Intervals(1) = Integer $ nof_tsteps
   Output Intervals(1) = Integer 1
   Max Output Level = 5
 End
@@ -78,8 +78,6 @@ End
 
 Body Force 1   !---- Source and circuit
   Name = "Source and circuit"
-  ! --- Coil area A = 0.0064 m^2, N = 8153, Je = 1.274e8 A/m^2, NI = Je*A = 81530 A-t, and I = 10 A
-  $I = 10.5 ! providing the current, it does not seem to be correct
   
   ! Fermi-Dirac distribution to represent the current interruption in the circuit
   !$td = 1 ! detection time
@@ -87,7 +85,7 @@ Body Force 1   !---- Source and circuit
   !IS1 = Variable time; Real MATC "Je/(exp((tx-td)/t0)+1)"
   
   ! --- Rampoing-up the coil
-  $t1 = 1.0 ! time to reach the current density Je in [s]
+  $t1 = ramp_time ! time to reach the current density Je in [s]
   IS1 = Variable time; Real MATC "if (tx <= t1) ((I/t1)*tx); else I;"
 End
 
@@ -115,12 +113,13 @@ Solver 1  !---- CoilSolver, CoilSolver
   Linear System Solver = "Iterative"
   Linear System Preconditioning = ILU1
   Linear System Max Iterations = 500
-  Linear System Convergence Tolerance = 1e-6
+  Linear System Convergence Tolerance = 1e-7
   Linear System Iterative Method = BiCGStab
   Linear System Residual Output = 1
   ! When we normalize, we introduce propably some divergence that
   ! does not impress the solver very much... Helmholtz projection needed?
-  Normalize Coil Current = Logical False ! necessary to have a uniform current across the coil
+  Normalize Coil Current = Logical True ! necessary to have a uniform current across the coil
+  Fix Input Current Density = Logical True
   Nonlinear System Consistent Norm = Logical True
   Coil Closed = Logical True
   Narrow Interface = Logical True
