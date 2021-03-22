@@ -9,12 +9,14 @@
 ! Original date: October 2020
 ! eelis.takala@gmail.com, ftrillaudp@gmail.com
 
-INCLUDE coil-circuits.definitions
+! Second case: dumping of current in external dump resistor. Use end of previous results to feed the initial condition of the model
+
+INCLUDE coil-circuits_2.definitions
 
 Header
   CHECK KEYWORDS Warn
   Mesh DB "." "MESH"
-  Results Directory "RESU"
+  Results Directory "RESU2"
 End
 
 Simulation
@@ -25,9 +27,12 @@ Simulation
   TimeStepping Method = BDF
   BDF Order = 1
   Timestep Sizes(1) = Real 0.1
-  TimeStep Intervals(1) = Integer 500
+  TimeStep Intervals(1) = Integer 10
   Output Intervals(1) = Integer 1
   Max Output Level = 5
+  
+  Restart File = String "case.result"
+  Restart Position = 0
 End
 
 Constants
@@ -76,19 +81,9 @@ Material 1     !---- Dummy
   Relative Permittivity = Real 1.0
 End
 
-Body Force 1   !---- Source and circuit
+Body Force 1
   Name = "Source and circuit"
-  ! --- Coil area A = 0.0064 m^2, N = 8153, Je = 1.274e8 A/m^2, NI = Je*A = 81530 A-t, and I = 10 A
-  $I = 10.5 ! providing the current, it does not seem to be correct
-  
-  ! Fermi-Dirac distribution to represent the current interruption in the circuit
-  !$td = 1 ! detection time
-  !$t0 = 0.05 ! fast current decay
-  !IS1 = Variable time; Real MATC "Je/(exp((tx-td)/t0)+1)"
-  
-  ! --- Rampoing-up the coil
-  $t1 = 1.0 ! time to reach the current density Je in [s]
-  IS1 = Variable time; Real MATC "if (tx <= t1) ((I/t1)*tx); else I;"
+
 End
 
 Boundary Condition 1
@@ -196,7 +191,7 @@ Solver 6  !---- ResultOuputSolve, ResultOuputSolver
    Vtu Format = Logical True
    Binary Output = Logical True
    
-   Output File Name = File "coil"
+   Output File Name = File "coil_2"
    
    Save Geometry Ids = Logical True
 End
@@ -205,7 +200,7 @@ Solver 7  !---- SaveData, SaveScalars (Write circuit variables to file)
    Exec Solver = After timestep
    Equation = "sv"
    Procedure = "SaveData" "SaveScalars"
-   Filename = "coil.dat"
+   Filename = "coil_2.dat"
 End
 
 Equation 1

@@ -28,7 +28,7 @@ Gamma_treeCotreeGauge = Region[{Gamma_dirichlet}];
 Function
 {
 DefineConstant[
-J = {1e8, Name "Input/1Electrical parameters/1Engineering current density (Am⁻2)"},
+J = {1.274e8, Name "Input/1Electrical parameters/1Engineering current density (Am⁻2)"},
 flag_CoulombsGauge = {0, Choices{0, 1}, AutoCheck 0, Name "Input/3Gauges/1Coulomb's gauge (div(a) = 0)"},
 flag_treeCotreeGauge = {1, Choices{0, 1}, AutoCheck 1, Name "Input/3Gauges/2Tree-coTree gauge (a.w = 0)"},
 visualization = {0, Choices{0, 1}, AutoCheck 1, Name "Output/PostProcessing/Visualization", Label "Real-time visualization"},
