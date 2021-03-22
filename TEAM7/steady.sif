@@ -1,0 +1,190 @@
+! Testing Electromagnetic Analysis Methods (TEAM)
+! Problem 7: Asymmetrical Conductor with a Hole
+! Author: Jonathan Velasco
+! Original date: March 2021
+! jonathan.velasco@csc.fi
+!
+! Steady version with simplified keywords.
+!------------------------------------------------------
+
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "." "TEAM7"
+  Results Directory "res"
+End
+
+Simulation
+  Coordinate System = String "Cartesian 3D"
+  Coordinate Mapping(3) = 1 2 3
+  Simulation Type = String "Steady"
+  Steady State Max Iterations = 1
+  Output Intervals(1) = 1
+  Max Output Level = 7
+
+! Let us use names as defined in mesh.names
+  Use Mesh Names = True
+End
+
+Constants
+  Permittivity of Vacuum = 8.8542e-12
+  Permeability of Vacuum = 1.256e-6
+End
+
+Body 1
+  Name = "Coil"
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body Force 1
+!  Current Density Amplitude = Variable "time"
+!    Real LUA "cos(2*3.14*50*tx[0])"
+End
+
+Body 2
+  Name = "Air"
+  Equation = 2
+  Material = 1
+End
+
+Body 3
+  Name = "Plate"
+  Equation = 2
+  Material = 2
+End
+
+Material 1     !---- Non-conducting
+  Name = "Air"
+  Relative Permeability = Real 1.0
+  Relative Permittivity = Real 1.0
+End
+
+
+Material 2    !---- Conducting
+  Name = "Aluminum"
+  Electric Conductivity = 3.526e7
+  Relative Permittivity = 1.0
+  Relative Permeability = 1.0
+End
+
+
+Boundary Condition 1
+  Name = "Inf"
+  AV {e} = Real 0.0
+  Jfix  = Real 0.0
+End
+
+
+Solver 1
+  Equation = "Coil Solver"
+
+  Exec Solver = "before all"
+  Procedure = "CoilSolver" "CoilSolver"
+  Coil Closed = Logical True
+  Desired Coil Current = Real -2742.0
+
+  Normalize Coil Current = Logical True 
+  Narrow Interface = Logical True
+!  Save Coil Set = Logical False
+!  Save Coil Index = Logical False
+!  Calculate Nodal Fields = Logical True
+  Calculate Elemental Fields = Logical True
+
+  Linear System Solver = Iterative
+  Linear System Iterative Method = idrs
+  Linear System Convergence Tolerance = 1.e-08
+  Linear System preconditioning = ILU0
+  Linear System Max Iterations = 3000
+  Linear System Residual Output = 10
+  Idrs Parameter = 4
+
+  Nonlinear System Consistent Norm = True
+
+  Coil Normal(3) = 0.0 0.0 1.0
+End
+
+Solver 2
+  Equation = "MGDynamics Transient"
+  Procedure = "MagnetoDynamics" "WhitneyAVSolver"
+
+!  Quadratic Approximation = Logical True
+
+  NonLinear System Max Iterations = 1
+!  NonLinear System Relaxation Factor = 1
+  Nonlinear System Consistent Norm = True
+
+  Linear System Solver = Iterative
+  Linear System Iterative Method = idrs !GCR ! bicgstabl !idrs 
+  Linear System GCR Restart = 200 
+  Linear System Convergence Tolerance = 1.e-08
+
+  Linear System preconditioning = none
+  Linear System Max Iterations = 1000
+  Linear System Residual Output = 10
+  Idrs Parameter = 6
+  BicgstabL polynomial degree = 6
+  Steady State Convergence Tolerance = 1e-06
+
+  Use Elemental CoilCurrent = True
+  Fix Input Current Density = True
+End
+
+Solver 3
+  Equation = "MGDynamicsCalc"
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  
+  Steady State Convergence Tolerance = 1.0e-6
+  Nonlinear System Consistent Norm = True
+ 
+  Linear System Solver = Iterative
+  Linear System Symmetric = True
+  Linear System Iterative Method = CG
+  Linear System Max Iterations = 5000
+  Linear System Convergence Tolerance = 1.0e-8
+  Linear System Preconditioning = ILU0
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+
+  Calculate Current Density = Logical True
+  Calculate Nodal Fields = False
+  Calculate Elemental Fields = True
+End
+
+Solver 4
+! As a side effect this solver will smooth the elemental fields 
+  Equation = String "ResultOutput" 
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name =  "steady"
+  Discontinuous Bodies = Logical True 
+  Gmsh Format = Logical True
+  Vtu Format = Logical True
+  Save Geometry Ids = Logical True
+  Save Bulk Only = Logical True
+End
+
+Solver 5
+  Equation = "SaveLine" 
+  Procedure = "SaveData" "SaveLine"
+  Filename = "fs.dat"
+  Polyline Coordinates(8,3) = 0.0 0.072 0.034 0.288 0.072 0.034 \
+  	   0.0 0.144 0.034 0.288 0.144 0.034 \
+	   0.0 0.072 0.019 0.288 0.072 0.019 \
+	   0.0 0.072 0.0 0.288 0.072 0.0
+  Polyline Divisions(4) = 100 100 100 100
+End
+
+
+Equation 1
+  Name = "MagDyn Coil Only"
+  Active Solvers(4) = 1 2 3 4
+End
+
+Equation 2
+  Name = "MagDyn in Plate + Air"
+  Active Solvers(3) = 2 3 4
+End
+
+Solver 1 :: Reference Norm = 5.81616403E-01
+Solver 2 :: Reference Norm = 2.52606547E-06
+
