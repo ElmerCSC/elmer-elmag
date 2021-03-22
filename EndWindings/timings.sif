@@ -1,0 +1,292 @@
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "." "mesh"
+  Include Path ""
+  Results Directory "results"
+End
+
+Simulation
+  Mesh Levels = 1
+  Max Output Level = 7
+  Coordinate System = Cartesian
+  Coordinate Mapping(3) = 1 2 3
+  Simulation Type = Steady state
+  Steady State Max Iterations = 1
+  Output Intervals = 1
+
+  Simulation Timing = Logical True
+  Use Mesh Names = Logical True
+End
+
+Constants
+  Permittivity of Vacuum = 8.8542e-12
+End
+
+Body 1
+  Name = "WindingA"
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 2
+  Name = "WindingB"
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 3
+  Name = "WindingC"
+  Equation = 1
+  Material = 1
+  Body Force = 1
+End
+
+Body 4
+  Name = "Air"
+  Equation = 2
+  Material = 2
+End
+
+Solver 1
+  Equation = Static Current Conduction
+  Variable = Potential
+  Procedure = "StatCurrentSolve" "StatCurrentSolver"
+
+  Calculate Volume Current = Logical True
+  Calculate Joule Heating = Logical False
+
+  Optimize Bandwidth = True
+  Nonlinear System Max Iterations = 1
+
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStabl
+  Linear System Max Iterations = 5000
+  Linear System Convergence Tolerance = 1.0e-10
+  Linear System Preconditioning = ILU0
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 20
+  Linear System Precondition Recompute = 1
+
+  Solver Timing = Logical True
+  Linear System Timing = Logical True
+End
+
+Solver 2
+! Default variable name is already "AV"
+!  Variable = -nooutput AV
+  Equation = "MGDynamics"
+  Procedure = "MagnetoDynamics" "WhitneyAVSolver"
+
+! We don't need to fix the current density if we use potential as source!
+!Fix Input Current Density = True
+  Newton-Raphson Iteration = Logical True
+  Nonlinear System Max Iterations = 1
+  
+  Linear System Solver = Iterative
+  Linear System Preconditioning = none
+  Linear System Convergence Tolerance = 1e-8
+  Linear System Residual Output = 20
+  Linear System Max Iterations = 5000
+  Linear System Iterative Method = BiCGStabl ! idrs !BiCGstab2
+  BiCGStabL Polynomial Degree = 4
+  Idrs Parameter = 6
+
+  Solver Timing = True 
+!  Linear System Row Equilibration = True
+
+  Solver Timing = Logical True
+  Linear System Timing = Logical True
+End
+
+Solver 3
+  Equation = "MGDynamicsCalc"
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  Linear System Symmetric = True
+
+  Calculate Magnetic Field Strength = Logical True
+  Calculate JxB = Logical False
+  Calculate Current Density = Logical True
+  Calculate Electric Field = Logical False
+
+  Calculate Nodal Fields = False
+  Calculate Elemental Fields = True
+
+  Linear System Solver = "Iterative"
+  Linear System Preconditioning = ILU0
+  Linear System Residual Output = 0
+  Linear System Max Iterations = 5000
+  Linear System Iterative Method = CG
+  Linear System Convergence Tolerance = 1.0e-8
+
+  Solver Timing = Logical True
+  Linear System Timing = Logical True
+End
+
+Solver 4
+!  Exec Solver = Never
+  Equation = VtuOutput
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = hierarc
+  Vtu Format = Logical True
+  Single Precision = Logical True
+
+  Save Bulk Only = Logical True
+  Save Geometry Ids = Logical True
+
+  Solver Timing = Logical True
+End 
+
+Solver 5
+  Exec Solver = Never
+  Equation = SaveGridData
+  Procedure = "SaveGridData" "SaveGridData"
+
+  Grid nx = Integer 60 
+  Grid ny = Integer 60 
+  Grid nz = Integer 5
+
+!  Min Coordinate 1 = Real -1.0
+!  Max Coordinate 1 = Real 2.0
+!  Min Coordinate 2 = Real -1.5
+!  Max Coordinate 2 = Real 1.5
+
+  Check For Duplicates = Logical True
+  Binary Output = Logical True
+  Single Precision = Logical True
+
+  Filename Prefix = String hierarch-glyphs
+  Vtu Format = Logical True
+End 
+
+
+Solver 6
+!  Exec Solver = Never
+  Equation = "SaveScalars"
+  Procedure = "SaveData" "SaveScalars"
+  Filename = timing.dat
+
+! Will use partitioning in the numbering 
+!  Partition Numbering = Logical True
+
+  File Append = Logical True
+
+  Operator 1 = partitions
+  Operator 2 = elements
+  Operator 3 = nodes
+
+
+!  Variable 1 = Magnetic Flux Density 1
+!  Operator 1 = int mean
+!  Variable 2 = Magnetic Flux Density 2
+!  Operator 2 = int mean
+!  Variable 3 = Magnetic Flux Density 3
+!  Operator 3 = int mean
+  
+!  Variable 4 = Magnetic Field Strength 1
+!  Operator 4 = int mean
+!  Variable 5 = Magnetic Field Strength 2
+!  Operator 5 = int mean
+!  Variable 6 = Magnetic Field Strength 3
+!  Operator 6 = int mean
+End
+
+Equation 1
+  Name = "CoilEq"
+  Active Solvers(3) = 1 2 3
+End
+
+Equation 2
+  Name = "AirEq"
+  Active Solvers(2) = 2 3
+End
+
+Material 1
+  Name = "Copper (generic)"
+  Heat expansion Coefficient = 16.5e-6
+  Electric Conductivity = 59.59e6
+  Heat Conductivity = 401.0
+  Heat Capacity = 385.0
+  Density = 8960.0
+  Poisson ratio = 0.34
+  Youngs modulus = 115.0e9
+  Relative Permeability = 1.0
+  Relative Permittivity = 1.0
+End
+
+Material 2
+  Name = "Air (room temperature)"
+  Electric Conductivity = 5e-15
+  Heat expansion Coefficient = 3.43e-3
+  Heat Conductivity = 0.0257
+  Heat Capacity = 1005.0
+  Density = 1.205
+  Relative Permeability = 1.0
+  Relative Permittivity = 1.0
+End
+
+Boundary Condition 1
+  Name = "Aminus"
+  Potential = 0
+  AV = Real 0
+  AV {e} = real 0
+End
+
+Boundary Condition 2
+  Name = "Bminus"
+  Potential = 0
+  AV = Real 0
+  AV {e} = real 0
+End
+
+Boundary Condition 3
+  Name = "Cminus"
+  Potential = 0
+  AV = Real 0
+  AV {e} = real 0
+End
+
+Boundary Condition 4
+  Name = "Aplus"
+  Current Density = 50700.0 
+  AV = Real 0
+  AV {e} = real 0
+  Save Scalars = Logical True
+End
+
+Boundary Condition 5
+  Name = "Bplus"
+  Current Density = -25350 
+  AV = Real 0
+  AV {e} = real 0
+End
+
+Boundary Condition 6
+  Name = "Cplus"
+  Current Density = -25350 
+  AV = Real 0
+  AV {e} = real 0
+End
+
+Boundary Condition 7
+  Name = "Sphere"
+  Potential = 0
+  AV = Real 0
+  AV {e} = Real 0
+End
+
+Boundary Condition 8
+  Name = "Plane"
+  AV = Real 0
+  AV {e} = Real 0
+End
+
+Body Force 1
+  Name = "Body forces for copper"
+  Electric Potential = Equals "Potential"
+End
+
+Solver 1 :: Reference Norm = 2.75178291E-04
+Solver 2 :: Reference Norm = 2.53895694E-07
