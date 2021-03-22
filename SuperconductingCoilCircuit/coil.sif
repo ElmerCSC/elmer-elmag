@@ -1,4 +1,4 @@
-! A test case for circuits to power a super conducting magnet (ramp-up)
+! A test case for circuits to power a super conducting magnet (ramp-up, see coil_extraction.sif for extraction)
 !
 ! Test case authors: Eelis Takala, Frederic Trillaud
 ! Original date: October 2020
