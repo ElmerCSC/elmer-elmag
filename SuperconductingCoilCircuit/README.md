@@ -1,7 +1,7 @@
 # NOTES!!!
 
 FOR RUNNING THE CASES YOU NEED THE LATEST (https://github.com/ElmerCSC/elmerfem/commit/824778ae6b0ba788cff3b8aecf0c474fdcf5648e) FROM: https://github.com/ElmerCSC/elmerfem/tree/CoilSolverGUI 
-This is needed because the normalized current is regularized and the patch for that is in the afforementioned branch.
+This is needed because the normalized current is regularized and the patch for that is in the aforementioned branch.
 
 # Electromagnetic model of a superconducting coil connected to an external circuit.
 
@@ -20,7 +20,7 @@ Electrical circuit for the entire system including the coil, the power supply an
 
 The problem is divided in two parts (reproduce with "run.sh"):
 
-1. Current ramp up to 100 A (coil.sif) that gives about 5.5T peak field. However, the ramp is 1000 A/s and thus some current is
+1. Current ramp up to 100 A (coil.sif) that gives about 5.5 T peak field. However, the ramp is 1000 A/s and thus some current is
    pushed to the dump resistor as well.
 ![Electrical circuit](ramp.png)
 
