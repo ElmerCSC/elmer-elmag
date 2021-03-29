@@ -1,4 +1,4 @@
-! A test case for circuits to power a super conducting magnet (ramp-up)
+! A test case for circuits to extract power off a superconducting magnet (extraction, see coil.sif for ramp-up)
 !
 ! Test case authors: Eelis Takala, Frederic Trillaud
 ! Original date: October 2020
@@ -77,12 +77,6 @@ End
 
 Body Force 1   !---- Source and circuit
   Name = "Source and circuit"
-  
-  ! Fermi-Dirac distribution to represent the current interruption in the circuit
-  !$td = 1 ! detection time
-  !$t0 = 0.05 ! fast current decay
-  !IS1 = Variable time; Real MATC "Je/(exp((tx-td)/t0)+1)"
-  
   ! --- Cut power supply current and start extracting the energy through the dump resistor
   IS1 = Real 0
 End
