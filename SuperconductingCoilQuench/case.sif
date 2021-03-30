@@ -1,0 +1,374 @@
+! F. Trillaud <ftrillaudp@gmail.com>
+! Created on 06/11/2020
+! Modified on 07/29/2020: including the filtering of the temperature field
+
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "." "MESH"
+  Results Directory "RESU"
+End
+
+Simulation
+  Coordinate System = String "Cartesian 3D"
+  Coordinate Mapping(3) = 1 2 3
+
+  Simulation Type = String "Transient"
+  
+  Steady State Max Iterations = 3 ! Iteration of coupled system for problems involving several solver with weak coupling, it impacts as well the behavior of individual solver in their convergence. First, the steady state loop then come the nested iterative individual solvers.
+  Steady State Min Iterations = 2
+  
+  TimeStepping Method = BDF
+  BDF Order = 2
+  Time Derivative Order = Integer 2 ! for a second order derivative if present
+  
+  Timestep Sizes(1) = Real 0.0005
+  TimeStep Intervals(1) = Integer 200
+  Output Intervals(1) = Integer 1 ! by default will be used in the "ResultOutputSolve" solver?
+
+  Max Output Level = 5
+End
+
+Constants
+  Gravity(4) = 0 0 -1 9.82
+  Stefan Boltzmann = 5.67e-08
+  Permittivity of Vacuum = 8.8542e-12
+  Permeability of Vacuum = 1.256e-6
+  Boltzmann Constant = 1.3807e-23
+  Unit Charge = 1.602e-19
+End
+
+! -- BODIES --
+Body 1
+  Name = "SOL001: coil"
+  Target Bodies(1) = 1
+  Equation = 4
+  Material = 2
+  Body Force = 1
+  Initial Condition = 2
+End
+
+! Surrounding medium (vaccuum, air, etc...)
+Body 2
+  Name = "SOL002: air"
+  Target Bodies(1) = 2
+  Equation = 1
+  Material = 1
+  Initial Condition = 1
+End
+
+
+! -- MATERIAL PROPERTIES --
+Material 1
+  Name = "Air"
+  Relative Permeability = Real 1.0
+  Relative Permittivity = Real 1.0
+End
+
+Material 2
+  Name = "Inductor"
+  Relative Permeability = Real 1.0
+  Relative Permittivity = Real 1.0
+  Heat Conductivity(3,3) = Variable Temperature, Magnetic Flux Density, coilcurrent
+    Real Procedure "./Fortran90/therConductivity" "getTherConductivity"
+  Density = Real 9010.0 ! equivalent density used by the heat capacity
+  Heat Capacity = Variable Temperature
+    Real Piecewise Linear
+      Include "./DATA/cp_eq.dat"
+    End
+  
+  ! Parameters of superconducting wire and coil
+  Matrix Density = Real 8960.0
+  Superconductor Density = Real 7000.0
+  Matrix Electric Conductivity = Real 1e8 ! matrix
+  Critical Temperature = Real 16.8
+  !N-Value = Real 10.0
+  Critical Electrical Field = Real 1e-4
+  Operating Temperature = Real 4.2
+  Matrix to Superconductor Ratio = Real 1.2
+  Filling Factor = Real 0.9
+  
+  ! The Electrical Conductivity cannot be defined in this model since it will lead to the induction of large current in the coil cancelling the magnetic field (Electrical Conductivity >> 1)
+End
+
+
+! -- COMPONENTS --
+Component 1
+  Name = String "Coil"
+  Coil Type = String "test"
+  Master Bodies(1) = Integer 1
+  Desired Current Density = Real 1.0e8
+End
+
+! -- BODY FORCES --
+Body Force 1
+  Name = "Source"
+  Current Density 1 = Equals "CoilCurrent e 1"
+  Current Density 2 = Equals "CoilCurrent e 2"
+  Current Density 3 = Equals "CoilCurrent e 3"
+  
+  Joule Heat = Logical False ! only if dissipation in the inductors associated with an Electrical Conductivity in the A-V formulation
+  
+  ! Parameters to be passed to the procedure: dissipation.f90
+  ! Dimension of the spherical disturbance (depends on local mesh size)
+  Disturbance Size = Real 0.006
+  ! Center of the spherical disturbance
+  Disturbance X Center = Real 0.0
+  Disturbance Y Center = Real -0.14
+  Disturbance Z Center = Real 0.0
+  ! Value of heat disturbance in [W/kg]
+  Heat Disturbance = Real 50000.0
+  ! Initial time of the disturbance
+  Heat Disturbance Initial Time = Real 0.002
+  ! Duration of the disturbance
+  Disturbance Duration = Real 0.01
+  
+  Heat Source = Variable Time, Temperature, Magnetic Flux Density, coilcurrent
+    Real Procedure "./Fortran90/dissipation" "getDissipation"
+End
+
+
+!-- BOUNDARY CONDITIONS --
+Boundary Condition 1
+  Name = "FAC003: air boundary"
+  Target Boundaries(1) = 4
+  AV {e} = real 0
+  AV = real 0
+  Jfix = real 0.0
+End
+
+Boundary Condition 2
+  Name = "FAC001: coil boundary"
+  Target Boundaries(1) = 3
+  Temperature = Real 4.2
+End
+
+!-- INITIAL CONDITIONS --
+Initial Condition 1
+  Name = "Initial state: magnetodynamics (air)"
+  AV {e} = real 0
+  AV = real 0
+  Jfix = real 0.0
+  Magnetic Flux Density 1 = Real 0.001
+  Magnetic Flux Density 2 = Real 0.001
+  Magnetic Flux Density 3 = Real 0.001
+End
+
+Initial Condition 2
+  Name = "Initial state: solids"
+  AV {e} = real 0
+  AV = real 0
+  Jfix = real 0.0
+  
+  Magnetic Flux Density 1 = Real 0.001
+  Magnetic Flux Density 2 = Real 0.001
+  Magnetic Flux Density 3 = Real 0.001
+  
+  Temperature = Real 4.2
+End
+
+
+!-- EQUATIONS --
+Equation 1
+  Name = "MagnetoDynamic for air"
+  Active Solvers(2) = 2 3
+End
+
+Equation 2
+  Name = "MagnetoDynamic for coils"
+  Active Solvers(4) = 1 2 3 6
+End
+
+Equation 3
+  Name = "Thermal analysis"
+  Active Solvers(4) = 4 5 6 7
+  Heat Equation = Logical True
+End
+
+Equation 4
+  Name = "Magnetic and thermal analysis (inductors)"
+  Active Solvers(7) = 1 2 3 4 5 6 7
+  Heat Equation = Logical True
+End
+
+Equation 5
+  Name = "Magnetic and thermal analysis (non-inductors)"
+  Active Solvers(6) = 2 3 4 5 6 7
+  Heat Equation = Logical True
+End
+
+
+!-- SOLVERS --
+Solver 1
+  Exec Solver = Always
+  Equation = "CoilSolver"
+  Procedure = "CoilSolver" "CoilSolver"
+  
+  Steady State Convergence Tolerance = 1e-06 ! related to the Steady State Iterations (see Simulation)
+
+  Linear System Solver = "Iterative"
+  Linear System Preconditioning = ILU1
+  Linear System Max Iterations = 500
+  Linear System Convergence Tolerance = 1e-4
+  Linear System Iterative Method = BiCGStab
+  Linear System Residual Output = 1
+
+  Normalize Coil Current = Logical True
+  Nonlinear System Consistent Norm = Logical True
+  Coil Closed = Logical True
+  Narrow Interface = Logical True
+  Save Coil Set = Logical True
+  Save Coil Index = Logical True
+  Calculate Elemental Fields = Logical True
+  
+  Coil Normal(3) = Real 0. 0. 1.
+End
+
+Solver 2
+  Exec Solver = Always
+  Equation = MGDynamics
+  Procedure = "MagnetoDynamics" "WhitneyAVSolver"
+  
+  Variable =  AV
+
+  Steady State Convergence Tolerance = 1.0e-6
+  
+  Nonlinear System Max Iterations = 200
+  Nonlinear System Convergence Tolerance = 1.0e-6
+  Nonlinear System Newton After Iterations = 10
+  Nonlinear System Newton After Tolerance = 1.0e-6
+  Nonlinear System Relaxation Factor = 0.9
+  Nonlinear System Consistent Norm = Logical True
+  
+  ! some convergence issue here
+  Linear System Solver = iterative
+  Linear System Iterative Method = BiCGStab ! BiCGStabl or Idrs GCR
+  Linear System GCR Restart = 100
+  BiCGStabl Polynomial Degree = 6
+  Idrs Parameter = Integer 6
+  Linear System Robust = Logical True
+  Linear System Max Iterations = 1000
+  Linear System Convergence Tolerance = 1.0e-4 ! change this value to help out
+  Linear System Preconditioning = none
+  Linear System Residual Output = 1
+  Linear System Abort Not Converged = Logical False
+  Linear System Row Equilibration = Logical True
+
+  Fix Input Current density = True
+  Jfix: Linear System Solver = Iterative
+  Jfix: Linear System Iterative Method = bicgstab
+  Jfix: Linear System Preconditioning = ILU1
+  Jfix: Linear System Convergence Tolerance = 1.0e-6
+  Jfix: Linear System Max Iterations = 500
+  Jfix: Linear System Residual Output = 100
+  Jfix: Linear System Abort Not Converged = False
+  Jfix: Linear System Precondition Recompute = 1
+  Jfix: Optimize Bandwidth = True
+End
+
+Solver 3
+  Exec Solver = Always
+  Equation = MGDynamicsCalc
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  
+  Potential Variable = String "AV"
+
+  Steady State Convergence Tolerance = 1.0e-6
+  
+  Nonlinear System Convergence Tolerance = 1.0e-6
+  Nonlinear System Max Iterations = 100
+  Nonlinear System Newton After Iterations = 10
+  Nonlinear System Newton After Tolerance = 1.0e-3
+  Nonlinear System Relaxation Factor = 1
+  Nonlinear System Consistent Norm = Logical True
+  
+  Linear System Solver = Iterative
+  Linear System Symmetric = True
+  Linear System Iterative Method = CG
+  Linear System Max Iterations = 5000
+  Linear System Convergence Tolerance = 1.0e-6
+  Linear System Preconditioning = ILU0
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 1
+  Linear System Precondition Recompute = 1
+
+  Discontinuous Bodies = Logical True
+  
+  Calculate Current Density = Logical True
+  Calculate Magnetic Field Strength = Logical True
+  Calculate Elemental Fields = Logical True
+  Calculate Joule Heating = Logical True ! only if there is an associated electrical conductivity
+End
+
+Solver 4
+  Exec Solver = Always
+  Equation = String "Heat Equation"
+  Procedure = "HeatSolve" "HeatSolver"
+  
+  Variable = -dofs 1 Temperature
+  
+  Stabilize = True
+  
+  Steady State Convergence Tolerance = 1.0e-6
+  
+  Nonlinear Timestepping = Logical True
+  
+  Nonlinear System Convergence Tolerance = 1.0e-6
+  Nonlinear System Max Iterations = 100
+  Nonlinear System Newton After Iterations = 10
+  Nonlinear System Newton After Tolerance = 1.0e-4
+  Nonlinear System Relaxation Factor = 0.5
+
+  !Linear System Solver = Direct
+  !Linear System Direct Method = MUMPS
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStabl
+  Linear System Max Iterations = 500
+  Linear System Convergence Tolerance = 1.0e-4
+  BiCGstabl polynomial degree = 6
+  Linear System Abort Not Converged = Logical False
+  Linear System Preconditioning = ILU2 ! none
+  Linear System Residual Output = 10
+  Linear System Precondition Recompute = 1
+End
+
+Solver 5
+  ! User's filter to mask the temperature field:
+  ! If T < T_min (minimum temperature expected in the system) then T = T_min
+  Exec Solver = Always
+  Equation = String "Filter"
+  Procedure = "./Fortran90/regularization" "getRegularizationSolver"
+  
+  Minimum Temperature = Real 4.2
+End
+
+Solver 6
+   Exec Solver = After timestep ! After Simulation ! use to get only the last result for steady state
+   Equation = "ResultOutput"
+   Procedure = "ResultOutputSolve" "ResultOutputSolver"
+   
+   Vtu Format = Logical True
+   !Gmsh Format = Logical True
+   Binary Output = Logical True
+   Discontinuous Bodies = Logical True
+   
+   Output File Name = File "case"
+   
+   Save Geometry Ids = Logical True ! to get the identifying numbers for paraview visualization (Threshold on GeomtryIds)
+   Scalar Field 1 = String "temperature"
+   Scalar Field 2 = String "joule heating"
+   Vector Field 1 = String "magnetic flux density"
+   Vector Field 2 = String "magnetic field strength"
+   Vector Field 3 = String "coilcurrent"
+End
+
+Solver 7
+  Exec Solver = After timestep
+  Equation = "SaveScalars"
+  Procedure = "SaveData" "SaveScalars"
+  Filename = "results.dat"
+  Variable 1 = String "Time"
+  Operator 2 = max
+  Variable 2 = String "Temperature"
+  Target Variable 2 = String "T_max" ! can be used elsewhere in the code
+End
