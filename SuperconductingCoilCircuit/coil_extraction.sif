@@ -19,8 +19,14 @@ Simulation
   Steady State Max Iterations = 1
   TimeStepping Method = BDF
   BDF Order = 1
-  $ total_time = 0.150
-  $ nof_tsteps = 10
+  ! --- Coil area A = 0.0064 m^2, N = 8153, Je = 1.274e8 A/m^2, NI = Je*A = 815360 A-t, and I = 100.007 A
+  $ I = 100 ! providing the current
+  $ ramp_rate = 1000 ! A/s
+  $ ramp_time = I/ramp_rate
+  $ up_time = 0.150
+  $ extraction_time = 0.150
+  $ total_time = up_time + extraction_time
+  $ nof_tsteps = 20
   Timestep Sizes(1) = Real $ total_time/nof_tsteps
   TimeStep Intervals(1) = Integer $ nof_tsteps
   Output Intervals(1) = Integer 1
@@ -78,7 +84,9 @@ End
 Body Force 1   !---- Source and circuit
   Name = "Source and circuit"
   ! --- Cut power supply current and start extracting the energy through the dump resistor
-  IS1 = Real 0
+  $t1 = ramp_time ! time to reach the current density Je in [s]
+  $t2 = up_time ! time to hold the current up
+  IS1 = Variable time; Real MATC "if (tx <= t1+t2) I; 0;"
 End
 
 Boundary Condition 1

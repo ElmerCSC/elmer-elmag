@@ -23,7 +23,7 @@ Simulation
   $ I = 100 ! providing the current
   $ ramp_rate = 1000 ! A/s
   $ ramp_time = I/ramp_rate
-  $ nof_tsteps = 2
+  $ nof_tsteps = 10
   Timestep Sizes(1) = Real $ ramp_time/nof_tsteps
   TimeStep Intervals(1) = Integer $ nof_tsteps
   Output Intervals(1) = Integer 1

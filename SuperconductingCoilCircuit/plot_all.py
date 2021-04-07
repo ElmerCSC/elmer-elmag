@@ -12,10 +12,21 @@ data_coil_extraction.columns = columns
 data = pd.concat([data_coil, data_coil_extraction])
 
 print (data)
-plt.plot(data['time'], data['i_component(1)'], label='Coil')
-plt.plot(data['time'], data['i_d1'], label='Dump Resistor')
-plt.plot(data['time'], data['i_s1'], label='Source')
+plt.plot(data['time']*1e3, data['i_component(1)'], label='Coil')
+plt.plot(data['time']*1e3, data['i_d1'], label='Dump Resistor')
+plt.plot(data['time']*1e3, data['i_s1'], label='Source')
+plt.xlabel("Time(ms)")
+plt.ylabel("Current(A)")
 plt.legend()
-plt.savefig('all.png')
+plt.savefig('all_current.png')
+
+plt.cla()
+plt.plot(data['time']*1e3, data['v_component(1)']*1e-3, label='Coil')
+plt.plot(data['time']*1e3, data['v_d1']*1e-3, label='Dump Resistor')
+plt.plot(data['time']*1e3, data['v_s1']*1e-3, label='Source')
+plt.xlabel("Time(ms)")
+plt.ylabel("Voltage(kV)")
+plt.legend()
+plt.savefig('all_voltage.png')
 
 

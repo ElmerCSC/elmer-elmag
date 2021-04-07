@@ -7,5 +7,8 @@ ElmerSolver coil.sif
 python plot_ramp.py
 eog ramp.png
 ElmerSolver coil_extraction.sif
-python plot_extraction.py
-eog extraction.png
+python plot_all.py
+eog all.png
+
+
+
