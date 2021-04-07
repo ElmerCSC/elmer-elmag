@@ -1,4 +1,4 @@
-#! /bin/env zsh
+#!/bin/zsh
 
 echo " "
 rm ./RESU/coil_*
@@ -8,7 +8,8 @@ python plot_ramp.py
 eog ramp.png
 ElmerSolver coil_extraction.sif
 python plot_all.py
-eog all.png
+eog all_current.png
+eog all_voltage.png
 
 
 
