@@ -1,15 +1,22 @@
-! A test case for circuits to power a superconducting magnet (ramp-up, see coil_extraction.sif for extraction)
+! Simple case for testing the stranded coil in transient 3D simulation.
+! This case is the first ever to use the coil solver to connect a full
+! coil to circuits. The wire density vector is given via wire vector instead
+! of wire potential using "Coil Use W Vector = Logical True" keyword in
+! the component section. Why this option? -You can compute your wires
+! in a full coil without cuts which you cannot do using wire potential.
 !
 ! Test case authors: Eelis Takala, Frederic Trillaud
 ! Original date: October 2020
 ! eelis.takala@gmail.com, ftrillaudp@gmail.com
 
-INCLUDE coil-circuits.definitions
+! Second case: dumping of current in external dump resistor. Use end of previous results to feed the initial condition of the model
+
+INCLUDE coil-circuits_2.definitions
 
 Header
   CHECK KEYWORDS Warn
   Mesh DB "." "MESH"
-  Results Directory "RESU"
+  Results Directory "RESU2"
 End
 
 Simulation
@@ -19,17 +26,13 @@ Simulation
   Steady State Max Iterations = 1
   TimeStepping Method = BDF
   BDF Order = 1
-  ! --- Coil area A = 0.0064 m^2, N = 8153, Je = 1.274e8 A/m^2, NI = Je*A = 815360 A-t, and I = 100.007 A
-  $ I = 100 ! providing the current
-  $ ramp_rate = 1000 ! A/s
-  $ ramp_time = I/ramp_rate
-  $ nof_tsteps = 10
-  Timestep Sizes(1) = Real $ ramp_time/nof_tsteps
-  TimeStep Intervals(1) = Integer $ nof_tsteps
+  Timestep Sizes(1) = Real 0.1
+  TimeStep Intervals(1) = Integer 10
   Output Intervals(1) = Integer 1
-  Output File = "result.dat"
-
   Max Output Level = 5
+  
+  Restart File = String "case.result"
+  Restart Position = 0
 End
 
 Constants
@@ -78,11 +81,9 @@ Material 1     !---- Dummy
   Relative Permittivity = Real 1.0
 End
 
-Body Force 1   !---- Source and circuit
+Body Force 1
   Name = "Source and circuit"
-  ! --- Ramping-up the coil
-  $t1 = ramp_time ! time to reach the current density Je in [s]
-  IS1 = Variable time; Real MATC "if (tx <= t1) ((I/t1)*tx); else I;"
+
 End
 
 Boundary Condition 1
@@ -109,13 +110,12 @@ Solver 1  !---- CoilSolver, CoilSolver
   Linear System Solver = "Iterative"
   Linear System Preconditioning = ILU1
   Linear System Max Iterations = 500
-  Linear System Convergence Tolerance = 1e-7
+  Linear System Convergence Tolerance = 1e-6
   Linear System Iterative Method = BiCGStab
   Linear System Residual Output = 1
   ! When we normalize, we introduce propably some divergence that
   ! does not impress the solver very much... Helmholtz projection needed?
-  Normalize Coil Current = Logical True ! necessary to have a uniform current across the coil
-  Fix Input Current Density = Logical True
+  Normalize Coil Current = Logical False ! necessary to have a uniform current across the coil
   Nonlinear System Consistent Norm = Logical True
   Coil Closed = Logical True
   Narrow Interface = Logical True
@@ -191,7 +191,7 @@ Solver 6  !---- ResultOuputSolve, ResultOuputSolver
    Vtu Format = Logical True
    Binary Output = Logical True
    
-   Output File Name = File "coil"
+   Output File Name = File "coil_2"
    
    Save Geometry Ids = Logical True
 End
@@ -200,7 +200,7 @@ Solver 7  !---- SaveData, SaveScalars (Write circuit variables to file)
    Exec Solver = After timestep
    Equation = "sv"
    Procedure = "SaveData" "SaveScalars"
-   Filename = "coil.dat"
+   Filename = "coil_2.dat"
 End
 
 Equation 1

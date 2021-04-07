@@ -1,4 +1,4 @@
-! A test case for circuits to power a superconducting magnet (ramp-up, see coil_extraction.sif for extraction)
+! A test case for circuits to extract power off a superconducting magnet (extraction, see coil.sif for ramp-up)
 !
 ! Test case authors: Eelis Takala, Frederic Trillaud
 ! Original date: October 2020
@@ -23,12 +23,15 @@ Simulation
   $ I = 100 ! providing the current
   $ ramp_rate = 1000 ! A/s
   $ ramp_time = I/ramp_rate
-  $ nof_tsteps = 10
-  Timestep Sizes(1) = Real $ ramp_time/nof_tsteps
+  $ up_time = 0.150
+  $ extraction_time = 0.150
+  $ total_time = up_time + extraction_time
+  $ nof_tsteps = 20
+  Timestep Sizes(1) = Real $ total_time/nof_tsteps
   TimeStep Intervals(1) = Integer $ nof_tsteps
   Output Intervals(1) = Integer 1
-  Output File = "result.dat"
-
+  Restart File = "result.dat"
+  Restart Position = 0
   Max Output Level = 5
 End
 
@@ -80,9 +83,10 @@ End
 
 Body Force 1   !---- Source and circuit
   Name = "Source and circuit"
-  ! --- Ramping-up the coil
+  ! --- Cut power supply current and start extracting the energy through the dump resistor
   $t1 = ramp_time ! time to reach the current density Je in [s]
-  IS1 = Variable time; Real MATC "if (tx <= t1) ((I/t1)*tx); else I;"
+  $t2 = up_time ! time to hold the current up
+  IS1 = Variable time; Real MATC "if (tx <= t1+t2) I; 0;"
 End
 
 Boundary Condition 1
@@ -191,7 +195,7 @@ Solver 6  !---- ResultOuputSolve, ResultOuputSolver
    Vtu Format = Logical True
    Binary Output = Logical True
    
-   Output File Name = File "coil"
+   Output File Name = File "coil_extraction"
    
    Save Geometry Ids = Logical True
 End
@@ -200,7 +204,7 @@ Solver 7  !---- SaveData, SaveScalars (Write circuit variables to file)
    Exec Solver = After timestep
    Equation = "sv"
    Procedure = "SaveData" "SaveScalars"
-   Filename = "coil.dat"
+   Filename = "coil_extraction.dat"
 End
 
 Equation 1

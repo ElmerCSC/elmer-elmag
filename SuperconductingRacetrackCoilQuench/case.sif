@@ -21,8 +21,8 @@ Simulation
   BDF Order = 2
   Time Derivative Order = Integer 2 ! for a second order derivative if present
   
-  Timestep Sizes(1) = Real 0.0005
-  TimeStep Intervals(1) = Integer 200
+  Timestep Sizes(1) = Real 0.001
+  TimeStep Intervals(1) = Integer 100
   Output Intervals(1) = Integer 1 ! by default will be used in the "ResultOutputSolve" solver?
 
   Max Output Level = 5
@@ -39,7 +39,7 @@ End
 
 ! -- BODIES --
 Body 1
-  Name = "SOL001: coil"
+  Name = "SOL001: racetrack"
   Target Bodies(1) = 1
   Equation = 4
   Material = 2
@@ -47,10 +47,26 @@ Body 1
   Initial Condition = 2
 End
 
-! Surrounding medium (vaccuum, air, etc...)
 Body 2
-  Name = "SOL002: air"
+  Name = "SOL002: core"
   Target Bodies(1) = 2
+  Equation = 5
+  Material = 3
+  Initial Condition = 2
+End
+
+Body 3
+  Name = "SOL003: shell"
+  Target Bodies(1) = 3
+  Equation = 5
+  Material = 4
+  Initial Condition = 2
+End
+
+! Surrounding medium (vaccuum, air, etc...)
+Body 4
+  Name = "SOL004: air"
+  Target Bodies(1) = 4
   Equation = 1
   Material = 1
   Initial Condition = 1
@@ -90,10 +106,44 @@ Material 2
   ! The Electrical Conductivity cannot be defined in this model since it will lead to the induction of large current in the coil cancelling the magnetic field (Electrical Conductivity >> 1)
 End
 
+Material 3
+  Name = "Core"
+  Relative Permittivity = Real 1.0
+  Relative Permeability = Real 1.0
+  H-B Curve = Variable "dummy"
+    Real Cubic Monotone
+      INCLUDE "./DATA/curve_BH-CERN.dat"
+    End
+  Heat Conductivity = Variable Temperature
+    Real Piecewise Linear
+      Include "./DATA/k_T_armco.dat"
+    End
+  Density = Real 8120.0
+  Heat Capacity = Variable Temperature
+    Real Piecewise Linear
+      Include "./DATA/cp_T_bronze.dat"
+    End
+End
+
+Material 4
+  Name = "Shell"
+  Relative Permittivity = Real 1.0
+  Relative Permeability = Real 1.0
+  Heat Conductivity = Variable Temperature
+    Real Piecewise Linear
+      Include "./DATA/k_T_Cu.dat"
+    End
+  Density = Real 8120.0
+  Heat Capacity = Variable Temperature
+    Real Piecewise Linear
+      Include "./DATA/cp_T_Cu.dat"
+    End
+End
+
 
 ! -- COMPONENTS --
 Component 1
-  Name = String "Coil"
+  Name = String "Racetrack"
   Coil Type = String "test"
   Master Bodies(1) = Integer 1
   Desired Current Density = Real 1.0e8
@@ -110,10 +160,10 @@ Body Force 1
   
   ! Parameters to be passed to the procedure: dissipation.f90
   ! Dimension of the spherical disturbance (depends on local mesh size)
-  Disturbance Size = Real 0.006
+  Disturbance Size = Real 0.003
   ! Center of the spherical disturbance
   Disturbance X Center = Real 0.0
-  Disturbance Y Center = Real -0.14
+  Disturbance Y Center = Real -0.0365
   Disturbance Z Center = Real 0.0
   ! Value of heat disturbance in [W/kg]
   Heat Disturbance = Real 50000.0
@@ -130,15 +180,15 @@ End
 !-- BOUNDARY CONDITIONS --
 Boundary Condition 1
   Name = "FAC003: air boundary"
-  Target Boundaries(1) = 4
+  Target Boundaries(1) = 7
   AV {e} = real 0
   AV = real 0
   Jfix = real 0.0
 End
 
 Boundary Condition 2
-  Name = "FAC001: coil boundary"
-  Target Boundaries(1) = 3
+  Name = "FAC002: shell boundary"
+  Target Boundaries(1) = 6
   Temperature = Real 4.2
 End
 
@@ -169,7 +219,7 @@ End
 
 !-- EQUATIONS --
 Equation 1
-  Name = "MagnetoDynamic for air"
+  Name = "MagnetoDynamic for air/iron"
   Active Solvers(2) = 2 3
 End
 
