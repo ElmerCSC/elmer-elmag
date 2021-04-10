@@ -7,9 +7,9 @@ ElmerSolver coil.sif
 python plot_ramp.py
 eog ramp.png
 ElmerSolver coil_extraction.sif
-python plot_all.py
-eog all_current.png
-eog all_voltage.png
+python ./Python/plot_all.py
+eog ./Figures/all_current.png
+eog ./Figures/all_voltage.png
 
 
 

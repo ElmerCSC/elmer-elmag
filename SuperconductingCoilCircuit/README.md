@@ -3,7 +3,7 @@
 FOR RUNNING THE CASES YOU NEED THE LATEST (https://github.com/ElmerCSC/elmerfem/commit/824778ae6b0ba788cff3b8aecf0c474fdcf5648e) FROM: https://github.com/ElmerCSC/elmerfem/tree/CoilSolverGUI 
 This is needed because the normalized current is regularized and the patch for that is in the aforementioned branch.
 
-Run in bash mode: ./run.sh
+Run in bash mode: bash run.sh
 
 # Electromagnetic model of a superconducting coil connected to an external circuit.
 
