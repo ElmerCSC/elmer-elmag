@@ -11,10 +11,10 @@ The external circuit is made of a DC power source supplying a current to a coil 
 
 Verification of the calculation of the magnetic field on the coil:
 - Comparison Elmerfem and Onelab (Gmsh/GetDP) assuming a constant current density Je = 1e8 A/m^2
-![Comparison Elmerfem and Onelab (Gmsh/GetDP)](comparison.png)
+![Comparison Elmerfem and Onelab (Gmsh/GetDP)](../Figures/comparison.png)
 
 Electrical circuit for the entire system including the coil, the power supply and the dump resistor:
-![Electrical circuit](quench-circuit.png)
+![Electrical circuit](../Figures/quench-circuit.png)
 
 # Testing the electrical circuits
 
@@ -22,7 +22,7 @@ The problem is divided in two parts (reproduce with "run.sh"):
 
 1. Current ramp up to 100 A (coil.sif) that gives about 5.5 T peak field. However, the ramp is 1000 A/s and thus some current is
    pushed to the dump resistor as well.
-![Electrical circuit](ramp.png)
+![Electrical circuit](../Figures/ramp.png)
 
 2. Energy extraction via dump resistor in 150 ms.
-![Electrical circuit](extraction.png)
+![Electrical circuit](../Figures/extraction.png)
