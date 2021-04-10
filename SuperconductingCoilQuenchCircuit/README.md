@@ -18,13 +18,13 @@ Verification of the calculation of the magnetic field on the coil:
 Electrical circuit for the entire system including the coil, the power supply and the dump resistor:
 ![Electrical circuit](Figures/quench-circuit.png)
 
-# Testing the electrical circuits
+# Testing the electrical circuits with quench model
 
 The problem is divided in two parts (reproduce with "run.sh"):
 
 1. Current ramp up to 100 A (coil.sif) that gives about 5.5 T peak field. However, the ramp is 1000 A/s and thus some current is
    pushed to the dump resistor as well.
-![Electrical circuit](Figures/ramp.png)
+![Electrical circuit](Figures/)
 
 2. Energy extraction via dump resistor in 150 ms.
-![Electrical circuit](Figures/extraction.png)
+![Electrical circuit](Figures/)
