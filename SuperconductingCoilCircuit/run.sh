@@ -4,8 +4,8 @@ echo " "
 rm ./RESU/coil_*
 echo "*** ElmerSolver ***"
 ElmerSolver coil.sif
-python plot_ramp.py
-eog ramp.png
+python ./Python/plot_ramp.py
+eog ./Figures/ramp.png
 ElmerSolver coil_extraction.sif
 python ./Python/plot_all.py
 eog ./Figures/all_current.png
