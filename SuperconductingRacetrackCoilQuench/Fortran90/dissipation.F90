@@ -278,17 +278,9 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
       ! distance to center of disturbance
       d = SQRT((X-x_d)**2+(Y-y_d)**2+(Z-z_d)**2)
       
-      IF (d > R_d) THEN
-        Q = 0.0D00
-      ELSE
+      Q = 0.0D00
+      IF ((d <= R_d) .AND. (tt > t_ini_d) .AND. (tt < (t_ini_d+Dt_d))) THEN
         Q = Qd
-        IF (tt <= t_ini_d) THEN
-          Q = 0.0D00
-        ELSE IF (( tt > t_ini_d) .AND. (tt < (t_ini_d+Dt_d))) THEN
-          Q = Qd
-        ELSE
-          Q = 0.0D00
-        END IF
       END IF
     END FUNCTION getQd
 

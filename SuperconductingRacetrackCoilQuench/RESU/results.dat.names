@@ -1,0 +1,10 @@
+Elmer version: 9.0
+Elmer compilation date: 2021-04-01
+Solver input file: case.sif
+File started at: 2021/04/01 13:40:26
+ 
+Variables in columns of matrix: RESU/results.dat
+   1: value: time scalar variable
+   2: max: temperature
+   3: res: eddy current power
+   4: res: electromagnetic field energy

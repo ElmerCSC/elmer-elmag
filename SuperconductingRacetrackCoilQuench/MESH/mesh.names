@@ -1,0 +1,10 @@
+! ----- names for bodies -----
+$ SOL001 = 1
+$ SOL002 = 2
+$ SOL003 = 3
+$ SOL004 = 4
+! ----- names for boundaries -----
+$ FAC001 = 1
+$ FAC002 = 2
+$ FAC003 = 3
+$ bnry9 = 4

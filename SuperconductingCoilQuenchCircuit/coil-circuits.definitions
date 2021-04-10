@@ -1,0 +1,47 @@
+$ Circuits = 1
+
+! ------------------------ Circuit 1 ------------------------
+! Define variable count and initialize circuit matrices.
+$ C.1.perm = zeros(6)
+!$ C.1.perm(0) = 2
+!$ C.1.perm(1) = 0
+!$ C.1.perm(2) = 1
+!$ C.1.perm(3) = 4
+!$ C.1.perm(4) = 3
+!$ C.1.perm(5) = 5
+
+!(I1,V1,Is1,Vs1,Id1,Vd1)
+$ C.1.variables = 6
+! Matrices of Ax' + Bx = Source
+$ C.1.A = zeros(6,6)
+$ C.1.B = zeros(6,6)
+
+! Define variables (Component 1).
+$ C.1.name.1 = "i_component(1)"
+$ C.1.name.2 = "v_component(1)"
+$ C.1.name.3 = "i_S1"
+$ C.1.name.4 = "v_S1"
+$ C.1.name.5 = "i_d1"
+$ C.1.name.6 = "v_d1"
+
+! Define sources (Body Force):
+!------------------
+$ C.1.source.3 = "IS1"
+
+! Define network cycles:
+!-------------------------
+$Rcl1 = 0.01
+$Rd1 = 1000.0
+!Voltage relations:
+$ C.1.B(0,1) = 1
+$ C.1.B(0,2) = Rcl1
+$ C.1.B(0,3) = -1
+$ C.1.B(4,3) = 1 ! Dumping
+$ C.1.B(4,5) = 1 ! Dumping
+$ C.1.B(5,4) = -Rd1 ! Dumping
+$ C.1.B(5,5) = 1 ! Dumping
+!Current relations:
+$ C.1.B(2,2) = 1 ! Source
+$ C.1.B(3,0) = 1
+$ C.1.B(3,2) = -1
+$ C.1.B(3,4) = -1
