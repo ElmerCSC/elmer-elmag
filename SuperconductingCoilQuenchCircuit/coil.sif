@@ -23,10 +23,14 @@ Simulation
   $ I = 100 ! providing the current
   $ ramp_rate = 1000 ! A/s
   $ ramp_time = I/ramp_rate
-  $ nof_tsteps = 10
-  Timestep Sizes(1) = Real $ ramp_time/nof_tsteps
-  TimeStep Intervals(1) = Integer $ nof_tsteps
-  Output Intervals(1) = Integer 1
+  $ nof_tsteps_1 = 10
+  $ plateau_time = 10
+  $ nof_tsteps_2 = 10
+  $ tstpsz_1 = ramp_time / nof_tsteps_1
+  $ tstpsz_2 = plateau_time / nof_tsteps_2
+  Timestep Sizes(2) = Real $ tstpsz_1 tstpsz_2
+  TimeStep Intervals(2) = Integer $ nof_tsteps_1  nof_tsteps_2
+  Output Intervals(2) = Integer 1 1
   Output File = "result.dat"
 
   Max Output Level = 5
@@ -108,8 +112,8 @@ End
 Body Force 1   !---- Source and circuit
   Name = "Source and circuit"
   ! --- Ramping-up the coil
-  $t1 = ramp_time ! time to reach the current density Je in [s]
-  IS1 = Variable time; Real MATC "if (tx <= t1) ((I/t1)*tx); else I;"
+  $ t1 = ramp_time ! time to reach the current density Je in [s]
+  IS1 = Variable time; Real MATC "if (tx <= t1) (ramp_rate*tx); else I;"
   
   ! Parameters to be passed to the procedure: dissipation.f90
   ! Dimension of the spherical disturbance (depends on local mesh size)
@@ -119,11 +123,11 @@ Body Force 1   !---- Source and circuit
   Disturbance Y Center = Real -0.14
   Disturbance Z Center = Real 0.0
   ! Value of heat disturbance in [W/kg]
-   
+  Heat Disturbance = Real 50000.0
   ! Initial time of the disturbance
-  Heat Disturbance Initial Time = Real $ ramp_time+2*ramp_time/nof_tsteps
+  Heat Disturbance Initial Time = Real $ ramp_time+0.5*plateau_time
   ! Duration of the disturbance
-  Disturbance Duration = Real 0.01
+  Disturbance Duration = Real 4.0
   
   Heat Source = Variable Time, Temperature, Magnetic Flux Density, coilcurrent
     Real Procedure "./Fortran90/dissipation" "getDissipation"
