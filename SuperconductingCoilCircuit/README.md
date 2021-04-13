@@ -25,3 +25,6 @@ The problem is divided in two parts (reproduce with "run.sh"):
 
 2. Energy extraction via dump resistor in 150 ms.
 ![Electrical circuit](Figures/extraction.png)
+
+Current ramp with both parts:
+![Electrical circuit](current_all.png)
