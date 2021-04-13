@@ -27,8 +27,8 @@ The problem is divided in two parts (reproduce with "run.sh"):
 ![Electrical circuit](Figures/extraction.png)
 
 Current ramp with both parts:
-![Electrical circuit](all_current.png)
+![Electrical circuit](Figures/all_current.png)
 
 Voltage ramp with both parts:
-![Electrical circuit](all_voltage.png)
+![Electrical circuit](Figures/all_voltage.png)
 
