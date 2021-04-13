@@ -1,7 +1,7 @@
 Elmer version: 9.0
-Elmer compilation date: 2021-03-28
+Elmer compilation date: 2021-04-07
 Solver input file: case.sif
-File started at: 2021/03/29 19:30:38
+File started at: 2021/04/12 19:11:59
  
 Variables in columns of matrix: RESU/results.dat
    1: value: time scalar variable

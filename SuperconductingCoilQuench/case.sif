@@ -110,13 +110,13 @@ Body Force 1
   
   ! Parameters to be passed to the procedure: dissipation.f90
   ! Dimension of the spherical disturbance (depends on local mesh size)
-  Disturbance Size = Real 0.006
+  Disturbance Size = Real 0.004
   ! Center of the spherical disturbance
   Disturbance X Center = Real 0.0
   Disturbance Y Center = Real -0.14
   Disturbance Z Center = Real 0.0
   ! Value of heat disturbance in [W/kg]
-   
+  Heat Disturbance = Real 50000.0
   ! Initial time of the disturbance
   Heat Disturbance Initial Time = Real 0.002
   ! Duration of the disturbance
