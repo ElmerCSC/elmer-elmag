@@ -86,7 +86,7 @@ Material 2
   Name = "Inductor"
   Relative Permeability = Real 1.0
   Relative Permittivity = Real 1.0
-  Heat Conductivity(3,3) = Variable Temperature, Magnetic Flux Density, coilcurrent
+  Heat Conductivity(3,3) = Variable Temperature, Magnetic Flux Density e, Current Density e
     Real Procedure "./Fortran90/therConductivity" "getTherConductivity"
   Density = Real 9010.0 ! equivalent density used by the heat capacity
   Heat Capacity = Variable Temperature
@@ -129,7 +129,7 @@ Body Force 1   !---- Source and circuit
   ! Duration of the disturbance
   Disturbance Duration = Real 4.0
   
-  Heat Source = Variable Time, Temperature, Magnetic Flux Density, coilcurrent
+  Heat Source = Variable Time, Temperature, Magnetic Flux Density e, Current Density e
     Real Procedure "./Fortran90/dissipation" "getDissipation"
 End
 
