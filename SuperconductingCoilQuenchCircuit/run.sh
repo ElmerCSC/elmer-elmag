@@ -1,6 +1,7 @@
-#!/bin/zsh
+#!/bin/bash
 
 echo " "
+# ElmerGrid 8 2 *.unv -out MESH -autoclean
 rm ./RESU/coil_*
 echo "*** ElmerSolver ***"
 ElmerSolver coil.sif

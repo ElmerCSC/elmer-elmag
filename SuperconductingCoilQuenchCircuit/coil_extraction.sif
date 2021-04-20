@@ -19,19 +19,27 @@ Simulation
   Steady State Max Iterations = 1
   TimeStepping Method = BDF
   BDF Order = 1
-  ! --- Coil area A = 0.0064 m^2, N = 8153, Je = 1.274e8 A/m^2, NI = Je*A = 815360 A-t, and I = 100.007 A
-  $ I = 100 ! providing the current
+
+  ! --- Coil area A = 0.0064 m^2, N = 8153
+  $ I = 60 ! providing the current
   $ ramp_rate = 1000 ! A/s
-  $ ramp_time = I/ramp_rate
-  $ up_time = 0.150
-  $ extraction_time = 0.150
-  $ total_time = up_time + extraction_time
-  $ nof_tsteps = 20
-  Timestep Sizes(1) = Real $ total_time/nof_tsteps
-  TimeStep Intervals(1) = Integer $ nof_tsteps
-  Output Intervals(1) = Integer 1
+
+  $ ramp_time = I/ramp_rate ! time to reach the current I in [s]
+  $ plateau_time = 1
+
+  $ nof_tstp_1 = 10
+  $ nof_tstp_2 = 100
+  $ sz_tstp_1 = ramp_time / nof_tstp_1
+  $ sz_tstp_2 = plateau_time / nof_tstp_2
+
+  Timestep Sizes(2) = Real $ sz_tstp_1 sz_tstp_2
+  TimeStep Intervals(2) = Integer $ nof_tstp_1  nof_tstp_2
+  Output Intervals(2) = Integer 1 1
+
+  ! --- Restart from previous results:
   Restart File = "result.dat"
   Restart Position = 0
+  
   Max Output Level = 5
 End
 
@@ -85,7 +93,7 @@ Material 2
   Name = "Inductor"
   Relative Permeability = Real 1.0
   Relative Permittivity = Real 1.0
-  Heat Conductivity(3,3) = Variable Temperature, Magnetic Flux Density, coilcurrent
+  Heat Conductivity(3,3) = Variable Temperature, Magnetic Flux Density e, Current Density e
     Real Procedure "./Fortran90/therConductivity" "getTherConductivity"
   Density = Real 9010.0 ! equivalent density used by the heat capacity
   Heat Capacity = Variable Temperature
@@ -98,7 +106,7 @@ Material 2
   Superconductor Density = Real 7000.0
   Matrix Electric Conductivity = Real 1e8 ! lumped materials called "matrix"
   Critical Temperature = Real 16.8
-  !N-Value = Real 10.0
+  N-Value = Real 15.0
   Critical Electrical Field = Real 1e-4
   Operating Temperature = Real 4.2
   Matrix to Superconductor Ratio = Real 1.2
@@ -106,6 +114,28 @@ Material 2
   
   ! The Electrical Conductivity cannot be defined in this model since it will lead to the induction of large current in the coil cancelling the magnetic field (Electrical Conductivity >> 1)
 End
+
+
+Body Force 1   !---- Source and circuit
+  Name = "Heat source"
+  ! Parameters to be passed to the procedure: dissipation.f90
+  ! Dimension of the spherical disturbance (depends on local mesh size)
+  Disturbance Size = Real 0.01
+  ! Center of the spherical disturbance
+  Disturbance X Center = Real 0.0
+  Disturbance Y Center = Real -0.14
+  Disturbance Z Center = Real 0.0
+  ! Value of heat disturbance in [W/kg]
+  Heat Disturbance = Real 700.0
+  ! Initial time of the disturbance
+  Heat Disturbance Initial Time = Real $ ramp_time+0.1*plateau_time
+  ! Duration of the disturbance
+  Disturbance Duration = Real 0.1
+  
+  Heat Source = Variable Time, Temperature, Magnetic Flux Density e, Current Density e
+    Real Procedure "./Fortran90/dissipation" "getDissipation"
+End
+
 
 Initial Condition 1
   Name = "Initial state: magnetodynamics"
@@ -286,6 +316,7 @@ End
 Equation 1
   Name = "MagnetoDynamic for coil"
   Active Solvers(7) = 1 2 3 4 5 6 8
+  Heat Equation = Logical True
 End
 
 Equation 2

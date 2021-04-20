@@ -30,6 +30,12 @@ echo " "
 elmerf90 -o regularization.so regularization.F90
 echo " "
 echo "  *** DONE ***"
+echo " "
+echo "  *** COMPILATION: checkMeshSize.f90 ***"
+echo " "
+elmerf90 -o checkMeshSize.so checkMeshSize.F90
+echo " "
+echo "  *** DONE ***"
 cd ..
 echo " "
 

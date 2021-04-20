@@ -19,17 +19,21 @@ Simulation
   Steady State Max Iterations = 1
   TimeStepping Method = BDF
   BDF Order = 1
+
   ! --- Coil area A = 0.0064 m^2, N = 8153, Je = 1.274e8 A/m^2, NI = Je*A = 815360 A-t, and I = 100.007 A
-  $ I = 100 ! providing the current
+  $ I = 60 ! providing the current for enough margin
   $ ramp_rate = 1000 ! A/s
-  $ ramp_time = I/ramp_rate
-  $ nof_tsteps_1 = 10
-  $ plateau_time = 10
-  $ nof_tsteps_2 = 10
-  $ tstpsz_1 = ramp_time / nof_tsteps_1
-  $ tstpsz_2 = plateau_time / nof_tsteps_2
-  Timestep Sizes(2) = Real $ tstpsz_1 tstpsz_2
-  TimeStep Intervals(2) = Integer $ nof_tsteps_1  nof_tsteps_2
+
+  $ ramp_time = I/ramp_rate ! time to reach the current I in [s]
+  $ plateau_time = 1
+
+  $ nof_tstp_1 = 10
+  $ nof_tstp_2 = 100
+  $ sz_tstp_1 = ramp_time / nof_tstp_1
+  $ sz_tstp_2 = plateau_time / nof_tstp_2
+
+  Timestep Sizes(2) = Real $ sz_tstp_1 sz_tstp_2
+  TimeStep Intervals(2) = Integer $ nof_tstp_1  nof_tstp_2
   Output Intervals(2) = Integer 1 1
   Output File = "result.dat"
 
@@ -62,7 +66,7 @@ Body 2
   Initial Condition = 1
 End
 
-Component 1    !---- Coil
+Component 1    !--- Coil
   Name = String "Coil"
   Coil Type = String "test"
   Master Bodies(1) = Integer 1
@@ -70,7 +74,7 @@ Component 1    !---- Coil
   Coil Type = String stranded
   Coil Use W Vector = Logical True
   W Vector Variable Name = String "CoilCurrent e"
-  ! ---- Nb3Sn wire diameter of 1 mm in a coil having a cross-section: 0.08 m x 0.08 m
+  ! --- Nb3Sn wire diameter of 1 mm in a coil having a cross-section: 0.08 m x 0.08 m
   Number of Turns = Real 8153.0
   Electrode Area = Real 0.0064
   Resistance = Real 0.0
@@ -99,35 +103,32 @@ Material 2
   Superconductor Density = Real 7000.0
   Matrix Electric Conductivity = Real 1e8 ! lumped materials called "matrix"
   Critical Temperature = Real 16.8
-  !N-Value = Real 10.0
+  N-Value = Real 15.0
   Critical Electrical Field = Real 1e-4
   Operating Temperature = Real 4.2
   Matrix to Superconductor Ratio = Real 1.2
   Filling Factor = Real 0.9
-  
-  ! The Electrical Conductivity cannot be defined in this model since it will lead to the induction of large current in the coil cancelling the magnetic field (Electrical Conductivity >> 1)
 End
 
 
 Body Force 1   !---- Source and circuit
   Name = "Source and circuit"
   ! --- Ramping-up the coil
-  $ t1 = ramp_time ! time to reach the current density Je in [s]
-  IS1 = Variable time; Real MATC "if (tx <= t1) (ramp_rate*tx); else I;"
+  IS1 = Variable time; Real MATC "if (tx <= ramp_time) (ramp_rate*tx); else I;"
   
   ! Parameters to be passed to the procedure: dissipation.f90
   ! Dimension of the spherical disturbance (depends on local mesh size)
-  Disturbance Size = Real 0.006
+  Disturbance Size = Real 0.01
   ! Center of the spherical disturbance
   Disturbance X Center = Real 0.0
   Disturbance Y Center = Real -0.14
   Disturbance Z Center = Real 0.0
   ! Value of heat disturbance in [W/kg]
-  Heat Disturbance = Real 50000.0
+  Heat Disturbance = Real 700.0
   ! Initial time of the disturbance
-  Heat Disturbance Initial Time = Real $ ramp_time+0.5*plateau_time
+  Heat Disturbance Initial Time = Real $ ramp_time+0.1*plateau_time
   ! Duration of the disturbance
-  Disturbance Duration = Real 4.0
+  Disturbance Duration = Real 0.1
   
   Heat Source = Variable Time, Temperature, Magnetic Flux Density e, Current Density e
     Real Procedure "./Fortran90/dissipation" "getDissipation"
@@ -274,7 +275,7 @@ Solver 5
   Linear System Precondition Recompute = 1
 End
 
-Solver 6 !---- soft filter for the temeprature field
+Solver 6 !---- soft filter for the temperature field
   ! User's filter to mask the temperature field:
   ! If T < T_min (minimum temperature expected in the system) then T = T_min
   Exec Solver = Always
@@ -284,13 +285,19 @@ Solver 6 !---- soft filter for the temeprature field
   Minimum Temperature = Real 4.2
 End
 
-Solver 7  !---- CircuitsAndDynamics, CircuitsOutput
+Solver 7 !---- Check if nodes are inside the volume of the disturbance, otherwise, the program stops
+  Exec Solver = Always
+  Equation = String "Check Model"
+  Procedure = "./Fortran90/checkMeshSize" "getCheckMeshSizeSolver"
+End
+
+Solver 8  !---- CircuitsAndDynamics, CircuitsOutput
    Exec Solver = Always
    Equation = Circuits Output
    Procedure = "CircuitsAndDynamics" "CircuitsOutput"
 End
 
-Solver 8  !---- ResultOuputSolve, ResultOuputSolver
+Solver 9  !---- ResultOuputSolve, ResultOuputSolver
    Exec Solver = After timestep
    Equation = "ResultOutput"
    Procedure = "ResultOutputSolve" "ResultOutputSolver"
@@ -303,7 +310,7 @@ Solver 8  !---- ResultOuputSolve, ResultOuputSolver
    Save Geometry Ids = Logical True
 End
 
-Solver 9  !---- SaveData, SaveScalars (Write circuit variables to file)
+Solver 10  !---- SaveData, SaveScalars (Write circuit variables to file)
    Exec Solver = After timestep
    Equation = "sv"
    Procedure = "SaveData" "SaveScalars"
@@ -313,12 +320,12 @@ End
 
 Equation 1
   Name = "MagnetoDynamic for coil"
-  Active Solvers(7) = 1 2 3 4 5 6 8
+  Active Solvers(8) = 1 2 3 4 5 6 7 9
   Heat Equation = Logical True
 End
 
 Equation 2
   Name = "MagnetoDynamic for air"
-  Active Solvers(3) = 3 4 8
+  Active Solvers(3) = 3 4 9
 End
 
