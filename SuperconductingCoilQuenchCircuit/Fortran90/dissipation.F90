@@ -1,6 +1,7 @@
 FUNCTION getDissipation(Model, n, arg) RESULT(G)
-  ! Frederic Trillaud <ftrillaudp@gmail.com> - July 4, 2020
-  !elmerf90 -o dissipation.so dissipation.F90
+  !!! Frederic Trillaud <ftrillaudp@gmail.com> - July 4, 2020
+  !!! elmerf90 -o dissipation.so dissipation.F90
+  !!! Create the local heat disturbance Q(t,x) and computes the heat generation G, sum up both parties to get the local total heat dissipation in W/kg: G+Q
 
   ! Elmer module
   USE DefUtils
@@ -11,10 +12,11 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
   REAL(KIND=dp) :: arg(*)
   REAL(KIND=dp) :: T, Bx, By, Bz, B, Jex, Jey, Jez, mu0
   REAL(KIND=dp) :: Tcm0, G, Tcs, lambda, f, beta, Top
-  REAL(KIND=dp) :: sigma_m, gamma_m, sigma_sc, gamma_sc, Je, Jm, Jc, Jc_op, nValue, Ec, Jsc
-  REAL(KIND=dp) :: tt, Q
+  REAL(KIND=dp) :: sigma_m, gamma_m, sigma_sc, gamma_sc, Je, Jm, Jc, Jc_op, nv_ref, nValue, Ec, Jsc
+  REAL(KIND=dp) :: tt, Qg
   LOGICAL :: gotIt, visu
 
+  !!! Get parameters from sif file:
   ! variables needed inside function
   TYPE(ValueList_t), POINTER :: material, const
   ! get pointer on list for material
@@ -22,12 +24,12 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
   IF (.NOT. ASSOCIATED(material)) THEN
     CALL Fatal('getDissipation', 'No material found')
   END IF
-  ! read in reference Critical Current density
-  !nvalue = GetConstReal( material, 'N-Value', gotIt)
-  !IF (.NOT. gotIt) THEN
-  !  CALL Fatal('getDissipation', 'N-Value')
-  !END IF
-  ! read in reference Critical Temperature
+  ! read in reference n-value
+  nv_ref = GetConstReal( material, 'N-Value', gotIt)
+  IF (.NOT. gotIt) THEN
+    CALL Fatal('getDissipation', 'N-Value')
+  END IF
+  ! read in reference critical Temperature
   Tcm0 = GetConstReal( material, 'Critical Temperature', gotIt)
   IF (.NOT. gotIt) THEN
     CALL Fatal('getDissipation', 'Critical Temperature')
@@ -74,7 +76,7 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
 
   visu = .FALSE.
 
-  ! Get the variables from the input
+  !!! Get the variables from the input:
   tt = arg(1)
   T = ABS(arg(2))
   Bx = arg(3)
@@ -87,7 +89,7 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
   B = SQRT(Bx**2+By**2+Bz**2)
   Je = SQRT(Jex**2+Jey**2+Jez**2)
 
-  ! Patch on the temperature to limit the appearance of negative temperature and its possible impact
+  ! Patch on the temperature to limit the appearance of negative temperature or temperature below the minimum temperature
   IF (T < Top) THEN
     T = Top
   ELSE IF (T > 299.0) THEN
@@ -95,9 +97,10 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
   END IF
   
   Jc_op = getJc(Top,B)
+  !!! Current-sharing temperature (K):
   Tcs = Tcm0 + f*(1.0+lambda)*(Je/Jc_op)*(Top-Tcm0)
 
-  ! basic model, assuming s steep transition
+  ! basic model assuming steep transition
   !IF (T < (0.5*(Tcs+Tcm0))) THEN
   !  PRINT *, "*** NO DISSIPATION ***"
   !  G = 0.0
@@ -106,18 +109,20 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
   !  G = ((f*(1.0+1.0/lambda)*Je)**2)/(sigma_m*gamma_m)
   !END IF
 
-  ! Current sharing model
+  !!! Heat dissipation G (W/kg):
+  ! Superconducting state
   IF (T < Tcs) THEN
     IF (visu) THEN
       PRINT *, "*** NO DISSIPATION ***"
     END IF
     G = 0.0
+  ! Current-sharing model
   ELSE IF (( T >= Tcs) .AND. (T < Tcm0 )) THEN
     IF (visu) THEN
       PRINT *, "*** MIXED DISSIPATION ***"
     END IF
     Jc = getJc(T,B)
-    nValue = getNvalue(T,B)
+    nValue = getNvalue(T,B,nv_ref)
     CALL NRSolver_Jsc(Jsc,Je,Jc,nValue,lambda,f,sigma_m,Ec)
     Jm = f*(1.0+1.0/lambda)*Je-(f/lambda)*Jsc
     sigma_sc = ((Jc**nValue)/Ec)*(Jsc**(1-nValue))
@@ -126,6 +131,7 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
       1  FORMAT(' Jc: ', EN12.3, ' n-Value: ', EN12.3, ' Jm: ', EN12.3, ' sigma_sc: ', EN12.3)
     END IF
     G = (Jm**2)/(sigma_m*gamma_m)+(Jsc**2)/(sigma_sc*gamma_sc)
+  ! Normal resistive state
   ELSE
     IF (visu) THEN
       PRINT *, "*** FULL DISSIPATION ***"
@@ -136,15 +142,16 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
   G = G + getQd(model, n, tt)
 
   IF (visu) THEN
-    PRINT 2, Jc_op,B
-    2  FORMAT(' Jc_op: ', EN12.3,', B: ', EN12.3)
-    PRINT 3, T,Tcs,Top
-    3  FORMAT(' T: ', EN12.3,', Tcs = ', EN12.3,', Top: ', EN12.3)
+    PRINT 2, Jc_op, B, Top
+    2  FORMAT(' Jc_op(Top,B): ', EN12.3,', B: ', EN12.3, ', Top: ', EN12.3)
+    PRINT 3, T, Tcs
+    3  FORMAT(' T: ', EN12.3,', Tcs = ', EN12.3)
     PRINT 4, G
     4  FORMAT(' G: ', EN12.3)
   END IF
 
   CONTAINS
+    !!! Compute Jc(T,B,eps) in A/m^2:
     FUNCTION getJc(arg_T,arg_B) RESULT(JJc)
       IMPLICIT NONE
       REAL(KIND=dp) :: arg_T, arg_B, JJc
@@ -179,12 +186,14 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
       END IF
     END FUNCTION getJc
 
-    FUNCTION getNValue(arg_T,arg_B) RESULT(nValue)
+    !!! N-value, n(T,B):
+    FUNCTION getNValue(arg_T,arg_B,nv_ref) RESULT(nValue)
       IMPLICIT NONE
-      REAL(KIND=dp) :: arg_T, arg_B, nValue
-      nValue = 15.0
+      REAL(KIND=dp) :: arg_T, arg_B, nValue, nv_ref
+      nValue = nv_ref
     END FUNCTION getNValue
 
+    !!! Newton-Raphson algorithm, solve Jsc
     SUBROUTINE NRSolver_Jsc(Jsc,Je,Jc,nValue,lambda,f,sigma_m,Ec)
       IMPLICIT NONE
       REAL(kind=dp), INTENT(IN) :: Je, Jc, nValue, lambda, f, sigma_m, Ec
@@ -224,12 +233,13 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
       END DO
     END SUBROUTINE NRSolver_Jsc
 
-    FUNCTION getQd(model, n, tt) RESULT(Q)
+    !!! Local heat disturbance in W/kg, Q:
+    FUNCTION getQd(model, n, tt) RESULT(Qg)
       IMPLICIT NONE
       TYPE(Model_t) :: model
       INTEGER :: n
       REAL(KIND=dp) :: tt
-      REAL(KIND=dp) :: X, Y, Z, t_ini_d, Dt_d, Qd, Q
+      REAL(KIND=dp) :: X, Y, Z, t_ini_d, Dt_d, Qd, Qg
       REAL(KIND=dp) :: R_d, x_d, y_d, z_d, d
 
       ! Parameters needed inside the function
@@ -240,7 +250,7 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
       IF ( .NOT. gotIt ) THEN
         CALL Warn('getDisturbance', 'Heat Disturbance not found')
       END IF
-      ! Initial time of the durantion
+      ! Initial time of the disturbance
       t_ini_d = ListGetConstReal(bfList, 'Heat Disturbance Initial Time', gotIt)
       IF ( .NOT. gotIt ) THEN
         CALL Warn('getDisturbance', 'Heat Disturbance Initial Time not found')
@@ -277,10 +287,12 @@ FUNCTION getDissipation(Model, n, arg) RESULT(G)
 
       ! distance to center of disturbance
       d = SQRT((X-x_d)**2+(Y-y_d)**2+(Z-z_d)**2)
+
+      !!! Need to check if the mesh is fine enough otherwise the temperature is psuriously diffused over the mesh!
       
-      Q = 0.0D00
+      Qg = 0.0D00
       IF ((d <= R_d) .AND. (tt > t_ini_d) .AND. (tt < (t_ini_d+Dt_d))) THEN
-        Q = Qd
+        Qg = Qd
       END IF
     END FUNCTION getQd
 

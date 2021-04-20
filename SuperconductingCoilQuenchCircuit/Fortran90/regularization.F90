@@ -1,6 +1,7 @@
 SUBROUTINE getRegularizationSolver(Model, Solver)
-  ! Frederic Trillaud <ftrillaudp@gmail.com> - July 29, 2020
-  !elmerf90 -o regularization.so regularization.F90
+  !!! Frederic Trillaud <ftrillaudp@gmail.com> - July 29, 2020
+  !!!celmerf90 -o regularization.so regularization.F90
+  !!! Smooth filter to avoid temperatures lower than the minimum temperature defined in the solver section
 
   ! Elmer module
   USE DefUtils
@@ -19,6 +20,7 @@ SUBROUTINE getRegularizationSolver(Model, Solver)
   LOGICAL :: gotIt, visu
   ALLOCATE(localTemp(CurrentModel % MaxElementNodes))
 
+  !!! get parameters from sif file:
   params => GetSolverParams()
   IF (.NOT. ASSOCIATED(params)) THEN
     CALL Fatal('getRegularizationSolver', 'No Parameter found')
@@ -28,12 +30,13 @@ SUBROUTINE getRegularizationSolver(Model, Solver)
     CALL Fatal('getRegularizationSolver', 'Minimum Temperature')
   END IF
   
-  visu = .TRUE.
+  visu = .FALSE.
   IF (visu) THEN
     PRINT 1, Tmin
     1  FORMAT(' T_min (K): ', EN12.3)
   END IF
 
+  !!! Get the temperature field:
   TempVar => VariableGet( Solver % Mesh % Variables, 'Temperature' )
   IF ( ASSOCIATED( TempVar) ) THEN
     TempPerm => TempVar % Perm
@@ -43,6 +46,7 @@ SUBROUTINE getRegularizationSolver(Model, Solver)
     CALL Fatal('regularizationSolver', 'No variable Temperature found')
   END IF
 
+  !!! Smooth filter to avoid temperatures below the minimum temperature:
   DO ElementNo = 1,Solver % NumberOfActiveElements
     Element => GetActiveElement(ElementNo)
     N = GetElementNOFNodes()

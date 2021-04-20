@@ -1,6 +1,7 @@
 SUBROUTINE getTherConductivity(Model, n, arg, Conductivity)
-  ! Frederic Trillaud <ftrillaudp@gmail.com> - July 12, 2020
-  !elmerf90 -o therConductivity.so therConductivity.F90
+  !!! Frederic Trillaud <ftrillaudp@gmail.com> - July 12, 2020
+  !!! elmerf90 -o therConductivity.so therConductivity.F90
+  !!! Compute the tensor of thermal conductivity in the material frame and transform the tensor back into the global frame through a transformation matrix Q.
 
   ! Elmer module
   USE DefUtils
@@ -16,7 +17,7 @@ SUBROUTINE getTherConductivity(Model, n, arg, Conductivity)
   REAL(KIND=dp), DIMENSION(3,3) :: kk_lc, kk_gc, Q
   LOGICAL :: gotIt, visu
 
-  ! variables needed inside function
+  !!! Get parameters from sif file:
   TYPE(ValueList_t), POINTER :: material, const
   ! get pointer on list for material
   material => GetMaterial()
@@ -42,14 +43,15 @@ SUBROUTINE getTherConductivity(Model, n, arg, Conductivity)
   B = SQRT(Bx**2+By**2+Bz**2)
   Je = SQRT(Jex**2+Jey**2+Jez**2)
 
-  ! Patch on the temperature
+  !!! Patch on the temperature:
   IF (T < Top) THEN
     T = Top
   ELSE IF (T > 299.0) THEN
     T = 299.0
   END IF
 
-  ! Transformation matrix Q
+  !!! Transformation matrix Q:
+  !!! We use the current density and normalize it for the first vector of the local coordinate system. We bult to additional unit vectors orthoganal between them
   ! First unit vector e_u along current density vector
   eu_x = Jex/Je
   eu_y = Jey/Je
@@ -99,7 +101,7 @@ SUBROUTINE getTherConductivity(Model, n, arg, Conductivity)
   Q(2,3) = ew_y
   Q(3,3) = ew_z
 
-  ! Tensor of thermal conductivity in local coordinate system
+  !!! Tensor of thermal conductivity in local coordinate system:
   kk_lc = 0.0D00
   kk_lc(1,1) = getk_11(T)
   kk_lc(2,2) = getk_22(T)
@@ -132,6 +134,7 @@ SUBROUTINE getTherConductivity(Model, n, arg, Conductivity)
   END IF
 
   CONTAINS
+    !!! Thermal conductivity in uu direction:
     FUNCTION getk_11(arg_T) RESULT(k_11)
       IMPLICIT NONE
       REAL(KIND=dp) :: arg_T, k_11
@@ -162,7 +165,8 @@ SUBROUTINE getTherConductivity(Model, n, arg, Conductivity)
         PRINT 5, k_11
       END IF
     END FUNCTION getk_11
-    
+
+    !!! Thermal conductivity in vv direction:
     FUNCTION getk_22(arg_T) RESULT(k_22)
       IMPLICIT NONE
       REAL(KIND=dp) :: arg_T, k_22
