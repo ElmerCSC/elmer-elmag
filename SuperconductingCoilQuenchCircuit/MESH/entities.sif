@@ -16,7 +16,3 @@ Boundary Condition 2
   Name = FAC002
 End
 
-Boundary Condition 3
-  Name = bnry5
-End
-

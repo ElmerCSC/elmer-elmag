@@ -2,6 +2,5 @@
 $ SOL001 = 1
 $ SOL002 = 2
 ! ----- names for boundaries -----
-$ FAC001 = 3
-$ FAC002 = 4
-$ bnry5 = 5
+$ FAC001 = 1
+$ FAC002 = 2
