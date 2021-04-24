@@ -31,6 +31,12 @@ elmerf90 -o regularization.so regularization.F90
 echo " "
 echo "  *** DONE ***"
 echo " "
+echo "  *** COMPILATION: electricalConductivity.f90 ***"
+echo " "
+elmerf90 -o electricalConductivity.so electricalConductivity.F90
+echo " "
+echo "  *** DONE ***"
+echo " "
 echo "  *** COMPILATION: checkMeshSize.f90 ***"
 echo " "
 elmerf90 -o checkMeshSize.so checkMeshSize.F90
