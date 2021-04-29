@@ -3,15 +3,12 @@
 ! Test case authors: Eelis Takala, Frederic Trillaud
 ! Original date: October 2020
 ! eelis.takala@gmail.com, ftrillaudp@gmail.com
-
 INCLUDE coil-circuits.definitions
-
 Header
   CHECK KEYWORDS Warn
   Mesh DB "." "MESH"
   Results Directory "RESU"
 End
-
 Simulation
   Coordinate System = String "Cartesian 3D"
   Coordinate Mapping(3) = 1 2 3
@@ -19,27 +16,21 @@ Simulation
   Steady State Max Iterations = 1
   TimeStepping Method = BDF
   BDF Order = 1
-
   ! --- Coil area A = 0.0064 m^2, N = 8153, Je = 1.274e8 A/m^2, NI = Je*A = 815360 A-t, and I = 100.007 A
   $ I = 60 ! providing the current for enough margin
   $ ramp_rate = 1000 ! A/s
-
   $ ramp_time = I/ramp_rate ! time to reach the current I in [s]
   $ plateau_time = 1
-
   $ nof_tstp_1 = 10
   $ nof_tstp_2 = 100
   $ sz_tstp_1 = ramp_time / nof_tstp_1
   $ sz_tstp_2 = plateau_time / nof_tstp_2
-
   Timestep Sizes(2) = Real $ sz_tstp_1 sz_tstp_2
   TimeStep Intervals(2) = Integer $ nof_tstp_1  nof_tstp_2
   Output Intervals(2) = Integer 1 1
   Output File = "result.dat"
-
   Max Output Level = 5
 End
-
 Constants
   Gravity(4) = 0 0 -1 9.82
   Stefan Boltzmann = 5.67e-08
@@ -48,7 +39,6 @@ Constants
   Boltzmann Constant = 1.3807e-23
   Unit Charge = 1.602e-19
 End
-
 Body 1
   Name = "coil"
   Target Bodies(1) = 1
@@ -57,7 +47,6 @@ Body 1
   Body Force = 1
   Initial Condition = 2
 End
-
 Body 2
   Name = "air"
   Target Bodies(1) = 2
@@ -65,7 +54,6 @@ Body 2
   Material = 1
   Initial Condition = 1
 End
-
 Component 1    !--- Coil
   Name = String "Coil"
   Coil Type = String "test"
@@ -79,13 +67,11 @@ Component 1    !--- Coil
   Electrode Area = Real 0.0064
   !Resistance = Real 0.0
 End
-
 Material 1
   Name = "Air"
   Relative Permeability = Real 1.0
   Relative Permittivity = Real 1.0
 End
-
 Material 2
   Name = "Inductor"
   Relative Permeability = Real 1.0
@@ -112,8 +98,6 @@ Material 2
   Electric Conductivity = Variable Temperature, Magnetic Flux Density e, Current Density e
     Real Procedure "./Fortran90/electricalConductivity" "getElectricalConductivity"
 End
-
-
 Body Force 1   !---- Source and circuit
   Name = "Source and circuit"
   ! --- Ramping-up the coil
@@ -136,15 +120,12 @@ Body Force 1   !---- Source and circuit
   Heat Source = Variable Time, Temperature, Magnetic Flux Density e, Current Density e
     Real Procedure "./Fortran90/dissipation" "getDissipation"
 End
-
-
 Initial Condition 1
   Name = "Initial state: magnetodynamics"
   A {e} = real 0
   A = real 0
   Jfix = real 0.0
 End
-
 Boundary Condition 1
   Name = "Air boundary"
   Target Boundaries(1) = 4
@@ -152,7 +133,6 @@ Boundary Condition 1
   A = real 0
   Jfix = real 0.0
 End
-
 Initial Condition 2
   Name = "Initial state: solids"
   AV {e} = real 0
@@ -167,8 +147,6 @@ Boundary Condition 2
   Target Boundaries(1) = 3
   Temperature = Real 4.2
 End
-
-
 Solver 1  !---- CoilSolver, CoilSolver
   Exec Solver = Before Timestep
   Equation = "CoilSolver"
@@ -194,7 +172,6 @@ Solver 1  !---- CoilSolver, CoilSolver
   
   Coil Normal(3) = Real 0. 0. 1.
 End
-
 Solver 2  !---- CircuitsAndDynamics, CircuitsAndDynamics
    Exec Solver = Always
    Equation = Circuits
@@ -202,7 +179,6 @@ Solver 2  !---- CircuitsAndDynamics, CircuitsAndDynamics
    No Matrix = Logical True
    Procedure = "CircuitsAndDynamics" "CircuitsAndDynamics"
 End
-
 Solver 3  !---- MagnetoDynamics, WhitneyAVSolver
    Exec Solver = Always
    Equation = "MGDynamics"
@@ -221,7 +197,6 @@ Solver 3  !---- MagnetoDynamics, WhitneyAVSolver
    BicgstabL polynomial degree = 6
    Steady State Convergence Tolerance = 1e-08
 End
-
 Solver 4  !---- MagnetoAndDynamics, MagnetoDynamicsCalcFields
   Exec Solver = Always
   Equation = MGDynamicsCalc
@@ -245,7 +220,6 @@ Solver 4  !---- MagnetoAndDynamics, MagnetoDynamicsCalcFields
   Calculate Elemental Fields = Logical True
   Calculate Current Density = Logical True
 End
-
 Solver 5
   Exec Solver = Always
   Equation = String "Heat Equation"
@@ -264,7 +238,6 @@ Solver 5
   Nonlinear System Newton After Iterations = 10
   Nonlinear System Newton After Tolerance = 1.0e-4
   Nonlinear System Relaxation Factor = 0.5
-
   !Linear System Solver = Direct
   !Linear System Direct Method = MUMPS
   Linear System Solver = Iterative
@@ -277,7 +250,6 @@ Solver 5
   Linear System Residual Output = 10
   Linear System Precondition Recompute = 1
 End
-
 Solver 6 !---- soft filter for the temperature field
   ! User's filter to mask the temperature field:
   ! If T < T_min (minimum temperature expected in the system) then T = T_min
@@ -287,19 +259,16 @@ Solver 6 !---- soft filter for the temperature field
   
   Minimum Temperature = Real 4.2
 End
-
 Solver 7 !---- Check if nodes are inside the volume of the disturbance, otherwise, the program stops
   Exec Solver = Always
   Equation = String "Check Model"
   Procedure = "./Fortran90/checkMeshSize" "getCheckMeshSizeSolver"
 End
-
 Solver 8  !---- CircuitsAndDynamics, CircuitsOutput
    Exec Solver = Always
    Equation = Circuits Output
    Procedure = "CircuitsAndDynamics" "CircuitsOutput"
 End
-
 Solver 9  !---- ResultOuputSolve, ResultOuputSolver
    Exec Solver = After timestep
    Equation = "ResultOutput"
@@ -312,23 +281,18 @@ Solver 9  !---- ResultOuputSolve, ResultOuputSolver
    
    Save Geometry Ids = Logical True
 End
-
 Solver 10  !---- SaveData, SaveScalars (Write circuit variables to file)
    Exec Solver = After timestep
    Equation = "sv"
    Procedure = "SaveData" "SaveScalars"
    Filename = "coil.dat"
 End
-
-
 Equation 1
   Name = "MagnetoDynamic for coil"
   Active Solvers(8) = 1 2 3 4 5 6 7 9
   Heat Equation = Logical True
 End
-
 Equation 2
   Name = "MagnetoDynamic for air"
   Active Solvers(3) = 3 4 9
 End
-
