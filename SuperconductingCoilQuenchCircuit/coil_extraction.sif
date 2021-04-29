@@ -148,7 +148,7 @@ Boundary Condition 2
   Temperature = Real 4.2
 End
 Solver 1  !---- CoilSolver, CoilSolver
-  Exec Solver = Before Timestep
+  Exec Solver = Before All
   Equation = "CoilSolver"
   Procedure = "CoilSolver" "CoilSolver"
   
