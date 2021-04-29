@@ -111,11 +111,11 @@ Body Force 1   !---- Source and circuit
   Disturbance Y Center = Real -0.14
   Disturbance Z Center = Real 0.0
   ! Value of heat disturbance in [W/kg]
-  Heat Disturbance = Real 700.0
+  Heat Disturbance = Real $700.0
   ! Initial time of the disturbance
   Heat Disturbance Initial Time = Real $ ramp_time+0.1*plateau_time
   ! Duration of the disturbance
-  Disturbance Duration = Real 0.1
+  Disturbance Duration = Real 1.0
   
   Heat Source = Variable Time, Temperature, Magnetic Flux Density e, Current Density e
     Real Procedure "./Fortran90/dissipation" "getDissipation"
@@ -181,6 +181,9 @@ Solver 2  !---- CircuitsAndDynamics, CircuitsAndDynamics
 End
 Solver 3  !---- MagnetoDynamics, WhitneyAVSolver
    Exec Solver = Always
+   Nonlinear Pre Solvers(1) = 2
+   Post Solvers (1) = 8
+
    Equation = "MGDynamics"
    Variable = "A"
    Procedure = "MagnetoDynamics" "WhitneyAVSolver"
