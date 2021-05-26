@@ -1,0 +1,146 @@
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "." "."
+  Include Path ""
+  Results Directory ""
+End
+
+Simulation
+  Max Output Level = 9
+
+  Coordinate System = "Cartesian"
+  Simulation Type = Steady
+  Timestepping Method = BDF
+  Timestep Sizes = 1
+  Timestep Intervals = 10
+  Steady State Max Iterations = 1
+
+  Post File = case.vtu
+  Output Intervals(1) = 1
+End
+
+Body 1
+  Target Bodies(1) = 1
+  Name = "Body 1"
+  Equation = 1
+  Material = 1
+End
+
+! Constants for wave equation
+$ beta=21.243
+$ beta_lim=47.896
+$ const=0.013292
+$ w=2*pi*(2.5e9)
+! Constant for Leontovich boundary condition
+$ l=767340
+
+Material 1
+  Relative Permittivity = Real 1
+End
+
+Equation 1
+  Name = "VectorHelmholtz_equation"
+  Active Solvers(3) = 1 2 3
+  Angular Frequency = Real $w
+End
+
+Solver 1
+  Equation = "VectorHelmholtz"
+  Variable = E[E re:1 E im:1]
+  Use Piola Transform = Logical True
+  Optimize Bandwidth = True
+  Linear System Symmetric = False
+  Procedure = "VectorHelmholtz" "VectorHelmholtzSolver"
+
+  Linear System Scaling = True
+  Linear System Solver = String "Iterative"
+  Linear System Iterative Method = String "bicgstabl"
+  BiCGstabl polynomial degree = Integer 4
+  
+  Linear System Preconditioning Damp Coefficient = Real 0.0
+  Linear System Preconditioning Damp Coefficient im = Real 1
+  Linear System Preconditioning = String "vanka"
+  Linear System ILUT Tolerance = Real 3e-3
+  Linear System Max Iterations = Integer 4000
+  Linear System Convergence Tolerance = 1.0e-5
+  linear system abort not converged = false
+
+  Steady State Convergence Tolerance = 1e-09
+  Automated Source Projection BCs = Logical False
+  Linear System Residual Output = 10
+  Calculate Loads = Logical True
+  Calculate Energy Norm = Logical True
+End
+
+Solver 2
+  Equation = "calcfields"
+
+  Use Piola Transform = Logical True
+  Optimize Bandwidth = False
+  Procedure = "VectorHelmholtz" "VectorHelmholtzCalcFields"
+  Linear System Symmetric = False
+
+  Field Variable =  String "E"
+
+  Calculate Elemental Fields = Logical True
+  Calculate Magnetic Field Strength = Logical True
+  Calculate Magnetic Flux Density = Logical True
+  Calculate Poynting vector = Logical True
+  Calculate Div of Poynting Vector = Logical True
+  Calculate Electric field = Logical True
+  Calculate Energy Functional = Logical True
+
+  Steady State Convergence Tolerance = 1
+  Linear System Solver = "Iterative"
+  Linear System Preconditioning = None
+  Linear System Residual Output = 10
+  Linear System Max Iterations = 5000
+  Linear System Iterative Method = CG
+  Linear System Convergence Tolerance = 1.0e-9
+End
+
+Solver 3
+  Exec Solver = After all
+  Equation = SaveGrid2
+  Procedure = "SaveGridData" "SaveGridData"
+  Filename Prefix = String "emwave_values"
+  Output Format = String table
+  Check for Duplicates = Logical True
+
+  Grid nx = Integer 1
+  Grid dy = Real 0.001
+  Grid dz = Real 0.001
+
+  ! Cavity cross-section without waveguide
+  Min Coordinate 1 = Real -0.001
+  Min Coordinate 2 = Real -0.151
+  Min Coordinate 3 = Real 0.24
+
+  Max Coordinate 1 = Real 0.001
+  Max Coordinate 2 = Real 0.151
+  Max Coordinate 3 = Real 0.72
+
+  Vector Field 1 = String Electric Field
+  Vector Field 2 = String Magnetic Field Strength
+End
+
+Boundary Condition 1
+  Target Boundaries(1) = 2
+  Name = "Inport"
+
+  Electric Robin Coefficient im = Real $ beta
+
+  Magnetic Boundary Load im 2 = Variable Coordinate 1, Coordinate 2
+  Real MATC "2*beta*sqrt(const/sqrt(tx(0)*tx(0)+tx(1)*tx(1)))*cos(beta_lim*sqrt(tx(0)*tx(0)+tx(1)*tx(1))-0.785398)"
+
+End
+
+Boundary Condition 2
+  Target Boundaries(4) = 1 3 4 5
+  Name = "Walls"
+  
+  ! Leontovich impedance boundary
+  Electric Robin Coefficient = Real $ -l 
+  Electric Robin Coefficient im = Real $ l 
+End
+
