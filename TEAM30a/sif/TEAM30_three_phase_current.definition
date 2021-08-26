@@ -1,0 +1,235 @@
+! -----------------------------------------------------------------------------
+! ElmerFEM Circuit Generated: August 26, 2021
+! -----------------------------------------------------------------------------
+
+! -----------------------------------------------------------------------------
+! Number of Circuits in Model
+! -----------------------------------------------------------------------------
+$ Circuits = 1
+
+! -----------------------------------------------------------------------------
+! Parameters
+! -----------------------------------------------------------------------------
+
+! General Parameters 
+$ I1 = 1
+$ I2 = 1
+$ I3 = 1
+
+! Parameters in Component 1: Winding_Phase1_Plus
+$ N_Winding_Phase1_Plus = 2045.175	 ! Number of Turns
+$ L_Winding_Phase1_Plus = 1	 ! Component Length
+$ Ns_Winding_Phase1_Plus = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+$ R_Winding_Phase1_Plus = 0.05340769902412596	 ! Resistance connected in Series (pin1-Resistance-Winding_Phase1_Plus-pin2)
+
+! Parameters in Component 2: Winding_Phase1_Minus
+$ N_Winding_Phase1_Minus = 2045.175	 ! Number of Turns
+$ L_Winding_Phase1_Minus = 1	 ! Component Length
+$ Ns_Winding_Phase1_Minus = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+$ R_Winding_Phase1_Minus = 0.05340769902412596	 ! Resistance connected in Series (pin1-Resistance-Winding_Phase1_Minus-pin2)
+
+! Parameters in Component 3: Winding_Phase2_Plus
+$ N_Winding_Phase2_Plus = 2045.175	 ! Number of Turns
+$ L_Winding_Phase2_Plus = 1	 ! Component Length
+$ Ns_Winding_Phase2_Plus = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+$ R_Winding_Phase2_Plus = 0.05340769902412596	 ! Resistance connected in Series (pin1-Resistance-Winding_Phase2_Plus-pin2)
+
+! Parameters in Component 4: Winding_Phase2_Minus
+$ N_Winding_Phase2_Minus = 2045.175	 ! Number of Turns
+$ L_Winding_Phase2_Minus = 1	 ! Component Length
+$ Ns_Winding_Phase2_Minus = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+$ R_Winding_Phase2_Minus = 0.05340769902412596	 ! Resistance connected in Series (pin1-Resistance-Winding_Phase2_Minus-pin2)
+
+! Parameters in Component 5: Winding_Phase3_Plus
+$ N_Winding_Phase3_Plus = 2045.175	 ! Number of Turns
+$ L_Winding_Phase3_Plus = 1	 ! Component Length
+$ Ns_Winding_Phase3_Plus = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+$ R_Winding_Phase3_Plus = 0.05340769902412596	 ! Resistance connected in Series (pin1-Resistance-Winding_Phase3_Plus-pin2)
+
+! Parameters in Component 6: Winding_Phase3_Minus
+$ N_Winding_Phase3_Minus = 2045.175	 ! Number of Turns
+$ L_Winding_Phase3_Minus = 1	 ! Component Length
+$ Ns_Winding_Phase3_Minus = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+$ R_Winding_Phase3_Minus = 0.05340769902412596	 ! Resistance connected in Series (pin1-Resistance-Winding_Phase3_Minus-pin2)
+
+
+! -----------------------------------------------------------------------------
+! Matrix Size Declaration and Matrix Initialization
+! -----------------------------------------------------------------------------
+$ C.1.variables = 24
+$ C.1.perm = zeros(C.1.variables)
+$ C.1.A = zeros(C.1.variables,C.1.variables)
+$ C.1.B = zeros(C.1.variables,C.1.variables)
+
+! -----------------------------------------------------------------------------
+! Dof/Unknown Vector Definition
+! -----------------------------------------------------------------------------
+$ C.1.name.1 = "i_I1"
+$ C.1.name.2 = "i_component(1)"
+$ C.1.name.3 = "i_component(2)"
+$ C.1.name.4 = "i_I2"
+$ C.1.name.5 = "i_component(3)"
+$ C.1.name.6 = "i_component(4)"
+$ C.1.name.7 = "i_I3"
+$ C.1.name.8 = "i_component(5)"
+$ C.1.name.9 = "i_component(6)"
+$ C.1.name.10 = "v_I1"
+$ C.1.name.11 = "v_component(1)"
+$ C.1.name.12 = "v_component(2)"
+$ C.1.name.13 = "v_I2"
+$ C.1.name.14 = "v_component(3)"
+$ C.1.name.15 = "v_component(4)"
+$ C.1.name.16 = "v_I3"
+$ C.1.name.17 = "v_component(5)"
+$ C.1.name.18 = "v_component(6)"
+$ C.1.name.19 = "u_1"
+$ C.1.name.20 = "u_2"
+$ C.1.name.21 = "u_4"
+$ C.1.name.22 = "u_5"
+$ C.1.name.23 = "u_6"
+$ C.1.name.24 = "u_7"
+
+! -----------------------------------------------------------------------------
+! Source Vector Definition
+! -----------------------------------------------------------------------------
+$ C.1.source.16 = "I1_Source"
+$ C.1.source.19 = "I2_Source"
+$ C.1.source.22 = "I3_Source"
+
+! -----------------------------------------------------------------------------
+! KCL Equations
+! -----------------------------------------------------------------------------
+$ C.1.B(0,0) = 1
+$ C.1.B(0,2) = 1
+$ C.1.B(1,0) = -1
+$ C.1.B(1,1) = -1
+$ C.1.B(2,3) = 1
+$ C.1.B(2,5) = 1
+$ C.1.B(3,3) = -1
+$ C.1.B(3,4) = -1
+$ C.1.B(4,6) = 1
+$ C.1.B(4,8) = 1
+$ C.1.B(5,6) = -1
+$ C.1.B(5,7) = -1
+
+! -----------------------------------------------------------------------------
+! KVL Equations
+! -----------------------------------------------------------------------------
+$ C.1.B(6,9) = -1
+$ C.1.B(6,18) = 1
+$ C.1.B(6,19) = -1
+$ C.1.B(7,10) = -1
+$ C.1.B(7,19) = -1
+$ C.1.B(8,11) = -1
+$ C.1.B(8,18) = 1
+$ C.1.B(9,12) = -1
+$ C.1.B(9,20) = 1
+$ C.1.B(9,21) = -1
+$ C.1.B(12,15) = -1
+$ C.1.B(12,22) = 1
+$ C.1.B(12,23) = -1
+
+! -----------------------------------------------------------------------------
+! Component Equations
+! -----------------------------------------------------------------------------
+$ C.1.B(15,0) = 1
+$ C.1.B(18,3) = 1
+$ C.1.B(19,16) = -1
+$ C.1.B(19,23) = -1
+$ C.1.B(20,17) = -1
+$ C.1.B(20,22) = 1
+$ C.1.B(21,6) = 1
+$ C.1.B(22,13) = -1
+$ C.1.B(22,21) = -1
+$ C.1.B(23,14) = -1
+$ C.1.B(23,20) = 1
+
+
+! -----------------------------------------------------------------------------
+! Additions in SIF file
+! -----------------------------------------------------------------------------
+Component 1
+  Name = "Winding_Phase1_Plus"
+  Master Bodies(1) = 7
+  Coil Type = "Stranded"
+  Number of Turns = Real $ -N_Winding_Phase1_Plus
+  Coil Thickness = Real $ L_Winding_Phase1_Plus
+  Symmetry Coefficient = Real $ 1/(Ns_Winding_Phase1_Plus)
+  Resistance = Real $ -R_Winding_Phase1_Plus
+End 
+
+Component 2
+  Name = "Winding_Phase1_Minus"
+  Master Bodies(1) = 8
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Winding_Phase1_Minus
+  Coil Thickness = Real $ L_Winding_Phase1_Minus
+  Symmetry Coefficient = Real $ 1/(Ns_Winding_Phase1_Minus)
+  Resistance = Real $ -R_Winding_Phase1_Minus
+End 
+
+Component 3
+  Name = "Winding_Phase2_Plus"
+  Master Bodies(1) = 9
+  Coil Type = "Stranded"
+  Number of Turns = Real $ -N_Winding_Phase2_Plus
+  Coil Thickness = Real $ L_Winding_Phase2_Plus
+  Symmetry Coefficient = Real $ 1/(Ns_Winding_Phase2_Plus)
+  Resistance = Real $ -R_Winding_Phase2_Plus
+End 
+
+Component 4
+  Name = "Winding_Phase2_Minus"
+  Master Bodies(1) = 10
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Winding_Phase2_Minus
+  Coil Thickness = Real $ L_Winding_Phase2_Minus
+  Symmetry Coefficient = Real $ 1/(Ns_Winding_Phase2_Minus)
+  Resistance = Real $ -R_Winding_Phase2_Minus
+End 
+
+Component 5
+  Name = "Winding_Phase3_Plus"
+  Master Bodies(1) = 11
+  Coil Type = "Stranded"
+  Number of Turns = Real $ -N_Winding_Phase3_Plus
+  Coil Thickness = Real $ L_Winding_Phase3_Plus
+  Symmetry Coefficient = Real $ 1/(Ns_Winding_Phase3_Plus)
+  Resistance = Real $ -R_Winding_Phase3_Plus
+End 
+
+Component 6
+  Name = "Winding_Phase3_Minus"
+  Master Bodies(1) = 12
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Winding_Phase3_Minus
+  Coil Thickness = Real $ L_Winding_Phase3_Minus
+  Symmetry Coefficient = Real $ 1/(Ns_Winding_Phase3_Minus)
+  Resistance = Real $ -R_Winding_Phase3_Minus
+End 
+
+! -----------------------------------------------------------------------------
+! Sources in SIF 
+! -----------------------------------------------------------------------------
+
+!Body Force 1
+!  I1_Source = Real $ I1
+!  I2_Source = Real $ I2
+!  I3_Source = Real $ I3
+!End
+
+Body Force 1
+
+  I1_Source  = Variable "time"
+      Real MATC "I1*sin(w_s*tx(0))"
+  
+  I2_Source  = Variable "time"
+      Real MATC "I2*sin(w_s*tx(0) + 2*pi/3)"
+
+  I3_Source  = Variable "time"
+      Real MATC "I3*sin(w_s*tx(0) - 2*pi/3)"
+
+End
+! -----------------------------------------------------------------------------
+! End of Circuit
+! -----------------------------------------------------------------------------

@@ -1,0 +1,62 @@
+!------ Skeleton for body section -----
+Body 1
+  Name = Rotor_Steel
+End
+
+Body 2
+  Name = Rotor_Aluminum
+End
+
+Body 3
+  Name = Rotor_side_Airgap
+End
+
+Body 4
+  Name = Stator_side_Airgap
+End
+
+Body 5
+  Name = Stator_Air
+End
+
+Body 6
+  Name = Stator_Steel
+End
+
+Body 7
+  Name = Winding_1_plus
+End
+
+Body 8
+  Name = Winding_2_minus
+End
+
+Body 9
+  Name = Winding_3_plus
+End
+
+Body 10
+  Name = Winding_1_minus
+End
+
+Body 11
+  Name = Winding_2_plus
+End
+
+Body 12
+  Name = Winding_3_minus
+End
+
+!------ Skeleton for boundary section -----
+Boundary Condition 1
+  Name = Rotor_side_Mortar_Boundary
+End
+
+Boundary Condition 2
+  Name = Stator_side_Mortar_Boundary
+End
+
+Boundary Condition 3
+  Name = Infinity
+End
+
