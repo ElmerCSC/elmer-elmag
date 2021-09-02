@@ -86,5 +86,3 @@ Physical Curve("Rotor-side Mortar Boundary", RMORTARAIRGAP) = {rAirLines[]};
 
 
 
-Mesh 3;
-Save "rotor_TEAM30a.msh";

@@ -8,7 +8,14 @@
 // ------------------------------------------------------------
 // Switch between 1-phase and 3-phase examples
 // ------------------------------------------------------------
-Phase = 1; //
+//Phase = 3;
+  
+DefineConstant[
+	       Phase = {1, Choices{
+		         1="1-Phase Model",
+			 2="3-Phase Model"},
+    Name StrCat['Input/0Induction Machine TEAM30/0'] , Highlight "Blue", Visible 1}  	 
+  ];
 
 // units
 cm= 1/100; //millimters
@@ -160,6 +167,6 @@ Else
 EndIf
 
 
-Mesh 3;
-Save "stator_TEAM30a.msh";
+//Mesh 3;
+//Save "stator_TEAM30a.msh";
 

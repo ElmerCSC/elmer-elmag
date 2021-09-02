@@ -1,0 +1,273 @@
+! Induction Motor Analyses InternationalTEAM Workshop Problem 30
+! Description: Use of Current Density to Compute IM Torque
+!              Single Phase Case
+! Transient Simulation
+! Author: Jonathan Velasco
+! Original date: August 2021
+! jonathan.velasco@csc.fi
+!------------------------------------------------------
+Check Keywords "Warn"
+!---------------------------------------------------------
+!MESH DATA  
+!---------------------------------------------------------
+Header
+  Mesh DB "." "TEAM30a"
+End
+!---------------------------------------------------------
+
+!---------------------------------------------------------
+!Parameters
+!---------------------------------------------------------
+
+$ freq = 60
+
+! current density (external source)
+$ Je = 310*1e4
+
+! excitation/stator angular frequency
+$ w_s = 2*pi*freq
+
+!---------------------------------------------------------
+!SIMULATION CONFIGURATION 
+!---------------------------------------------------------
+
+Simulation
+  Max Output Level = 10
+  Coordinate System = "Cartesian 2d"
+  Simulation Type = "scanning"
+  !-----------Scanning Simulation Parameters ------------
+  TimeStep Intervals(1) = 41
+  !-------------------------------
+  Output Intervals(1) = 1
+  Steady State Max Iterations = 1
+  Use Mesh Names = True
+
+  Angular Frequency = $w_s
+End
+!---------------------------------------------------------
+
+Constants
+  Permittivity of Vacuum = 8.8542e-12
+  Permeability of Vacuum = 1.256e-6
+End
+
+!---------------------------------------------------------
+
+Body 1
+  Name = Rotor_Steel
+  Material = 2
+  Equation = 2
+  Body Force = 3
+End
+
+Body 2
+  Name = Rotor_Aluminum
+  Material = 3
+  Equation = 2
+  Body Force = 3
+End
+
+Body 3
+  Name = Rotor_side_Airgap
+  Material = 1
+  Equation = 2
+  Body Force = 3
+
+  ! Torque Calculation Method 1:
+  ! Arkkio's Method
+  ! Only valid in uniform airgap models
+  r inner = Real 3e-2
+  r outer = Real 3.1e-2
+End
+
+Body 4
+  Name = Stator_side_Airgap
+  Material = 1
+  Equation = 1
+End
+
+Body 5
+  Name = Stator_Air
+  Material = 1
+  Equation = 1
+End
+
+Body 6
+  Name = Stator_Steel
+  Material = 4
+  Equation = 1
+End
+
+Body 7
+  Name = Winding_1_plus
+  Material = 1
+  Equation = 1
+  Body Force = 1
+End
+
+Body 8
+  Name = Winding_1_minus
+  Material = 1
+  Equation = 1
+  Body Force = 2
+End
+
+
+
+!---------------------------------------------------------
+! Boundary conditions
+!---------------------------------------------------------
+
+Boundary Condition 1
+  Name = Infinity
+  Az re = Real 0
+  Az im = Real 0
+End
+
+Boundary Condition 2
+  Name = Stator_side_Mortar_Boundary
+End
+
+Boundary Condition 3
+  Name = Rotor_side_Mortar_Boundary
+  Mortar BC Static = Logical True
+  Rotational Projector = Logical True
+  Galerkin Projector = Logical True
+  Mortar BC = Integer 2
+End
+
+
+!---------------------------------------------------------
+!Sources (External Current Density Driven Case)
+!---------------------------------------------------------
+
+Body Force 1
+  Name = "+A"
+  Current Density = $Je
+End
+
+Body Force 2
+  Name = "-A"
+  Current Density = $-Je
+End
+
+Body Force 3
+  Angular velocity = Variable "time"
+    Real MATC "10*(tx-1)"
+End 
+
+
+! Torque Calculation Method 2:
+! Rotor Component for torque calculation using
+! the sum of nodal forces in rotating domains
+! The postprocessing quantity is obtained via the CalcFields Solver
+! Note: Components 1-6 are under the circuit definitions.
+Component 1
+  Name = String "Rotating_Domains"
+  Master Bodies(2) = Integer 1 2  
+  Calculate Magnetic Torque = Logical true
+End
+
+
+!---------------------------------------------------------
+! Material Properties 
+!---------------------------------------------------------
+
+Material 1
+  Name = "Air"
+  Electric Conductivity = 0.0
+  Relative Permittivity = 1.0
+  Relative Permeability = 1.0
+End
+
+Material 2
+  Name = "Rotor_Steel"
+  Electric Conductivity = 1.6e6
+  Relative Permittivity = 1.0
+  Relative Permeability = 30.0
+End
+
+Material 3
+  Name = "Rotor_Aluminum"
+  Electric Conductivity = 3.72e7
+  Relative Permittivity = 1.0
+  Relative Permeability = 1.0
+End
+
+Material 4
+  Name = "Stator_Steel"
+  Electric Conductivity = 0.0
+  Relative Permittivity = 1.0
+  Relative Permeability = 30.0
+End
+
+
+!---------------------------------------------------------
+! Solver Configuration
+!---------------------------------------------------------
+
+Equation 1
+  Active Solvers(5) = 1 2 3 4 5
+End
+
+
+Equation 2
+  Active Solvers(5) = 1 2 3 4 5
+End
+
+
+Solver 1
+  Exec Solver = never
+  Equation = MeshDeform
+  Procedure = "RigidMeshMapper" "RigidMeshMapper"
+End
+
+Solver 2
+  Equation = MgDyn2D
+!  Variable = "A"
+  Variable = Az[Az re:1 Az im:1]
+  Procedure = "MagnetoDynamics2D" "MagnetoDynamics2DHarmonic"
+  Linear System Solver = Direct
+  Linear System Direct Method = MUMPS
+
+  ! Rotating Boundary
+  Apply Mortar BCs = Logical True
+
+End 
+
+Solver 3
+  Equation = CalcFields
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  Calculate Current Density = Logical True 
+  Calculate Magnetic Vector Potential = Logical True
+  Calculate Nodal Fields     = Logical False
+  Calculate Elemental Fields = Logical True  
+  Calculate Nodal Forces = Logical True
+End
+
+
+Solver 4
+  Equation = "ResultOutput"
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  !Exec Solver = after all 
+  Output File Name = harmonic
+  Output Directory = res
+  Save Geometry Ids = Logical True
+  Vtu Format = Logical True
+  discontinuous bodies = logical true
+  Gmsh Format = Logical True
+End 
+
+
+Solver 5
+   Exec Solver = After Timestep
+   Procedure = "SaveData" "SaveScalars"
+   Filename = res/w2.dat
+   Save Component Results = True
+   Variable 1 = time
+
+   Expression 1 = Variable "time"
+    Real MATC "10*(tx-1)"
+End
+
+

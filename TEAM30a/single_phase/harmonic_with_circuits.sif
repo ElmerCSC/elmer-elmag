@@ -1,5 +1,6 @@
 ! Induction Motor Analyses InternationalTEAM Workshop Problem 30
 ! Transient Simulation
+! Case: Single Phase
 ! Author: Jonathan Velasco
 ! Original date: August 2021
 ! jonathan.velasco@csc.fi
@@ -9,33 +10,20 @@ Check Keywords "Warn"
 !MESH DATA  
 !---------------------------------------------------------
 Header
-  Mesh DB "." "TEAM30a_3ph"
+  Mesh DB "." "TEAM30a"
 End
 !---------------------------------------------------------
 
 !---------------------------------------------------------
-!Include Directories (Parameters and Circuit Sources)
-!---------------------------------------------------------
-! Single Circuit (Y connected) : built with circuit builder
-Include "TEAM30_three_phase_current.definition"
-
-!---------------------------------------------------------
 !Parameters
 !---------------------------------------------------------
-
 $ freq = 60
-! excitation/stator angular frequency
 $ w_s = 2*pi*freq
 
-! Rotor angular /mechanical speed
-$ Rotor_start_angle = 0
-$ w_r = 0 0 200 400 600 800 1000 1200  ! [rad/s]
-
-! Time dependent parameters
-$ stepsPerPeriod = 50
-$ periods = 3
-$ nsteps = periods*stepsPerPeriod
-$ stepsize=(periods/freq)/nsteps
+!---------------------------------------------------------
+!Include Directories (Parameters and Circuit Sources)
+!---------------------------------------------------------
+Include "TEAM30_single_phase_current_harmonic.definition"
 
 
 !---------------------------------------------------------
@@ -43,22 +31,15 @@ $ stepsize=(periods/freq)/nsteps
 !---------------------------------------------------------
 
 Simulation
-  Max Output Level = 7
-  Coordinate System = "Cartesian"
-  Simulation Type = "Scanning"
-  !-----------Transient Simulation Parameters ------------
-  !TimeStepping Method = BDF
-  !BDF Order = 1
-  !Timestep Sizes(1) = Real $stepsize
-  !TimeStep Intervals(1) = $nsteps
-  !-------------------------------
-  !-----------Scanning Simulation Parameters ------------
-  Timestep Sizes(1) = 1
-  Timestep intervals(1) = 7	
-  !-------------------------------
+  Max Output Level = 10
+  Coordinate System = "Cartesian 2d"
+  Simulation Type = "scanning"
+  TimeStep Intervals(1) = 51
   Output Intervals(1) = 1
   Steady State Max Iterations = 1
   Use Mesh Names = True
+
+  Angular Frequency = $w_s
 End
 !---------------------------------------------------------
 
@@ -74,6 +55,7 @@ Body 1
   Material = 2
   Equation = 1
   Body Force = 2
+  Torque Groups = Integer 1
 End
 
 Body 2
@@ -81,6 +63,7 @@ Body 2
   Material = 3
   Equation = 1
   Body Force = 2
+  Torque Groups = Integer 1
 End
 
 Body 3
@@ -88,12 +71,13 @@ Body 3
   Material = 1
   Equation = 1
   Body Force = 2
+  Torque Groups = Integer 1
 
   ! Torque Calculation Method 1:
   ! Arkkio's Method
   ! Only valid in uniform airgap models
   r inner = Real 3e-2
-  r outer = Real 3.1e-2
+  r outer = Real 3.2e-2
 End
 
 Body 4
@@ -118,37 +102,16 @@ Body 7
   Name = Winding_1_plus
   Material = 1
   Equation = 1
+  Body Force = 1
 End
 
 Body 8
   Name = Winding_1_minus
   Material = 1
   Equation = 1
+  Body Force = 1
 End
 
-Body 9
-  Name = Winding_2_plus
-  Material = 1
-  Equation = 1
-End
-
-Body 10
-  Name = Winding_2_minus
-  Material = 1
-  Equation = 1
-End
-
-Body 11
-  Name = Winding_3_plus
-  Material = 1
-  Equation = 1
-End
-
-Body 12
-  Name = Winding_3_minus
-  Material = 1
-  Equation = 1
-End
 
 !---------------------------------------------------------
 ! Boundary conditions
@@ -156,7 +119,8 @@ End
 
 Boundary Condition 1
   Name = Infinity
-  A = Real 0
+  Az re = Real 0
+  Az im = Real 0
 End
 
 Boundary Condition 2
@@ -166,6 +130,9 @@ End
 Boundary Condition 3
   Name = Rotor_side_Mortar_Boundary
   Mortar BC Static = Logical True
+  Rotational Projector = Logical True
+  Galerkin Projector = Logical True
+ 
   Mortar BC = Integer 2
 End
 
@@ -175,18 +142,19 @@ End
 !---------------------------------------------------------
 
 Body Force 2
-  Mesh Rotate 3 = Variable "time", "timestep size"
-    Real MATC "180/pi*w_r*(tx(0)-tx(1)) + Rotor_start_angle"
-End
+  Angular velocity = Variable "time"
+    Real MATC "30*(tx-1)"
+End 
+
 
 ! Torque Calculation Method 2:
 ! Rotor Component for torque calculation using
 ! the sum of nodal forces in rotating domains
 ! The postprocessing quantity is obtained via the CalcFields Solver
 ! Note: Components 1-6 are under the circuit definitions.
-Component 7
+Component 3
   Name = String "Rotating_Domains"
-  Master Bodies(3) = Integer 1 2 3 
+  Master Bodies(2) = Integer 1 2  
   Calculate Magnetic Torque = Logical true
 End
 
@@ -229,63 +197,74 @@ End
 !---------------------------------------------------------
 
 Equation 1
-  Active Solvers(7) = 1 2 3 4 5 6 7
+  Active Solvers(6) = 1 2 3 4 5 6
 End
+
 
 Solver 1
- Exec Solver = Before timestep
- Equation = MeshDeform
- Procedure = "RigidMeshMapper" "RigidMeshMapper"
-End
-
-Solver 2
   Exec Solver = Always
   Equation = Circuits
   Variable = X
   No Matrix = Logical True  
-  Procedure = "CircuitsAndDynamics" "CircuitsAndDynamics"
+  Procedure = "CircuitsAndDynamics" "CircuitsAndDynamicsHarmonic"
 End
 
 
-Solver 3
+Solver 2
   Equation = MgDyn2D
-  Variable = "A"
-  Procedure = "MagnetoDynamics2D" "MagnetoDynamics2D"
+  Variable = Az[Az re:1 Az im:1]
+  Procedure = "MagnetoDynamics2D" "MagnetoDynamics2DHarmonic"
   Linear System Solver = Direct
   Linear System Direct Method = MUMPS
-  
+
   ! Needed for strong coupling with circuits
   Export Lagrange Multiplier = True
-End
 
-Solver 4
+  ! For projection
+  Apply Mortar BCs = Logical True
+
+End 
+
+Solver 3
   Equation = CalcFields
   Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
   Calculate Current Density = Logical True 
   Calculate Magnetic Vector Potential = Logical True
-  Calculate Nodal Fields     = Logical False
-  Calculate Elemental Fields = Logical True
-  
+  Calculate Nodal Fields     = Logical True
+  Calculate Elemental Fields = Logical False 
+  Calculate Nodal Forces = Logical True
 End
 
 
-Solver 5
+Solver 4
   Equation = "ResultOutput"
   Procedure = "ResultOutputSolve" "ResultOutputSolver"
-  Output File Name = TEAM30A_3ph
+  Exec Solver = after saving 
+  Output File Name = harmonic
   Output Directory = res
   Save Geometry Ids = Logical True
   Vtu Format = Logical True
-  Output Format = Gmsh
+  Gmsh Format = Logical True
+  !Exec Solver = never
 End 
 
-Solver 6
+Solver 5
    Equation = Circuits Output
    Procedure = "CircuitsAndDynamics" "CircuitsOutput"
 End
 
-Solver 7
+Solver 6
    Exec Solver = After Timestep
    Procedure = "SaveData" "SaveScalars"
-   Filename = res/circuit_info.dat
+   Filename = res/w2.dat
+   Save Component Results = True 
+   Variable 1 = time
+ 
+   Expression 1 = Variable "time"
+     Real MATC "30*(tx-1)"
 End
+
+
+
+
+
