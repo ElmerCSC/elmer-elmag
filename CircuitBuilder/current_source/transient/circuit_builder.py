@@ -727,9 +727,18 @@ def write_kcl_equations(c, num_nodes, num_variables, elmer_Amat, elmer_Bmat, ofi
     print("", file=elmer_file)
     elmer_file.close()
 
-def write_kvl_equations(c, num_nodes, num_edges, num_variables, elmer_Amat, elmer_Bmat, ofile):
+def write_kvl_equations(c, num_nodes, num_edges, num_variables, elmer_Amat, elmer_Bmat, unknown_names, ofile):
 
     range_init = num_nodes - 1
+
+    # this trick switches all source voltage signs
+    # to comply with Elmer's convention
+    source_sign_index = []
+    for i,name in enumerate(unknown_names):
+        if ("v" in name and "component" not in name):
+            source_sign_index.append(i)
+        else:
+            source_sign_index.append(None)
 
     elmer_file = open(ofile, 'a')
     print("! -----------------------------------------------------------------------------", file=elmer_file)
@@ -740,7 +749,16 @@ def write_kvl_equations(c, num_nodes, num_edges, num_variables, elmer_Amat, elme
         for j in range(num_variables):
             if (elmer_Bmat[i][j].decode().strip("-") != str(0)) and (elmer_Bmat[i][j].decode().strip("-") != str(0.0)):
                 kvl_without_decimal = elmer_Bmat[i][j].decode().split(".")[0]
-                print("$ C." + str(c.index) + ".B(" + str(i) + "," + str(j) + ")" + " = " + str(kvl_without_decimal),
+                if(j == source_sign_index[j]):
+
+                    if("-" in kvl_without_decimal):
+                        print("$ C." + str(c.index) + ".B(" + str(i) + "," + str(j) + ")" + " = " + str(kvl_without_decimal.strip("-")),
+                            file=elmer_file)
+                    else:
+                        print("$ C." + str(c.index) + ".B(" + str(i) + "," + str(j) + ")" + " = -" + str(kvl_without_decimal.strip("-")),
+                            file=elmer_file)
+                else:
+                    print("$ C." + str(c.index) + ".B(" + str(i) + "," + str(j) + ")" + " = " + str(kvl_without_decimal),
                       file=elmer_file)
 
 
@@ -823,7 +841,7 @@ def write_sif_additions(c, source_vector, ofile):
                 print("  Number of Turns = Real $ N_" + str(ecomp.name), file=elmer_file)
             print("  Coil Thickness = Real $ L_" + str(ecomp.name), file=elmer_file)
             print("  Symmetry Coefficient = Real $ 1/(Ns_" + str(ecomp.name) + ")", file=elmer_file)
-            print("  Resistance = Real $ -R_" + str(ecomp.name), file=elmer_file)
+            print("  Resistance = Real $ R_" + str(ecomp.name), file=elmer_file)
             print("End \n", file=elmer_file)
 
     # store body forces per circuit to print later
@@ -903,7 +921,7 @@ def write_elmer_circuit_file(c, elmerA, elmerB, elmersource, unknown_names, num_
         write_unknown_vector(c, unknown_names, ofile)
         write_source_vector(c, elmersource, ofile)
         write_kcl_equations(c, num_nodes, num_variables, elmerA, elmerB, ofile)
-        write_kvl_equations(c, num_nodes, num_edges, num_variables, elmerA, elmerB, ofile)
+        write_kvl_equations(c, num_nodes, num_edges, num_variables, elmerA, elmerB, unknown_names, ofile)
         write_component_equations(c, num_nodes, num_edges, num_variables, elmerA, elmerB, ofile)
         body_forces=write_sif_additions(c, elmersource, ofile)
 
