@@ -48,10 +48,10 @@ from circuit_builder import *
 def main(argv=None):
 
     # name output file
-    output_file = "string_circuit.definitions"
+    output_file = "eelis_circuit.definitions"
 
     # initialize circuits: number of circuits - do not remove
-    c = number_of_circuits(1)
+    c = number_of_circuits(2)
 
     # ------------------ Circuit 1 ---------------------
 
@@ -59,12 +59,25 @@ def main(argv=None):
     c[1].ref_node = 1
 
     # Components
-    V1 = V("V1", 1, 2, 5)
-    R1 = R("R1", 1, 2, 2)
-    FEM_Component1 = ElmerComponent("Coil1", 1, 3, 0, 1, [1, 4], "Stranded", 3)
+    V1 = V("VA", 1, 2, 10*np.exp(-4j))
+    R1 = R("R1", 2, 3, 2)
+    R2 = R("Re", 2, 3)
+    FEM_Component1 = ElmerComponent("Coil1", 3, 1, 0.2, 1, [1, 4], "Stranded", 100)
+    FEM_Component2 = ElmerComponent("Resistor", 1, 2, 1, 2, [1, 4], "Massive")
+
+
+# store components in array components = [comp1, comp2,...] - do not remove
+    c[1].components.append([V1, R1, R2, FEM_Component1, FEM_Component2])
+
+    # --------------------------------------------------
+
+    # ------------------ Circuit 2 ---------------------
+
+    # reference/ground node needed - do not remove.
+    c[2].ref_node = 1
 
     # store components in array components = [comp1, comp2,...] - do not remove
-    c[1].components.append([V1, R1, FEM_Component1])
+    c[2].components.append([V1, R1, R2, FEM_Component1])
 
     # --------------------------------------------------
 
