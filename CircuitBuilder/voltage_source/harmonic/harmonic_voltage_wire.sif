@@ -1,4 +1,4 @@
-! Single Straight Wire Connected to an Ideal Voltage source
+! Single Straight Wire Connected to an Ideal Current source
 ! Description: This model showcases how to setup a circuit-field
 !              simulation.
 !              The MATC circuit matrices are built using 
@@ -37,7 +37,7 @@ $ phase = 0
 Simulation
   Max Output Level = 7
   Coordinate System = "Cartesian"
-  Simulation Type = "Harmonic"
+  Simulation Type = Steady
   Angular Frequency = $omega
   Output Intervals(1) = 1
   Steady State Max Iterations = 1
@@ -55,6 +55,7 @@ Body 1
   Name = Wire
   Equation = 1
   Material = 1
+  Body Force = 1
 End
 
 Body 2
@@ -73,7 +74,6 @@ Boundary Condition 1
   Az re = Real 0
   Az im = Real 0
 End
-
 
 !---------------------------------------------------------
 ! Material Properties 
@@ -105,7 +105,7 @@ End
 
 
 Solver 1
-  !Exec Solver = Always
+  !Exec Solver = Never
   Equation = Circuits
   Variable = X
   No Matrix = Logical True  
@@ -115,11 +115,11 @@ End
 
 Solver 2
   Equation = MgDyn2D
-  Variable = "Az"
+  Variable = Az[Az re:1 Az im:1]
   Procedure = "MagnetoDynamics2D" "MagnetoDynamics2DHarmonic"
   Linear System Solver = Direct
   Linear System Direct Method = MUMPS
-
+  
   ! Needed for strong coupling with circuits
   Export Lagrange Multiplier = True
 End
@@ -135,7 +135,7 @@ End
 Solver 4
   Equation = "ResultOutput"
   Procedure = "ResultOutputSolve" "ResultOutputSolver"
-  Output File Name = ckt_straight_wire_steady
+  Output File Name = harmonic_current
   Output Directory = res
   Save Geometry Ids = Logical True
   Vtu Format = Logical True
@@ -143,7 +143,7 @@ Solver 4
 End 
 
 Solver 5
-   !Exec Solver = Always
+   !Exec Solver = Never
    Equation = Circuits Output
    Procedure = "CircuitsAndDynamics" "CircuitsOutput"
 End
@@ -151,7 +151,7 @@ End
 Solver 6
    Exec Solver = After Timestep
    Procedure = "SaveData" "SaveScalars"
-   Filename = res/circuit_info.dat
+   Filename = res/f1.dat
 End
 
 Solver 7
