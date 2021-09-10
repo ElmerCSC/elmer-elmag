@@ -736,12 +736,12 @@ def write_kvl_equations(c, num_nodes, num_edges, num_variables, elmer_Amat, elme
     source_names = []
     components = c.components[0]
     for component in components:
-        if(type(component) == V):
+        if(type(component) == V or type(component) == I):
           source_names.append(component.name)
 
     source_sign_index = []
     for i,name in enumerate(unknown_names):
-        if (name.strip('"').strip("v_") in source_names):
+        if (name.strip('"').strip("v_") in source_names or name.strip('"').strip("i_") in source_names):
             source_sign_index.append(i)
         else:
             source_sign_index.append(None)
@@ -756,7 +756,6 @@ def write_kvl_equations(c, num_nodes, num_edges, num_variables, elmer_Amat, elme
             if (elmer_Bmat[i][j].decode().strip("-") != str(0)) and (elmer_Bmat[i][j].decode().strip("-") != str(0.0)):
                 kvl_without_decimal = elmer_Bmat[i][j].decode().split(".")[0]
                 if(j == source_sign_index[j]):
-
                     if("-" in kvl_without_decimal):
                         print("$ C." + str(c.index) + ".B(" + str(i) + "," + str(j) + ")" + " = " + str(kvl_without_decimal.strip("-")),
                               file=elmer_file)
