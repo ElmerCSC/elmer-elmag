@@ -53,22 +53,20 @@ def main(argv=None):
     # initialize circuits: number of circuits - do not remove
     c = number_of_circuits(1)
 
-    # ------------------ Circuit 1 (example)---------------------
+    # ------------------ Circuit 1 (Current Source - Harmonic)---------------------
 
     # reference/ground node needed - do not remove.
     c[1].ref_node = 1
 
     # Components
-    I1 = I("I1", 1, 2, 1+0j)
-    FEM_Component1 = ElmerComponent("Coil1", 2, 1, 0, 1, [1], "Massive")
-
+    phase = np.radians(120)
+    I1 = I("I1", 2, 1, 1*np.exp(phase*1j))
+    FEM_Component1 = ElmerComponent("Coil1", 1, 2, 0, 1, [1], "Massive")
 
     # store components in array components = [comp1, comp2,...] - do not remove
     c[1].components.append([I1, FEM_Component1])
 
     # --------------------------------------------------
-
-
 
     # generate elmer circuit.definitions - do not remove / do not edit
     generate_elmer_circuits(c, output_file)

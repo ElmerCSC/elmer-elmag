@@ -48,23 +48,28 @@ from circuit_builder import *
 def main(argv=None):
 
     # name output file
-    output_file = "transient_current_source.definition"
+    output_file = "harmonic_voltage_divider.definition"
 
     # initialize circuits: number of circuits - do not remove
     c = number_of_circuits(1)
 
-    # ------------------------------------------Circuit 1 ------------------------------------------------
-    # ---------------(Current Source - Steady State /  Modify Body Force 1 in file for Transient )---------------------
+    # ------------------ Circuit 1 (Voltage Source, Resistor and FEM coil connected in series - Harmonic)---------
 
     # reference/ground node needed - do not remove.
     c[1].ref_node = 1
 
     # Components
-    I1 = I("I1", 1, 2, 1)
-    FEM_Component1 = ElmerComponent("Coil1", 2, 1, 0, 1, [1], "Massive")
+    phase_degrees = 0.0     # enter phase in degrees
+    Vs = 1                  # voltage source amplitude
+    Rs = 5.496942336059e-3  # resistor value
+
+    phase = np.radians(phase_degrees)
+    V1 = V("V1", 1, 2, Vs*np.exp(phase*1j))
+    R1 = R("R1", 2, 3, Rs)
+    FEM_Component1 = ElmerComponent("Coil1", 3, 1, 0, 1, [1], "Massive")
 
     # store components in array components = [comp1, comp2,...] - do not remove
-    c[1].components.append([I1, FEM_Component1])
+    c[1].components.append([V1, R1, FEM_Component1])
 
     # --------------------------------------------------
 

@@ -1,9 +1,6 @@
-! Single Straight Wire Connected to an Ideal Voltage source
+! Single Straight Wire Connected to an Ideal Current source
 ! Description: This model showcases how to setup a circuit-field
 !              simulation.
-!              The model is stationary, and the analytical
-!              solution of the resistance validates the circuit/FEM
-!              connection.(Resistance = 1/(sigma A))
 !              The MATC circuit matrices are built using 
 !              the circuit builder. 
 !
@@ -23,20 +20,15 @@ End
 !---------------------------------------------------------
 !Include Directories (Parameters and Circuit Sources)
 !---------------------------------------------------------
-Include "transient_voltage_source.definition"
+Include "harmonic_voltage_divider.definition"
 
 !---------------------------------------------------------
 !Parameters
 !---------------------------------------------------------
 
-$ freq = 1
+$ freq = 50
 $ omega = 2*pi*freq
 $ phase = 0
-$ stepsPerPeriod = 50
-$ periods = 1
-$ nsteps = periods*stepsPerPeriod
-$ stepsize=(periods/freq)/nsteps
-
 
 !---------------------------------------------------------
 !SIMULATION CONFIGURATION 
@@ -45,13 +37,8 @@ $ stepsize=(periods/freq)/nsteps
 Simulation
   Max Output Level = 7
   Coordinate System = "Cartesian"
-  Simulation Type = "Transient"
-  !-----------Transient Simulation Parameters ------------
-  TimeStepping Method = BDF
-  BDF Order = 1
-  Timestep Sizes(1) = Real $stepsize
-  TimeStep Intervals(1) = $nsteps
-  !-------------------------------
+  Simulation Type = Steady
+  Angular Frequency = $omega
   Output Intervals(1) = 1
   Steady State Max Iterations = 1
   Use Mesh Names = True
@@ -68,6 +55,7 @@ Body 1
   Name = Wire
   Equation = 1
   Material = 1
+  Body Force = 1
 End
 
 Body 2
@@ -83,13 +71,9 @@ End
 
 Boundary Condition 1
   Name = Infinity_Magnetic_Insulation
-  A = Real 0
+  Az re = Real 0
+  Az im = Real 0
 End
-
-
-!---------------------------------------------------------
-!Sources  (from the circuit definition)
-!---------------------------------------------------------
 
 !---------------------------------------------------------
 ! Material Properties 
@@ -121,21 +105,21 @@ End
 
 
 Solver 1
-  Exec Solver = Always
+  !Exec Solver = Never
   Equation = Circuits
   Variable = X
   No Matrix = Logical True  
-  Procedure = "CircuitsAndDynamics" "CircuitsAndDynamics"
+  Procedure = "CircuitsAndDynamics" "CircuitsAndDynamicsHarmonic"
 End
 
 
 Solver 2
   Equation = MgDyn2D
-  Variable = "A"
-  Procedure = "MagnetoDynamics2D" "MagnetoDynamics2D"
+  Variable = Az[Az re:1 Az im:1]
+  Procedure = "MagnetoDynamics2D" "MagnetoDynamics2DHarmonic"
   Linear System Solver = Direct
   Linear System Direct Method = MUMPS
-
+  
   ! Needed for strong coupling with circuits
   Export Lagrange Multiplier = True
 End
@@ -151,7 +135,7 @@ End
 Solver 4
   Equation = "ResultOutput"
   Procedure = "ResultOutputSolve" "ResultOutputSolver"
-  Output File Name = ckt_straight_wire_steady
+  Output File Name = harmonic_current
   Output Directory = res
   Save Geometry Ids = Logical True
   Vtu Format = Logical True
@@ -159,7 +143,7 @@ Solver 4
 End 
 
 Solver 5
-   Exec Solver = Always
+   !Exec Solver = Never
    Equation = Circuits Output
    Procedure = "CircuitsAndDynamics" "CircuitsOutput"
 End
@@ -176,6 +160,5 @@ Solver 7
   Procedure = "SaveData" "SaveLine"
   Filename = res/jz.dat
   File Append = Logical True 
-  Variable 1 = Current Density
   Polyline coordinates(2,2) = -0.001 0.0 0.001 0.0
 End

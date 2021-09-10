@@ -53,13 +53,15 @@ def main(argv=None):
     # initialize circuits: number of circuits - do not remove
     c = number_of_circuits(1)
 
-    # ------------------ Circuit 1 (Voltage Source Example)---------------------
+    # ------------------ Circuit 1 (Voltage Source - Harmonic)---------------------
 
     # reference/ground node needed - do not remove.
     c[1].ref_node = 1
 
     # Components
-    V1 = V("V1", 1, 2, 1*np.exp(0j))
+    phase = np.radians(0)
+    Vs = 5.496942336059e-3
+    V1 = V("V1", 2, 1, Vs*np.exp(phase*1j))
     FEM_Component1 = ElmerComponent("Coil1", 2, 1, 0, 1, [1], "Massive")
 
     # store components in array components = [comp1, comp2,...] - do not remove
