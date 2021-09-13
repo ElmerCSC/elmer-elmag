@@ -1,5 +1,5 @@
 ! -----------------------------------------------------------------------------
-! ElmerFEM Circuit Generated: September 10, 2021
+! ElmerFEM Circuit Generated: September 13, 2021
 ! -----------------------------------------------------------------------------
 
 ! -----------------------------------------------------------------------------
@@ -14,10 +14,13 @@ $ Circuits = 1
 ! General Parameters 
 $ I1 = 2742
 
+
 ! Parameters in Component 1: Coil1
+$ N_Coil1 = 1	 ! Number of Turns
 $ L_Coil1 = 1	 ! Component Length
 $ Ns_Coil1 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
 $ R_Coil1 = 0	 ! Resistance connected in Series (pin1-Resistance-Coil1-pin2)
+$ Ae_Coil1 = 0.0025 	 ! Electrode Area (dummy for now change as required)
 
 
 ! -----------------------------------------------------------------------------
@@ -68,10 +71,13 @@ $ C.1.B(4,0) = 1
 Component 1
   Name = "Coil1"
   Master Bodies(1) = 1
-  Coil Type = "Massive"
-  Coil Thickness = Real $ L_Coil1
-  Symmetry Coefficient = Real $ 1/(Ns_Coil1)
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Coil1
   Resistance = Real $ R_Coil1
+  ! Additions for 3D Coil
+  Coil Use W Vector = Logical True
+  W Vector Variable Name = String CoilCurrent e
+  Electrode Area = Real $ Ae_Coil1
 End 
 
 ! -----------------------------------------------------------------------------
@@ -79,7 +85,8 @@ End
 ! -----------------------------------------------------------------------------
 
 Body Force 1
-  I1_Source = Real $ I1
+  I1_Source = Variable time
+    Real MATC "I1*sin(omega*tx)" 
 End
 
 ! -----------------------------------------------------------------------------

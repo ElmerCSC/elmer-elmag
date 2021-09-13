@@ -39,7 +39,7 @@ class C(Component):
     pass
 
 class ElmerComponent(Component):
-    def __init__(self, name, pin1, pin2, resistance_value, component_number, master_body_list, coiltype, number_of_turns=1, sector=1, length=1):
+    def __init__(self, name, pin1, pin2, resistance_value, component_number, master_body_list, coiltype, number_of_turns=1, dimension="2D",sector=1, length=1, ):
         Component.__init__(self, name, pin1, pin2, resistance_value)
         self.component_number = component_number
         self.master_bodies = master_body_list
@@ -47,6 +47,7 @@ class ElmerComponent(Component):
         self.sector = sector
         self.length = length
         self.number_turns = number_of_turns
+        self.dimension = dimension
 
 
 class Circuit:
@@ -844,9 +845,15 @@ def write_sif_additions(c, source_vector, ofile):
             print("  Coil Type = \"" + str(ecomp.coil_type) + "\"", file=elmer_file)
             if ecomp.coil_type == "Stranded":
                 print("  Number of Turns = Real $ N_" + str(ecomp.name), file=elmer_file)
-            print("  Coil Thickness = Real $ L_" + str(ecomp.name), file=elmer_file)
-            print("  Symmetry Coefficient = Real $ 1/(Ns_" + str(ecomp.name) + ")", file=elmer_file)
-            print("  Resistance = Real $ R_" + str(ecomp.name), file=elmer_file)
+                print("  Resistance = Real $ R_" + str(ecomp.name), file=elmer_file)
+            if(ecomp.dimension == "3D" or ecomp.dimension == "3d" or ecomp.dimension == "3"):
+                print("  ! Additions for 3D Coil", file=elmer_file)
+                print("  Coil Use W Vector = Logical True", file=elmer_file)
+                print("  W Vector Variable Name = String "'CoilCurrent e'"", file=elmer_file)
+                print("  Electrode Area = Real $ Ae_" + str(ecomp.name) , file=elmer_file)
+            else:
+                print("  Coil Thickness = Real $ L_" + str(ecomp.name), file=elmer_file)
+                print("  Symmetry Coefficient = Real $ 1/(Ns_" + str(ecomp.name) + ")", file=elmer_file)
             print("End \n", file=elmer_file)
 
     # store body forces per circuit to print later
@@ -900,7 +907,8 @@ def write_parameters(c,ofile):
             print("$ L_" + component.name + " = " + str(component.length) + "\t ! Component Length", file=elmer_file)
             print("$ Ns_" + component.name + " = " + str(component.sector) + "\t ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)", file=elmer_file)
             print("$ R_" + component.name + " = " + str(component.value) + "\t ! Resistance connected in Series (pin1-Resistance-" +str(component.name) +"-pin2)", file=elmer_file)
-            print("", file=elmer_file)
+            print("$ Ae_" + component.name + " = 0.0025 " + "\t ! Electrode Area (dummy for now change as required)", file=elmer_file)
+        print("", file=elmer_file)
     print("", file=elmer_file)
 
     elmer_file.close
