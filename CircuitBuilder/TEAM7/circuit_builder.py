@@ -328,7 +328,7 @@ def get_capacitance_matrix_str(components, nedges, indcap):
             Cmat_str[i][j] = ''
 
     for i in indcap:
-        Cmat_str[i][j] = -components[i].name
+        Cmat_str[i][j] = "-" + components[i].name
 
     return Cmat_str
 
@@ -840,8 +840,11 @@ def write_sif_additions(c, source_vector, ofile):
 
             print("Component " + str(ecomp.component_number), file=elmer_file)
             print("  Name = \"" + str( ecomp.name) + "\"", file=elmer_file)
-            print("  Master Bodies(" + str(len(ecomp.master_bodies)) + ") = " + str(
-                ecomp.master_bodies)[1:-1], file=elmer_file)
+            if( type(ecomp.master_bodies[0]) == str):
+                print("  Master Bodies Name = " + str(ecomp.master_bodies[0]), file=elmer_file)
+            else:
+                print("  Master Bodies(" + str(len(ecomp.master_bodies)) + ") = " +
+                      str(ecomp.master_bodies)[1:-1], file=elmer_file)
             print("  Coil Type = \"" + str(ecomp.coil_type) + "\"", file=elmer_file)
             if ecomp.coil_type == "Stranded":
                 print("  Number of Turns = Real $ N_" + str(ecomp.name), file=elmer_file)

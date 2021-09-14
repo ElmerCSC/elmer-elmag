@@ -70,10 +70,12 @@ $ C.1.B(4,0) = 1
 ! -----------------------------------------------------------------------------
 Component 1
   Name = "Coil1"
-  Master Bodies(1) = 1
+  !Master Bodies(1) = 1
+  Master Bodies Name = Coil
   Coil Type = "Stranded"
   Number of Turns = Real $ N_Coil1
   Resistance = Real $ R_Coil1
+  
   ! Additions for 3D Coil
   Coil Use W Vector = Logical True
   W Vector Variable Name = String CoilCurrent e
