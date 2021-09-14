@@ -61,7 +61,7 @@ def main(argv=None):
 
     # Components
     I1 = I("I1", 1, 2, 2742)
-    FEM_Component1 = ElmerComponent("Coil1", 2, 1, 0, 1, [1], "Stranded", 1, "3D")
+    FEM_Component1 = ElmerComponent("Coil1", 2, 1, 0, 1, ["Coil"], "Stranded", 1, "3D")
 
     # store components in array components = [comp1, comp2,...] - do not remove
     c[1].components.append([I1, FEM_Component1])
