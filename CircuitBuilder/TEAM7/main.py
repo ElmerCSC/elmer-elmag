@@ -27,7 +27,7 @@
 #                                                         int_pin2,
 #                                                         int_series_resistor
 #                                                         int_component_number
-#                                                         int_list_master_bodies
+#                                                         int or string list_master_bodies (int bodies, string names)
 #                                                         string_coil_type
 #                                                         int_number_of_turns (optional. default=1)
 #                                                         int_coil_length (optional. default=1)
@@ -61,7 +61,7 @@ def main(argv=None):
 
     # Components
     I1 = I("I1", 1, 2, 2742)
-    FEM_Component1 = ElmerComponent("Coil1", 2, 1, 0, 1, ["Coil"], "Stranded", 1, "3D")
+    FEM_Component1 = ElmerComponent("Coil1", 2, 1, 0, 1, ["Coil", 1, 3], "Stranded", 1, "3D")
 
     # store components in array components = [comp1, comp2,...] - do not remove
     c[1].components.append([I1, FEM_Component1])

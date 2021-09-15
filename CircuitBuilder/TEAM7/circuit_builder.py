@@ -840,12 +840,28 @@ def write_sif_additions(c, source_vector, ofile):
 
             print("Component " + str(ecomp.component_number), file=elmer_file)
             print("  Name = \"" + str( ecomp.name) + "\"", file=elmer_file)
-            if( type(ecomp.master_bodies[0]) == str):
-                joined_str_master_bodies = ", ".join(ecomp.master_bodies)
-                print("  Master Bodies Name = " + str(joined_str_master_bodies), file=elmer_file)
-            else:
-              print("  Master Bodies(" + str(len(ecomp.master_bodies)) + ") = " +
-          str(ecomp.master_bodies)[1:-1], file=elmer_file)
+
+            # split integer and string list members: master bodies, and master bodies name
+            str_mbody = []
+            str_mb_count = 0
+            int_mbody = []
+            int_mb_count = 0
+            for mbody in ecomp.master_bodies:
+                if( type(mbody) == str):
+                    str_mbody.append(mbody)
+                    str_mb_count += 1
+                elif(type(mbody) == int):
+                    int_mbody.append(str(mbody))
+                    int_mb_count += 1
+
+            if(str_mbody):
+                joined_str_master_names = ", ".join(str_mbody)
+                print("  Master Bodies Name = " + str(joined_str_master_names), file=elmer_file)
+            if(int_mbody):
+                joined_str_master_bodies = ", ".join(int_mbody)
+                print("  Master Bodies(" + str(int_mb_count) + ") = " +
+                      str(joined_str_master_bodies) , file=elmer_file)
+            # ------------------------------------------------------------------------------
             print("  Coil Type = \"" + str(ecomp.coil_type) + "\"", file=elmer_file)
             if ecomp.coil_type == "Stranded":
                 print("  Number of Turns = Real $ N_" + str(ecomp.name), file=elmer_file)

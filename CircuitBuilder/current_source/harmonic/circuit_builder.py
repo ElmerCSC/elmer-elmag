@@ -327,7 +327,7 @@ def get_capacitance_matrix_str(components, nedges, indcap):
             Cmat_str[i][j] = ''
 
     for i in indcap:
-        Cmat_str[i][j] = -components[i].name
+        Cmat_str[i][j] = "-" + components[i].name
 
     return Cmat_str
 
@@ -450,25 +450,6 @@ def get_tableau_matrix(Amat, Rmat, Gmat, Lmat, Cmat, fvec, numnodes, numedges):
 def get_tableau_matrix_str(Amat_str, Rmat_str, Gmat_str, Lmat_str, Cmat_str, fvec_str, numnodes, numedges):
 
     M_kcl_str = np.block([Amat_str, np.zeros(shape=(numnodes - 1, numedges)), np.zeros(shape=(numnodes - 1, numnodes - 1))])
-
-    '''
-    Amat_str_minus_transposed = np.transpose(Amat_str.copy())
-    rows1, cols1 = Amat_str_minus_transposed.shape
-    for i in range(0, rows1):
-        for j in range(0, cols1):
-            try:
-                if Amat_str_minus_transposed[i][j].decode() == "-1" or Amat_str_minus_transposed[i][j].decode() == "-1.0":
-                    Amat_str_minus_transposed[i][j] = str(1)
-                elif Amat_str_minus_transposed[i][j].decode() == "1" or Amat_str_minus_transposed[i][j].decode() == "1.0":
-                    Amat_str_minus_transposed[i][j] = str(-1)
-            except:
-                pass
-    '''
-    #print(np.transpose(Amat_str), Amat_str_minus_transposed)
-
-    #M_kvl_str = np.block([np.zeros(shape=(numedges, numedges)), np.eye(numedges, numedges), Amat_str_minus_transposed])
-    #print(M_kvl_str)
-
     M_kvl_str = np.block([np.zeros(shape=(numedges, numedges)), -np.eye(numedges, numedges), np.transpose(Amat_str.copy())])
     M_comp_str = np.block([Rmat_str, Gmat_str, np.zeros(shape=(numedges, numnodes - 1))])
 
@@ -737,7 +718,7 @@ def write_kvl_equations(c, num_nodes, num_edges, num_variables, elmer_Amat, elme
     components = c.components[0]
     for component in components:
         if(type(component) == V or type(component) == I):
-          source_names.append(component.name)
+            source_names.append(component.name)
 
     source_sign_index = []
     for i,name in enumerate(unknown_names):
@@ -839,8 +820,30 @@ def write_sif_additions(c, source_vector, ofile):
 
             print("Component " + str(ecomp.component_number), file=elmer_file)
             print("  Name = \"" + str( ecomp.name) + "\"", file=elmer_file)
-            print("  Master Bodies(" + str(len(ecomp.master_bodies)) + ") = " + str(
-                ecomp.master_bodies)[1:-1], file=elmer_file)
+
+            # split integer and string list members: master bodies, and master bodies name
+            str_mbody = []
+            str_mb_count = 0
+            int_mbody = []
+            int_mb_count = 0
+            for mbody in ecomp.master_bodies:
+
+                if( type(mbody) == str):
+                    str_mbody.append(mbody)
+                    str_mb_count += 1
+
+                if(type(mbody) == int):
+                    int_mbody.append(str(mbody))
+                    int_mb_count += 1
+
+            if(str_mbody):
+                joined_str_master_names = ", ".join(str_mbody)
+                print("  Master Bodies Name = " + str(joined_str_master_names), file=elmer_file)
+            if(int_mbody):
+                joined_str_master_bodies = ", ".join(int_mbody)
+                print("  Master Bodies(" + str(int_mb_count) + ") = " +
+                      str(joined_str_master_bodies) , file=elmer_file)
+            # ------------------------------------------------------------------------------
             print("  Coil Type = \"" + str(ecomp.coil_type) + "\"", file=elmer_file)
             if ecomp.coil_type == "Stranded":
                 print("  Number of Turns = Real $ N_" + str(ecomp.name), file=elmer_file)
