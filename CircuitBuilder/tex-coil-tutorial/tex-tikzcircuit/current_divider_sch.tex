@@ -1,5 +1,6 @@
-% LaTeX schematics: Voltage Source
-% Description: DC Voltage Source connected to Elmer Massive Coil
+% LaTeX schematics: Voltage Divider
+% Description: DC Current Source connected in series
+% to lumped resistor and Elmer Stranded Coil
 % Author: Jonathan Velasco, CSC - IT Center for Science
 % Original date: September 2021
 % email: jonathan.velasco@csc.fi
@@ -24,23 +25,29 @@
         \begin{circuitikz}[PH/.append style={font=\scriptsize,inner ysep=2pt,inner xsep=5pt},
                            PV/.append style={PH,inner ysep=2pt,inner xsep=2pt}]
                 
-            \draw (0,4) node [PV,above left] {2} % pin number
-             
-             % Ideal DC Voltage Source
-             to[V,name=Vs,-,l_=$\mathbf{V}$,i={$\mathbf{I}$},thick] (0,0) (0,4)
-             
-             % Elmer FEM Component
-             to[generic, l^=$\mathbf{ElmerComponent}$,name=Ecomp,*-]  (4,4) 
-             
-             % Short Wires
-             to[short,-] (4,0) 
-             to[short,-] (2,0) node [ground]{} node [PV,above left] {1} (2,0) 
-             to[short,*-] (0,0) ;
+                \draw (0,0) % Begin Circuit
                 
-             % Component Values
-             \node[above, xshift=31pt, yshift=-14pt] at (Vs.n) {1V};
-             \node[below, xshift=2pt, yshift=-14pt] at (Ecomp.n) {Massive Coil};
+                % Ideal DC Current Source
+                to[I ,name=Is,-,l^=$\mathbf{I}$, v^={$$},thick] (0,4) (0,0)
                 
+                % Lumped Resistor
+                (2,4) node [PV,above left] {2} 
+                to[R ,name=R,*-,l^=$\mathbf{R}$, v^={$$},i^={$$},thick] (2,0) 
+                
+                % Elmer FEM Component
+                (4,4)
+                to[generic, l^=$\mathbf{ElmerComponent}$,v^={$$},i^={$$},name=Ecomp,-]  (4,0) 
+                
+                % Short Wires
+                to[short,-] (2,0) node [ground]{} node [PV,above left] {1} (2,0) 
+                to[short,*-] (0,0) 
+                (0,4) 
+                to[short,-] (4,4) ;
+                
+                % Component Values
+                \node[above, xshift=31pt, yshift=-14pt] at (Is.n) {1A};
+                \node[below, xshift=20pt, yshift=-6pt] at (Ecomp.n) {Resistor};
+
         \end{circuitikz}
 \end{document}
 
