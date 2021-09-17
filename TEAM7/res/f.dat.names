@@ -1,0 +1,42 @@
+Variables in file: res/f.dat
+Elmer version: 9.0
+Elmer revision: ea56b76c
+Elmer compilation date: 2021-08-18
+Solver input file: team7.sif
+File started at: 2021/09/12 20:40:04
+Number of data nodes for each step
+  bc nodes: 0
+  polyline nodes: 404
+  circle nodes: 0
+  isocurve nodes: 0
+Data on different columns
+  1: Time step
+  2: Iteration step
+  3: Boundary condition
+  4: Node index
+  5: coordinate 1
+  6: coordinate 2
+  7: coordinate 3
+  8: coilpot
+  9: coilpotb
+ 10: potselect
+ 11: coilcurrent e 1
+ 12: coilcurrent e 2
+ 13: coilcurrent e 3
+ 14: coilcurrent 1
+ 15: coilcurrent 2
+ 16: coilcurrent 3
+ 17: a {e} 1
+ 18: a {e} 2
+ 19: a {e} 3
+ 20: a nodal
+ 21: magnetic flux density e 1
+ 22: magnetic flux density e 2
+ 23: magnetic flux density e 3
+ 24: current density e 1
+ 25: current density e 2
+ 26: current density e 3
+ 27: jfix {e} 1
+ 28: jfix {e} 2
+ 29: jfix {e} 3
+ 30: jfix nodal

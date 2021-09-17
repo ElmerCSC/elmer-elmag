@@ -5,7 +5,7 @@ Geometry.AutoCoherence = 0;
 
 //Stator
 Qs = 48; // number of stator teeth
-N_ss = 12;
+N_ss = 1;
 
 //Main Stator parameters
 R_sin = 62.5;     // inner stator radius
@@ -92,7 +92,7 @@ For i In {0:N_ss-1}
         Symmetry {Cos(2*Pi*i/Qs+2*Pi/Qs/2),Sin(2*Pi*i/Qs+2*Pi/Qs/2),0,0} { Point{t}; }
       EndFor
     EndIf	
-	
+    
     dR=newl-1;
 	//vertical tooth tip line
     Line(dR+1) = {dP+1,dP+2};   
@@ -183,7 +183,7 @@ For i In {0:N_ss-1}
     dH = news; Plane Surface(news) = rev*{newll-1};
     StatorAirgapLayer_[] += dH;
 
-
+    
 
   EndFor
 EndFor
@@ -193,7 +193,7 @@ EndFor
 //----------------------------------------------------------------------------------------
 // Physical regions
 //----------------------------------------------------------------------------------------
-
+/*
 //Assigning StatorConductors to phase Regions
 //number of slots in a belt
 qq=4;
@@ -263,3 +263,4 @@ Show{ Line{show_stator[]};}
 
 
 Mesh 2;
+*/

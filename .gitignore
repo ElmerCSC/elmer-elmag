@@ -55,3 +55,7 @@ $RECYCLE.BIN/
 # paraview results
 *.vtu
 TEST.PASSED
+# LaTeX output
+*.aux
+*.log
+*.gz

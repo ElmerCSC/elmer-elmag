@@ -40,13 +40,7 @@ Body 1
 End
 
 Body Force 1
-! LUA is quite a bit faster than MATC
-!   Current Density 1 = Variable "time", "CoilCurrent e 1"
-!       Real MATC "cos(2*3.14*50*tx(0))*tx(1)"
-!   Current Density 2 = Variable "time", "CoilCurrent e 2"
-!       Real MATC "cos(2*3.14*50*tx(0))*tx(1)"
-!   Current Density 3 = Variable "time", "CoilCurrent e 3"
-!       Real MATC "cos(2*3.14*50*tx(0))*tx(1)"     
+
   Current Density 1 = Variable "time", "CoilCurrent e 1"
       Real LUA "cos(2*3.14*50*tx[0])*tx[1]"
   Current Density 2 = Variable "time", "CoilCurrent e 2"
@@ -88,6 +82,12 @@ Boundary Condition 1
   Jfix  = Real 0.0
 End
 
+Initial Condition 1
+  Name = "Initial state: magnetodynamics"
+  A {e} = real 0
+  A = real 0
+  Jfix = real 0.0
+End
 
 Solver 1
   Equation = "Coil Solver"
