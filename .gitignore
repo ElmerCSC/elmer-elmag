@@ -13,6 +13,7 @@ tags
 *.su
 *.idb
 *.pdb
+res/
 ### macOS ###
 # General
 .DS_Store
