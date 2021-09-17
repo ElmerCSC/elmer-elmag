@@ -1,0 +1,48 @@
+% LaTeX schematics: Voltage Source connected to Elmer Component
+% Author: Jonathan Velasco, CSC - IT Center for Science
+% Original date: September 2021
+% email: jonathan.velasco@csc.fi
+%------------------------------------------------------
+
+%------------------------------------------------------
+%         Document Settings
+%------------------------------------------------------
+\documentclass
+[border=3mm]{standalone}
+
+%------------------------------------------------------
+%         Packages
+%------------------------------------------------------
+
+\usepackage[siunitx,cuteinductors,americanvoltages,americancurrents]{circuitikz}  
+
+%------------------------------------------------------
+%         Main
+%------------------------------------------------------
+\begin{document}     
+        \begin{circuitikz}[PH/.append style={font=\scriptsize,inner ysep=2pt,inner xsep=5pt},
+                           PV/.append style={PH,inner ysep=2pt,inner xsep=2pt}]
+                
+            \draw (0,4) node [PV,above left] {2} % pin number
+             
+             % Ideal DC Voltage Source
+             to[V,name=Vs,-,l_=$\mathbf{V}$,i={$\mathbf{I}$},thick] (0,0) (0,4)
+             
+             % Elmer FEM Component
+             to[generic, l^=$\mathbf{ElmerComponent}$,name=Ecomp,*-]  (4,4) 
+             
+             % Short Wires
+             to[short,-] (4,0) 
+             to[short,-] (2,0) node [ground]{} node [PV,above left] {1} (2,0) 
+             to[short,*-] (0,0) ;
+                
+             % Component Values
+             \node[above, xshift=31pt, yshift=-14pt] at (Vs.n) {1V};
+             \node[below, xshift=2pt, yshift=-14pt] at (Ecomp.n) {Massive Coil};
+                
+        \end{circuitikz}
+\end{document}
+
+%------------------------------------------------------
+%         EOF
+%------------------------------------------------------

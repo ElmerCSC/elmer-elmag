@@ -60,3 +60,6 @@ TEST.PASSED
 *.aux
 *.log
 *.gz
+*.out
+*.idx
+*.toc

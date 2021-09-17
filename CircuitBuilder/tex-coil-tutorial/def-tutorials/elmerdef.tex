@@ -1,0 +1,95 @@
+\newcommand{\menu}[2]{{\it \vskip2mm #1 $\rightarrow$ #2 \vskip2mm}}
+\newcommand{\dynmenu}[3]{{\it \vskip2mm #1 $\rightarrow$ #2 $\rightarrow$ #3 \vskip2mm}}
+
+
+% Use these to make the printable area bigger
+% Also have the option 'ownsize' active in the documentclass
+\setlength{\hoffset}{-15mm}
+\setlength{\voffset}{-10mm}
+\addtolength{\textwidth}{30mm}
+\addtolength{\textheight}{20mm}
+%\addtolength{\headwidth}{30mm}
+
+
+% Command file syntax stuff
+\definecolor{SifCol}{rgb}{0.5,0.5,0.5}
+%\definecolor{SifCol}{rgb}{1,1,1}
+
+% Index for keywords
+\newcommand{\sifitem}[2]{\item[\tt{#1}]\index{#1}\hspace{1mm}{\color{SifCol}\hspace{1mm}\tt{#2}}\newline} 
+%item with two fields but no text
+\newcommand{\sifitemnt}[2]{\item[\tt{#1}]\index{#1}\hspace{1mm}{\color{SifCol}\hspace{1mm}\tt{#2}}} 
+
+
+\newcommand{\sifbegin}{\begin{description}}
+\newcommand{\sifend}{\end{description}}
+\newcommand{\modinfo}[2]{{\bf{#1}}: {#2}\newline}
+
+\newcommand{\ttbegin}{\begin{alltt}}
+\newcommand{\ttend}{\end{alltt}}
+\newcommand{\keno}{$\backslash$}
+
+
+\newcommand{\Sf}[1]{\textsf{#1}}
+\newcommand{\Bf}[1]{{\sffamily\bfseries}}
+
+\newcommand{\URL}[1]{\texttt{#1}}
+
+% Some new commands...
+\def\xwin{X Window System}
+\def\xbr{Xbrowse}
+\def\prag{\Tt{\#pragma}}
+
+\newcommand{\inxgra}[2]{{\centerline{\includegraphics[width=#1]{#2}}}}
+\newcommand{\inygra}[2]{{\centerline{\includegraphics[height=#1]{#2}}}}
+\newcommand{\incgra}[2]{{\centerline{\includegraphics[height=#1]{#2}}}}
+
+\providecommand{\ftn}{Fort\-ran~90}
+\providecommand{\Idx}[1]{{#1}\index{#1}}
+
+
+%%%%%%%%%%%%%%%% Math definitions for Elmer Solver Manuals %%%%%%%%%%%%%%%%%
+\newcommand{\Bfm}[1]{\mbox{\boldmath{${#1}$}}}
+
+\newcommand{\tensorspace}[1]{\boldsymbol{#1}}         % Sets of tensors are bold italic
+\newcommand{\tensor}[1]{\boldsymbol{#1}}              % Tensors are bold italic
+\newcommand{\point}[1]{\mathbf{#1}}                   % Points are bold upright
+\newcommand{\pointf}[1]{\mathbf{#1}}                  % Point-valued functions are bold upright
+\newcommand{\pointfm}[1]{\mbox{\boldmath{${#1}$}}}    % Point-valued functions for math symbols
+
+\DeclareMathOperator{\grad}{\mathbf{grad}}            % The spatial gradient operator
+\newcommand{\Grad}{\mbox{\boldmath{${\nabla}$}}}      % gradient with respect to the points of the reference configuration
+\DeclareMathOperator{\curl}{\mathbf{curl}}            % The spatial curl operator
+\DeclareMathOperator{\Curl}{\mathbf{Curl}}            % curl with respect to the points of the reference configuration
+\DeclareMathOperator{\rot}{\mathbf{rot}}              % rot operator defined for scalars
+\DeclareMathOperator{\divs}{\mathrm{div}}             % scalar-valued divergence
+\DeclareMathOperator{\divvec}{\mathbf{div}}           % vector-valued divergence
+\DeclareMathOperator{\Divvec}{\mathbf{Div}}           % vector-valued divergence w. r. t. the points of the reference configuration
+\newcommand{\Div}{\nabla\cdot}                        
+
+%\newcommand{\Vec}[1]{\vec{#1}}
+%\newcommand{\Vec}[1]{\mathify{\mathbf{#1}}}
+
+%\newcommand{\Matr}[1]{\mbox{${#1}$}}                  % Matrices are just italic to differentiate between true tensors and matrices
+\newcommand{\Matr}[1]{{#1}}                     % Matrices
+\newcommand{\Der}[2]{\frac{\partial{#1}}{\partial{#2}}}
+\newcommand{\Secder}[2]{\frac{\partial^2{#1}}{\partial{#2}^2}}
+\newcommand{\Inv}[1] {\frac{1}{#1}}
+
+
+% Make the headings fancier
+\pagestyle{fancy}
+
+\lhead[\normalfont\small\bf\thepage]{\normalfont\small\slshape\rightmark}
+\rhead[\small\slshape\lefthead]{\normalfont\small\bf \thepage}
+%\setlength{\headrulewidth}{0.4pt}
+%\renewcommand{\chaptermark}[1]{\markright{\bf \chaptername \ \thechapter.\ #1}{}}
+\renewcommand{\chaptermark}[1]{\markright{\bf \thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{}
+\renewcommand{\subsectionmark}[1]{}
+\cfoot{}
+
+% This sets the Elmer version in the documentation
+%\newcommand{\elmerversion}{6.0}
+
+
