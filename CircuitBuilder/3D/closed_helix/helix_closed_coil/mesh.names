@@ -1,0 +1,6 @@
+! ----- names for bodies -----
+$ Coil = 1
+$ Air = 2
+! ----- names for boundaries -----
+$ Terminal = 3
+$ Infinity_Magnetic_Insulation = 4

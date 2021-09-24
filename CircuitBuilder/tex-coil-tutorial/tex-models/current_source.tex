@@ -11,11 +11,53 @@
 
 \subsection*{Introduction}
 
-zzz This Template For Tutorials is designed to help make it easy to create a new tutorial using ElmerGUI.  Having an outline of a tutorial should allow for simpler development of new tutorials, and will help keep the look and feel of new tutorials in unison with existing tutorials.
+This tutorial addresses the implementation of a \textbf{circuit-field} coupled model, in which an \textbf{ideal current source} excites a solid conductor (i.e., massive conductor). \\
+The circuit equations are setup using the \textbf{circuit builder} library and solved using Maxwell's magnetodynamics $\vec a-v $ formulation with \textbf{ElmerSolver}. 
+\\
+The model is setup as a transient simulation (CircuitsAndDynamics and MagnetoDynamics2D) and in frequency domain (CircuitsAndDynamicsHarmonic and CircuitsAndDynamicsHarmonic), pointing out the differences when pre-processing  Elmer's input file (.sif).
 
-zzz Anywhere you see `zzz', it means that section needs to be replaced.  Any text that begins with `zzz', should be deleted and replaced by the appropriate text for your tutorial.  
 
-zzz Think of `zzz' as a spot where you should `fill in the blanks'.
+Let the conducting region
+$$
+\Omega_{c} = \bigcup_{i,ckt} \Omega_{c_i}^{ckt}
+$$ 
+be the union of the $i$ conductors associated to circuit $ckt$,
+and $\Omega_{c}^C$ be the complementary non-conduction regions.
+The computation domain is thus
+$\Omega = \Omega_{c}^C \cup \Omega_{c}$.
+The conductors $\Omega_{c_i}$ are supplied
+with a DC current source $I_{s_{i}} =1A$.
+
+In this tutorial the field problem is solved in current-driven solid (massive) round conductor surrounded by air as shown in Fig. \ref{fg:dc_current_source_mesh}.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.5\textwidth]{current_source_sch_mesh.pdf}
+\caption{Single DC current source connected to FEM Round Wire }\label{fg:dc_current_source_mesh}
+\end{figure}  
+
+To find model in our Github repository click on \href{https://github.com/ElmerCSC/elmer-elmag/tree/main/CircuitBuilder/current_source}{\textcolor{blue}{\textbf{Current Source}}}
+
+\subsection*{Tutorial Goals}
+
+After completing this tutorial the user will be able to:
+\begin{itemize}
+  \item Setup an ideal current source using the Circuit Builder, and understand the methodology behind setting up circuit equations.
+  \item Understand what a Massive coil is.
+  \item Run 2D  coil models in Transient and Frequency Domain.
+  \item Post-process local and global quantities
+  
+\end{itemize}
+
+
+
+
+
+%\subsection*{ElmerGUI Equation Menu}
+\subsection*{Circuit Builder:  Ideal current source connected to 2D massive conductor}
+
+The circuit schematics is shown in figure\ref{fg:dc_current_source}.
+
 
 \begin{figure}[H]
 \centering
@@ -23,28 +65,57 @@ zzz Think of `zzz' as a spot where you should `fill in the blanks'.
 \caption{DC current source connected to FEM Component Schematics}\label{fg:dc_current_source}
 \end{figure}  
 
-\subsection*{Case definition}
 
 
-zzz Enter your case definition here.
+To define the source circuit we use the \textbf{Circuit Builder} , which follows the nodal circuit analysis approach to build the circuit equations of the type
 
-The geometry for this tutorial looks like as shown in figure \ref{fg:geometry}.
+\begin{equation}
+  Bx = f
+\end{equation}
 
-zzz Enter your geometry figure here.
+where, B is the stiffness matrix of the system containing the Kirchhoff laws and component voltage and current information, and  f is the source term.
 
-\begin{figure}[H]
+Following the schematics in \ref{fg:dc_current_source} we apply the following steps in the Circuit Builder
+
+\begin{itemize}
+  \item Enter file output name with .definition extension. This file includes all the circuit information needed by Elmer's input file (.sif)
+  \begin{figure}[H]
 \centering
-\includegraphics[width=0.8\textwidth]{geometry.png}
-\caption{Geometry}\label{fg:geometry}
+\includegraphics[width=0.7\textwidth]{T1_file.png}
+%\caption{DC current source connected to FEM Component Schematics}%\label{fg:dc_current_source}
+\end{figure}  
+    \item Enter number of circuits in definition
+      \begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{T1_nckts.png}
+%\caption{DC current source connected to FEM Component Schematics}%\label{fg:dc_current_source}
+\end{figure}  
+    \item Enter the reference node number belonging to the given circuit  
+      \begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{T1_refnode.png}
+%\caption{DC current source connected to FEM Component Schematics}%\label{fg:dc_current_source}
+\end{figure}  
+    \item Setup circuit components and populate given circuit with them
+      \begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{T1_components.png}
+%\caption{DC current source connected to FEM Component Schematics}%\label{fg:dc_current_source}
 \end{figure}  
 
-\subsection*{ElmerGUI Equation Menu}
+      \begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{T1_build_ckt.png}
+%\caption{DC current source connected to FEM Component Schematics}%\label{fg:dc_current_source}
+\end{figure}  
 
-zzz Note that we include both edf and edf-extra examples.  If you don't need the edf-extra example, the first section can be deleted.  It is suggested to keep the edf example, to show where the edf file comes from.
+\end{itemize}
 
-zzz The GUI definitions of zzz solver utilized in this tutorial are located in the \texttt{edf-extra} folder and thus need to be manually activated in the ElmerGUI.\\
 
-zzz Note that the extra definition needs to be loaded first, before any other steps in building any tutorial.  Once the extra definition has been loaded, and the ElmerGUI project has been saved, then the reference to the extra definition will be stored in the project, and you won't have to load the extra definition again.
+
+\subsection*{Pre-processing with ElmerGUI}
+
+
 
 \begin{verbatim}
 File
@@ -79,13 +150,7 @@ File
   Open -> zzz
 \ttend
 
-You should obtain your mesh and may check \texttt{Model Summary...} that it consists of zzz elements.  Your mesh should look like as shown in figure \ref{fg:mesh}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{mesh}
-\caption{Mesh}\label{fg:mesh}
-\end{figure}
 
 After we have the mesh we start to go through the Model menu from the top to bottom.  In the Setup we choose things related to the whole simulation such as file names, time stepping, constants etc.  
 
@@ -255,13 +320,7 @@ Due to the number of the time steps the simulation may take around zzz minutes.\
 
 You may inspect the results with Paraview or with ElmerVTK.\\
 
-zzz In Figure \ref{fg:temp} the obtained temperature distribution is presented. 
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.8\textwidth]{temp}
-\caption{zzz Temperature distribution at 260 s.}\label{fg:temp}
-\end{figure} 
 
 \subsection*{zzz Extra task:}
 

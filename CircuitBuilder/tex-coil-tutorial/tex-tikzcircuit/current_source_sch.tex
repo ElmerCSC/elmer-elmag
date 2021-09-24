@@ -27,11 +27,11 @@
                 \draw (0,0) % Begin Circuit
                 
                 % Ideal DC Voltage Source
-                to[I ,name=Is,-,l^=$\mathbf{I}$, v^={$$},thick] (0,4) (0,0)
+                to[I ,name=Is,-,l^=$\mathbf{I^{ckt}}$, v^={$$},thick] (0,4) (0,0)
                 
                 % Elmer FEM Component
                 (0,4) node [PV,above left] {2} 
-                to[generic, l^=$\mathbf{ElmerComponent}$,name=Ecomp,*-]  (4,4) 
+                to[generic, l^=$\mathbf{ElmerComponent^{ckt}}$,name=Ecomp,*-]  (4,4) 
                 
                 % Short Wires
                 to[short,-] (4,0) 
@@ -41,6 +41,7 @@
                 % Component Values
                 \node[above, xshift=31pt, yshift=-14pt] at (Is.n) {1A};
                 \node[below, xshift=2pt, yshift=-14pt] at (Ecomp.n) {Massive Coil};
+                \node at (2.8,-0.5) {ref$^{ckt}$};
 
         \end{circuitikz}
 \end{document}
