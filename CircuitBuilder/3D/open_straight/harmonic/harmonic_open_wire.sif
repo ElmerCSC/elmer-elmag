@@ -22,8 +22,8 @@ $ omega = 2*pi*freq
 !Include Directories (Parameters and Circuit Sources)
 !Toggle between current and voltage sources by (un)commenting
 !---------------------------------------------------------
-Include "harmonic_open_wire_current.definition"
-!Include "harmonic_open_wire_voltage.definition"
+!Include "harmonic_open_wire_current.definition"
+Include "harmonic_open_wire_voltage.definition"
 
 !---------------------------------------------------------
 !SIMULATION CONFIGURATION 
@@ -136,7 +136,7 @@ Solver 3  !---- MagnetoDynamics, WhitneyAVHarmonicSolver
    Linear System Symmetric = Logical True
    Linear System Complex = Logical False
    Linear System Solver = Iterative
-   Linear System Iterative Method = BicgstabL
+   Linear System Iterative Method = GCR
    Linear System preconditioning = Circuit
    Linear System Convergence Tolerance = 1.e-7
    Linear System Max Iterations = 3000
