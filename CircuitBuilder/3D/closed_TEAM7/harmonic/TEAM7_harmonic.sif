@@ -153,7 +153,7 @@ End
 Solver 3  !---- MagnetoDynamics, WhitneyAVSolver
    !Exec Solver = Never
    Equation = "MGDynamics"
-   Variable = "A"
+   Variable = "A[A re:1 A im:1]"
    Procedure = "MagnetoDynamics" "WhitneyAVHarmonicSolver"
    NonLinear System Relaxation Factor=1
    Export Lagrange Multiplier = Logical True
