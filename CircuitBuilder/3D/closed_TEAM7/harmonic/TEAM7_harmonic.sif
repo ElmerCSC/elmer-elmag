@@ -1,8 +1,9 @@
 ! Testing Electromagnetic Analysis Methods (TEAM)
 ! Problem 7: Asymmetrical Conductor with a Hole
+! Harmonic Simulation at 50 Hz
 ! This model uses the Circuit Builder to set up the coil
 ! Author: Jonathan Velasco
-! Original date: September 2021
+! Original date: October 2021
 ! jonathan.velasco@csc.fi
 !------------------------------------------------------
 
