@@ -1,0 +1,7 @@
+! ----- names for bodies -----
+$ Wire = 77
+$ Air = 78
+! ----- names for boundaries -----
+$ Infinity_Magnetic_Insulation = 79
+$ Terminal_1 = 80
+$ Terminal_2 = 81
