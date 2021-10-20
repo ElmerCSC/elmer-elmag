@@ -1,0 +1,22 @@
+Elmer version: 9.0
+Elmer revision: 79ffe793
+Elmer compilation date: 2021-10-18
+Solver input file: sif/6479.sif
+File started at: 2021/10/20 13:39:42
+ 
+Variables in columns of matrix: 6479/dat/6479.dat
+   1: res: eddy current power
+   2: res: electromagnetic field energy
+   3: res: harmonic loss linear
+   4: res: harmonic loss quadratic
+   5: res: joule loss
+   6: res: time
+   7: res: i_vs
+   8: res: i_component(1)
+   9: res: v_vs
+  10: res: v_component(1)
+  11: res: v_component(1)dof  1
+  12: res: v_component(1)dof  2
+  13: res: u_2_circuit_1
+  14: res: r_component(1)
+  15: res: p_dc_component(1)
