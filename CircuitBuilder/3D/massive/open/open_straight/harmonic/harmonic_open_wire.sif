@@ -23,8 +23,8 @@ $ omega = 2*pi*freq
 !Toggle between current and voltage sources by (un)commenting
 !---------------------------------------------------------
 !Include "harmonic_open_wire_current.definition"
-Include "harmonic_open_wire_voltage.definition"
-
+!Include "harmonic_open_wire_voltage.definition"
+Include "harmonic_open3Dmassive_circuit.definition"
 !---------------------------------------------------------
 !SIMULATION CONFIGURATION 
 !---------------------------------------------------------
