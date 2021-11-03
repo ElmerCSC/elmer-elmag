@@ -29,7 +29,8 @@ $ stepsize=(periods/freq)/nsteps
 !Toggle between current and voltage sources by (un)commenting
 !---------------------------------------------------------
 !Include "open_wire_current.definition"
-Include "open_wire_voltage.definition"
+!Include "open_wire_voltage.definition"
+Include "transient_open3Dmassive_circuit.definition"
 
 !---------------------------------------------------------
 !SIMULATION CONFIGURATION 
