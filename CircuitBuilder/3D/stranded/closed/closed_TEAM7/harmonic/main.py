@@ -29,7 +29,7 @@ from elmer_circuitbuilder import *
 def main(argv=None):
 
     # name output file
-    output_file = "transient_TEAM7_circuit.definition"
+    output_file = "harmonic_TEAM7_circuit.definition"
 
     # initialize circuits: number of circuits - do not remove
     c = number_of_circuits(1)
@@ -41,7 +41,7 @@ def main(argv=None):
     c[1].ref_node = 1
 
     # Components
-    I1 = I("I1", 1, 2, 2742)
+    Is = I("Is", 1, 2, 2742+1j*0)
     FEM_Component1 = ElmerComponent("Coil1", 2, 1, 1, ["Coil"])
 
     # Define coil parameters in 3D
@@ -50,7 +50,7 @@ def main(argv=None):
     FEM_Component1.isClosed()
 
     # store components in array components = [comp1, comp2,...] - do not remove
-    c[1].components.append([I1, FEM_Component1])
+    c[1].components.append([Is, FEM_Component1])
 
     # --------------------------------------------------
 

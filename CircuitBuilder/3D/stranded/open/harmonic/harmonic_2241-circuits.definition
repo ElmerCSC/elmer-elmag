@@ -12,13 +12,16 @@ $ Circuits = 1
 ! -----------------------------------------------------------------------------
 
 ! General Parameters 
-$ I1 = 2742
+! Is = re_Is+ j im_Is, phase_Is = 0.0(Deg)
+$ re_Is = 1.0
+$ im_Is = 0.0
+$ phase_Is = 0.0
 
-! Parameters in Component 1: Coil1
-$ N_Coil1 = 1	 ! Number of Turns
-$ R_Coil1 = 0	 ! Coil Resistance
-$ Ns_Coil1 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
-$ Ae_Coil1 = 0.0025 	 ! Electrode Area (dummy for now change as required)
+! Parameters in Component 1: wp1
+$ N_wp1 = 144	 ! Number of Turns
+$ R_wp1 = 0	 ! Coil Resistance
+$ Ns_wp1 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+$ Ae_wp1 = 0.0025 	 ! Electrode Area (dummy for now change as required)
 
 ! -----------------------------------------------------------------------------
 ! Matrix Size Declaration and Matrix Initialization
@@ -31,16 +34,16 @@ $ C.1.B = zeros(C.1.variables,C.1.variables)
 ! -----------------------------------------------------------------------------
 ! Dof/Unknown Vector Definition
 ! -----------------------------------------------------------------------------
-$ C.1.name.1 = "i_I1"
+$ C.1.name.1 = "i_Is"
 $ C.1.name.2 = "i_component(1)"
-$ C.1.name.3 = "v_I1"
+$ C.1.name.3 = "v_Is"
 $ C.1.name.4 = "v_component(1)"
 $ C.1.name.5 = "u_2_circuit_1"
 
 ! -----------------------------------------------------------------------------
 ! Source Vector Definition
 ! -----------------------------------------------------------------------------
-$ C.1.source.5 = "I1_Source"
+$ C.1.source.5 = "Is_Source"
 
 ! -----------------------------------------------------------------------------
 ! KCL Equations
@@ -66,16 +69,15 @@ $ C.1.B(4,0) = 1
 ! Additions in SIF file
 ! -----------------------------------------------------------------------------
 Component 1
-  Name = "Coil1"
-  Master Bodies Name = Coil
+  Name = "wp1"
+  Master Bodies(1) = 4
   Coil Type = "Stranded"
-  Number of Turns = Real $ N_Coil1
-  Resistance = Real $ R_Coil1
+  Number of Turns = Real $ N_wp1
+  Resistance = Real $ R_wp1
  
   ! Additions for 3D Coil
-  Coil Use W Vector = Logical True
-  W Vector Variable Name = String CoilCurrent e
-  Electrode Area = Real $ Ae_Coil1
+  Electrode Boundaries(2) = Integer 4 5
+  Circuit Equation Voltage Factor = Real 0.5 !(use for symmetry, e.g. half of the coil)
 End 
 
 ! -----------------------------------------------------------------------------
@@ -83,8 +85,8 @@ End
 ! -----------------------------------------------------------------------------
 
 Body Force 1
-  I1_Source = Variable "time" 
-  	 Real MATC "I1*sin(omega*tx)"
+  Is_Source re = Real $ re_Is*cos(phase_Is)
+  Is_Source im = Real $ im_Is*sin(phase_Is)
 End
 
 ! -----------------------------------------------------------------------------
