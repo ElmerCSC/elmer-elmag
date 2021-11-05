@@ -1,0 +1,1 @@
+![Stranded Open Coil](2241.png)
