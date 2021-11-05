@@ -18,7 +18,7 @@ INCLUDE 6480/mesh.names
 $ freq = 50
 $ omega = 2*pi*freq
 $ phase = 0
-$ stepsPerPeriod = 16
+$ stepsPerPeriod = 64
 $ periods = 1
 $ nsteps = periods*stepsPerPeriod
 $ stepsize=(periods/freq)/nsteps
