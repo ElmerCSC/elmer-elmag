@@ -30,4 +30,4 @@ Instructions: \
 
 The CircuitBuilder builds the stiffness and damping matrices coupled to your FEM coil model of choice: massive, stranded, and foil in 2D and 3D.
 
-![3D Stranded Closed Coil](TEAM7_current_source.pdf)
+![3D Stranded Closed Coil](TEAM7_current_source.png)
