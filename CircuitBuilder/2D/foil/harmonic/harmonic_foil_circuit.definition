@@ -1,5 +1,5 @@
 ! -----------------------------------------------------------------------------
-! ElmerFEM Circuit Generated: November 01, 2021
+! ElmerFEM Circuit Generated: November 09, 2021
 ! -----------------------------------------------------------------------------
 
 ! -----------------------------------------------------------------------------
@@ -18,18 +18,14 @@ $ im_V1 = 0.0
 $ phase_V1 = 0.0
 
 ! Parameters in Component 1: T1
-$ N_T1 = 100	 ! Number of Turns
-$ L_T1 = 1	 ! Coil Thickness
+$ N_T1 = 1000	 ! Number of Turns
+$ L_T1 = 0.05	 ! Coil Thickness
 $ Ns_T1 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
-! Parameters in Component 2: T2
-$ N_T2 = 100	 ! Number of Turns
-$ L_T2 = 1	 ! Coil Thickness
-$ Ns_T2 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
 
 ! -----------------------------------------------------------------------------
 ! Matrix Size Declaration and Matrix Initialization
 ! -----------------------------------------------------------------------------
-$ C.1.variables = 8
+$ C.1.variables = 5
 $ C.1.perm = zeros(C.1.variables)
 $ C.1.A = zeros(C.1.variables,C.1.variables)
 $ C.1.B = zeros(C.1.variables,C.1.variables)
@@ -39,41 +35,33 @@ $ C.1.B = zeros(C.1.variables,C.1.variables)
 ! -----------------------------------------------------------------------------
 $ C.1.name.1 = "i_V1"
 $ C.1.name.2 = "i_component(1)"
-$ C.1.name.3 = "i_component(2)"
-$ C.1.name.4 = "v_V1"
-$ C.1.name.5 = "v_component(1)"
-$ C.1.name.6 = "v_component(2)"
-$ C.1.name.7 = "u_1_circuit_1"
-$ C.1.name.8 = "u_3_circuit_1"
+$ C.1.name.3 = "v_V1"
+$ C.1.name.4 = "v_component(1)"
+$ C.1.name.5 = "u_1_circuit_1"
 
 ! -----------------------------------------------------------------------------
 ! Source Vector Definition
 ! -----------------------------------------------------------------------------
-$ C.1.source.8 = "V1_Source"
+$ C.1.source.5 = "V1_Source"
 
 ! -----------------------------------------------------------------------------
 ! KCL Equations
 ! -----------------------------------------------------------------------------
 $ C.1.B(0,0) = 1
-$ C.1.B(0,1) = 1
-$ C.1.B(1,0) = -1
-$ C.1.B(1,2) = 1
+$ C.1.B(0,1) = -1
 
 ! -----------------------------------------------------------------------------
 ! KVL Equations
 ! -----------------------------------------------------------------------------
-$ C.1.B(2,3) = 1
-$ C.1.B(2,6) = 1
-$ C.1.B(2,7) = -1
-$ C.1.B(3,4) = -1
-$ C.1.B(3,6) = 1
+$ C.1.B(1,2) = 1
+$ C.1.B(1,4) = 1
+$ C.1.B(2,3) = -1
+$ C.1.B(2,4) = -1
 
 ! -----------------------------------------------------------------------------
 ! Component Equations
 ! -----------------------------------------------------------------------------
-$ C.1.B(6,5) = -1
-$ C.1.B(6,7) = 1
-$ C.1.B(7,3) = 1
+$ C.1.B(4,2) = 1
 
 
 ! -----------------------------------------------------------------------------
@@ -81,20 +69,11 @@ $ C.1.B(7,3) = 1
 ! -----------------------------------------------------------------------------
 Component 1
   Name = "T1"
-  Master Bodies(1) = 1
-  Coil Type = "Foil Winding"
+  Master Bodies(1) = 3
+  Coil Type = "Foil winding"
   Number of Turns = Real $ N_T1
   Coil Thickness = Real $ L_T1
   Symmetry Coefficient = Real $ 1/(Ns_T1)
-End 
-
-Component 2
-  Name = "T2"
-  Master Bodies(1) = 2
-  Coil Type = "Foil Winding"
-  Number of Turns = Real $ N_T2
-  Coil Thickness = Real $ L_T2
-  Symmetry Coefficient = Real $ 1/(Ns_T2)
 End 
 
 ! -----------------------------------------------------------------------------
