@@ -1,0 +1,1 @@
+![Stranded Closed Coil](TEAM7.png)
