@@ -1,0 +1,1 @@
+![Stranded Open Coil](stranded3D_open.png)
