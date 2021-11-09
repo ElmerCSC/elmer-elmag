@@ -13,7 +13,8 @@ After importing all the functions within the library into a fresh Python file, y
 using a common two-terminal component approach. Where each component has two nodes that are connected to their
 "high" and "low" potentials. 
 
-The steps are simple: \
+The steps are simple. The idea is that following the main.py template on the examples in this directory you'd be able to create
+your own circuit to model coils with ElmerFEM. The steps are summarized below.
 
 Instructions: \
                1) Import the circuit builder library (from elmer_circuitbuilder import *) \
