@@ -42,16 +42,16 @@ def main(argv=None):
     c[1].ref_node = 2
 
     # Components
-    V1 = V("V1", 1, 3, 1)
+    V1 = V("V1", 1, 2, 1)
 
-    Terminal_1 = ElmerComponent("T1", 1, 2, 1, [1])
-    Terminal_1.foil(100, 1)
+    Terminal_1 = ElmerComponent("T1", 2, 1, 1, [3])
+    Terminal_1.foil(1000, 0.05)
 
-    Terminal_2 = ElmerComponent("T2", 3, 2, 2, [2])
-    Terminal_2.foil(100, 1)
+    #Terminal_2 = ElmerComponent("T2", 3, 2, 2, [2])
+    #Terminal_2.foil(100, 1)
 
     # store components in array components = [comp1, comp2,...] - do not remove
-    c[1].components.append([V1, Terminal_1, Terminal_2])
+    c[1].components.append([V1, Terminal_1])
 
     # --------------------------------------------------
 
