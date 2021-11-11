@@ -1,3 +1,5 @@
 # Current Source
 
-<img src=current_source_sch.png width="500" height="500">
+<p align="center">
+  <img src=current_source_sch.png width="400" height="400">
+</p>
