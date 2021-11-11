@@ -13,6 +13,8 @@ Global sources (e.g., Ideal Voltage and Current Sources) can be added using elec
 
 
 ## References
+For information about massive, stranded and foil coil types
+
 @article{dular2002spatially,
   title={Spatially dependent global quantities associated with 2-D and 3-D magnetic vector potential formulations for foil winding modeling},
   author={Dular, Patrick and Geuzaine, Christophe},
@@ -23,6 +25,8 @@ Global sources (e.g., Ideal Voltage and Current Sources) can be added using elec
   year={2002},
   publisher={IEEE}
 }
+
+More references can be found on page 128 of Elmer's Documentation: [Elmer Documentation](http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf)
 
 
 # How to Download the CircuitBuilder
