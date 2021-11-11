@@ -1,12 +1,24 @@
 # What is the CircuitBuilder?
-The Elmer CircuitBuilder is a Python library with components such as ideal sources(V,I), resistors(R), capacitors (C), and inductors (L) to streamline the creation of circuit networks and enable circuit-field simulations. 
+The Elmer CircuitBuilder is a Python library with components such as ideal sources(V,I), resistors(R), capacitors (C), and inductors (L) 
+to streamline the creation of circuit networks and enable circuit-field simulations by building the stiffness and damping matrices needed.
+The available Finite Element coil models in Elmer's component block are: massive, stranded and foil, in 2D and 3D. \
+
 In this directory you'll find basic examples on how to model coils in Magnetodynamics applications using ElmerFem. 
 Global sources (e.g., Ideal Voltage and Current Sources) can be added using electrical networks with the help of elmer_circuitbuilder.py. 
 
+![3D Stranded Closed Coil](TEAM7_current_source.png)
+
+# Coil Models: Massive, Stranded, and Foil
+
+
+
 
 # How to Download the CircuitBuilder
-To use and take advantage of the models in this directory, please download Elmer CircuitBuilder: 
+To use and take advantage of the models in this directory, please download Elmer CircuitBuilder: \
+
+```
 $ pip install elmer-circuitbuilder
+```
 
 # How does Elmer CircuitBuilder work?
 After importing all the functions within the library into a fresh Python file, you can develop a circuit network 
@@ -29,6 +41,4 @@ Instructions: \
                7) Write circuits generate_elmer_circuits(c, output_file) \
                8) Output file must be included in .sif file 
 
-The CircuitBuilder builds the stiffness and damping matrices coupled to your FEM coil model of choice: massive, stranded, and foil in 2D and 3D.
 
-![3D Stranded Closed Coil](TEAM7_current_source.png)
