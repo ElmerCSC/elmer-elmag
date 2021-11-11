@@ -1,3 +1,3 @@
 # Current Source
 
-<img src=current_source_sch.pdf width="1000" height="1000">
+<img src=current_source_sch.png width="500" height="500">
