@@ -1,8 +1,7 @@
 ! Helix Coil
 ! This model uses the Circuit Builder to set up a massive closed 3D coil
-! driven by sinusoidal sources 
 ! Author: Jonathan Velasco
-! Original date: October 2021
+! Original date: September 2021
 ! jonathan.velasco@csc.fi
 !------------------------------------------------------
 
@@ -12,6 +11,7 @@ Header
   Results Directory "res"
 End
 
+
 !---------------------------------------------------------
 !Parameters
 !---------------------------------------------------------
@@ -19,8 +19,8 @@ End
 $ freq = 50
 $ omega = 2*pi*freq
 $ phase = 0
-$ stepsPerPeriod = 10
-$ periods = 1
+$ stepsPerPeriod = 8
+$ periods = 2
 $ nsteps = periods*stepsPerPeriod
 $ stepsize=(periods/freq)/nsteps
 
@@ -30,17 +30,20 @@ $ stepsize=(periods/freq)/nsteps
 !---------------------------------------------------------
 
 Simulation
-  Max Output Level = 7
+  Max Output Level = 22
   Coordinate System = "Cartesian"
   Simulation Type = "Transient"
+
   !-----------Transient Simulation Parameters ------------
   TimeStepping Method = BDF
   BDF Order = 1
+
   Timestep Sizes(1) = Real $stepsize
   TimeStep Intervals(1) = $nsteps
   !-------------------------------
   Output Intervals(1) = 1
   Steady State Max Iterations = 1
+
   Use Mesh Names = True
 End
 !---------------------------------------------------------
@@ -48,16 +51,15 @@ End
 
 !---------------------------------------------------------
 !Include Directories (Parameters and Circuit Sources)
-!Toggle between current and voltage sources by (un)commenting
 !---------------------------------------------------------
-!Include "massive_sinusoidal_current.definition"
-Include "massive_sinusoidal_voltage.definition"
+Include "massive_helix_coil_circuit.definition"
 
 
 Constants
   Permittivity of Vacuum = 8.8542e-12
   Permeability of Vacuum = 1.256e-6
 End
+
 
 Body 1
   Name = "Coil"
@@ -71,11 +73,27 @@ Initial Condition 1
   W = Real 1
 End
 
+
 Body 2
   Name = "Air"
   Equation = 2
   Material = 2
 End
+
+
+!Body Force 1
+!  mult = variable time
+!   real matc "1e9*sin(omega*tx)"
+!
+! Current Density 1 = Variable time,CoilCurrent e 1
+!   Real MATC "1e9*sin(omega*tx(0))*tx(1)"
+!!
+! Current Density 2 = Variable time,CoilCurrent e 2
+!   Real MATC "1e9*sin(omega*tx(0))*tx(1)"
+!
+! Current Density 3 = Variable time,CoilCurrent e 3
+!   Real MATC "1e9*sin(omega*tx(0))*tx(1)"
+!End
 
 
 !---------------------------------------------------------
@@ -84,6 +102,7 @@ End
 
 Material 1
   Name = "Copper"
+
   Electric Conductivity = 58e6
   Relative Permittivity = 1.0
   Relative Permeability = 1.0
@@ -93,6 +112,7 @@ End
 
 Material 2
   Name = "Air"
+
   Electric Conductivity = 0.0
   Relative Permittivity = 1.0
   Relative Permeability = 1.0
@@ -108,16 +128,22 @@ Boundary Condition 1
   Jfix  = Real 0.0
 End
 
+Boundary Condition 2
+  Name = "Terminal"
+! A = real 0
+End
+
 !---------------------------------------------------------
 ! Solver Configuration
 !---------------------------------------------------------
 Equation 1
   Name = "MagnetoDynamics for coil"
-  Active Solvers(7) = 1 2 3 4 5 6 7
+  Active Solvers(5) = 1 2 3 4 5
 End
+
 Equation 2
   Name = "MagnetoDynamics for air"
-  Active Solvers(5) = 3 4 5 6 7
+  Active Solvers(2) = 3 4
 End
 
 
@@ -128,28 +154,33 @@ Solver 1  !---- CoilSolver, CoilSolver
 
   Exported Variable 1 = W
   
-  Steady State Convergence Tolerance = 1e-8
-  Linear System Solver = "direct"
-  Linear System Direct Method = MUMPS
-  Linear System Preconditioning = ILU1
-  Linear System Max Iterations = 500
-  Linear System Convergence Tolerance = 1e-8
-  Linear System Iterative Method = GCR
-  Linear System Residual Output = 1
-  !Normalize Coil Current = Logical True
-  !Fix Input Current Density = Logical True
-  !Nonlinear System Consistent Norm = Logical True
-  !Coil Closed = Logical True
-  !Narrow Interface = Logical True
-  !Save Coil Set = Logical True
-  !Save Coil Index = Logical True
-  !Calculate Elemental Fields = Logical True
-  !Single Coil Cut = Logical True
+  Linear System Solver = "Iterative"
+  Linear System Direct Method = Umfpack
 
+  Linear System Preconditioning = ILU
+  Linear System Max Iterations = 2000
+  Linear System Residual Output = 1
+  Linear System Iterative Method = BiCGStabL
+  Linear System Convergence Tolerance = 1e-9
+
+  Steady State Convergence Tolerance = 1e-9
+
+  Fix Input Current Density = Logical true
+  Coil Closed = Logical True
+  Normalize Coil Current = Logical True
+  Nonlinear System Consistent Norm = Logical True
+
+  Narrow Interface = Logical True
+  Save Coil Set = Logical True
+  Save Coil Index = Logical True
+  Calculate Elemental Fields = Logical True
+
+  Single Coil Cut = Logical True
 End
 
+
 Solver 2  !---- CircuitsAndDynamics, CircuitsAndDynamics
-   !Exec Solver = Never
+!  Exec Solver = Never
    Equation = Circuits
    Variable = X
    No Matrix = Logical True
@@ -157,51 +188,63 @@ Solver 2  !---- CircuitsAndDynamics, CircuitsAndDynamics
 End
 
 Solver 3  !---- MagnetoDynamics, WhitneyAVSolver
-   !Exec Solver = Never
+!  Exec Solver = Never
    Equation = "MGDynamics"
    Variable = "A"
    Procedure = "MagnetoDynamics" "WhitneyAVSolver"
    NonLinear System Relaxation Factor=1
+
+   Edge Basis = True
+   Linear System ILU Order = 0
+
+!  Linear System Symmetric = True
+!  Fix Input Current Density = True
+!  Jfix: Linear System Solver = direct
+!  Jfix: Linear System Direct Method = MUMPS
+
    Export Lagrange Multiplier = Logical True
+
+   Linear System Iterative Method = BiCGstabL
+   Linear System Preconditioning = Circuit
+   Linear System Max Iterations = 6000
    Linear System Solver = Iterative
-   Linear System Iterative Method = GCR
-   Linear System GCR Restart = 200
-   Linear System preconditioning = Circuit
-   Linear System Convergence Tolerance = 1.e-5
-   Linear System Max Iterations = 10000
-   Linear System Residual Output = 10
-   Linear System ILUT Tolerance=1e-5
-   BicgstabL polynomial degree = 6
-   Steady State Convergence Tolerance = 1e-5
+   Linear System GCR Restart = 100
+   Linear System Residual Output = 1
+   BiCGstabL Polynomial Degree = 6
+   Linear System Convergence Tolerance = 1.e-6
+
+   Steady State Convergence Tolerance = 1e-3
 End
 
+
 Solver 4  !---- MagnetoAndDynamics, MagnetoDynamicsCalcFields
-  Exec Solver = Always
-  !Exec Solver = Never
+! Exec Solver = Never
   Equation = MGDynamicsCalc
   Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
   
   Potential Variable = String "A"
   Steady State Convergence Tolerance = 1.0e-6
   
-  Linear System Solver = Iterative
-  Linear System Symmetric = True
+  Linear System Convergence Tolerance = 1.0e-6
   Linear System Iterative Method = CG
   Linear System Max Iterations = 5000
-  Linear System Convergence Tolerance = 1.0e-6
-  Linear System Preconditioning = ILU0
-  Linear System ILUT Tolerance = 1.0e-3
-  Linear System Abort Not Converged = False
+  Linear System Solver = Iterative
+  Linear System Symmetric = True
   Linear System Residual Output = 1
+  Linear System Preconditioning = ILU0
   Linear System Precondition Recompute = 1
+  Linear System Abort Not Converged = False
+
   Discontinuous Bodies = Logical True
   
+  Calculate Nodal Fields = Logical True
   Calculate Elemental Fields = Logical True
 End
 
+
 Solver 5  !---- CircuitsAndDynamics, CircuitsOutput
    Exec Solver = After timestep
-   !Exec Solver = Never
+!  Exec Solver = Never
    Equation = Circuits Output
    Procedure = "CircuitsAndDynamics" "CircuitsOutput"
 End
@@ -211,16 +254,10 @@ Solver 6  !---- ResultOuputSolve, ResultOuputSolver
    Equation = "ResultOutput"
    Procedure = "ResultOutputSolve" "ResultOutputSolver"
    Vtu Format = Logical True
-   Output Format = Gmsh
+   Output Format =  Elmerpost
    Binary Output = Logical True
    Discontinuous Bodies = Logical True
    Output File Name = File "coil"
    Save Geometry Ids = Logical True 
-End
-
-Solver 7
-   Exec Solver = After Timestep
-   Procedure = "SaveData" "SaveScalars"
-   Filename = f1.dat
 End
 
