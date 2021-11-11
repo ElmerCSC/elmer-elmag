@@ -1,3 +1,3 @@
 # Current Source
 
-![Current Source](current_source_sch.png)
+<img src=current_source_sch.png width="100" height="100">
