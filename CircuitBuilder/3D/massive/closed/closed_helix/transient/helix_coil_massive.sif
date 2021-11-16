@@ -194,7 +194,7 @@ Solver 2  !---- CircuitsAndDynamics, CircuitsAndDynamics
 End
 
 Solver 3  !---- MagnetoDynamics, WhitneyAVSolver
-  Exec Solver = Never
+  !Exec Solver = Never
    Equation = "MGDynamics"
    Variable = "A"
    Procedure = "MagnetoDynamics" "WhitneyAVSolver"
@@ -245,13 +245,13 @@ Solver 4  !---- MagnetoAndDynamics, MagnetoDynamicsCalcFields
   
   Calculate Nodal Fields = Logical True
   Calculate Elemental Fields = Logical True
-  Exec Solver = never
+  !Exec Solver = never
 End
 
 
 Solver 5  !---- CircuitsAndDynamics, CircuitsOutput
    Exec Solver = After timestep
-  Exec Solver = Never
+  !Exec Solver = Never
    Equation = Circuits Output
    Procedure = "CircuitsAndDynamics" "CircuitsOutput"
 End

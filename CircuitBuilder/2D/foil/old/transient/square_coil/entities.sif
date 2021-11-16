@@ -1,0 +1,18 @@
+!------ Skeleton for body section -----
+Body 1
+  Name = Terminal1
+End
+
+Body 2
+  Name = Terminal2
+End
+
+Body 3
+  Name = Air
+End
+
+!------ Skeleton for boundary section -----
+Boundary Condition 1
+  Name = Infinity_Magnetic_Insulation
+End
+

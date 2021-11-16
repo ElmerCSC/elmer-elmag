@@ -6,7 +6,7 @@ The available Finite Element coil models in Elmer's component block are: massive
 In this directory you'll find basic examples on how to model coils in Magnetodynamics applications using ElmerFem. 
 Global sources (e.g., Ideal Voltage and Current Sources) can be added using electrical networks with the help of the elmer_circuitbuilder Python module. 
 
-![3D Stranded Closed Coil](TEAM7_current_source.png)
+![3D Stranded Closed Coil](readme_figures/TEAM7_current_source.png)
 
 # Coil Models: Massive, Stranded, and Foil
 
@@ -75,13 +75,12 @@ Instructions: \
                7) Write circuits generate_elmer_circuits(c, output_file) \
                8) Output file must be included in .sif file 
 
-
+##  The CircuibBuilder Template
 The steps can be easily spotted on the following template
 
 ```
 # Imported Libraries:
 import sys
-import os
 from elmer_circuitbuilder import *                                                 # STEP 1
 # -------------------------------------------------------------------------------
 
@@ -125,4 +124,15 @@ Note that STEP 8 is not part of the template but rather on the .sif file itself 
 ```
 Include "<name_of_circuit>.definition"
 ```
+##  How to create Components in STEP 5
+
+The components are created as objects I, V, R, L, C and/or, ElmerComponent.
+The CircuitLibrary is docummented with DocStrings and should be easy to find 
+the arguments needed, depending on the type of component. 
+
+Lumped parameters such as I, V, R, L and C require the same input parameters: name, pin1, pin2, and component value.
+The code is documented using Docstrings, hence, it's encouraged to use an IDE. 
+Below you can see the documentation of the ElmerComponent class by hovering over the object on PyCharm:
+
+![ElmerComponent Documentation](readme_figures/elmer_component_doc.png)
 
