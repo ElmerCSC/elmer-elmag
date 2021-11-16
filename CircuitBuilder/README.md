@@ -15,13 +15,24 @@ Global sources (e.g., Ideal Voltage and Current Sources) can be added using elec
 ## References
 For information about massive, stranded and foil coil types:
 
-&nbsp;&nbsp;  Patrick Dular, and Christophe Geuzaine. <A HREF="https://ieeexplore.ieee.org/abstract/document/996165/">Spatially dependent global quantities associated with 2d and 3d magnetic vector potential formulations for foil winding modeling</A>. IEEE trans. magn., 38(2):633–636, March 2002.
+&nbsp;&nbsp;  Patrick Dular, and Christophe Geuzaine. 
+&nbsp;&nbsp;  <A HREF="https://ieeexplore.ieee.org/abstract/document/996165/">
+&nbsp;&nbsp;  Spatially dependent global quantities associated with 2d and 3d &nbsp;&nbsp;  magnetic vector potential formulations for foil winding modeling</A>. 
+&nbsp;&nbsp;  IEEE trans. magn., 38(2):633–636, March 2002.
 
-&nbsp;&nbsp;  Patrick Dular, F. Henrotte, and W. Legros. <A HREF="https://ieeexplore.ieee.org/abstract/document/767310">A general and natural method to define circuit relations associated with magnetic vector potential formulations </A>. IEEE trans. magn., 35(3):1630–1633, May 1999.
+&nbsp;&nbsp;  Patrick Dular, F. Henrotte, and W. Legros.
+ <A HREF="https://ieeexplore.ieee.org/abstract/document/767310">
+ A general and natural method to define circuit relations associated with magnetic vector potential formulations </A>. 
+ IEEE trans. magn., 35(3):1630–1633, May 1999.
 
-&nbsp;&nbsp;  Patrick Dular, Nelson Sadowski, J.P.A. Bastos, and Willy Legros. <A HREF="https://ieeexplore.ieee.org/abstract/document/877746">Dual complete procedures to take stranded inductors into account in magnetic vector potential formulations</A>. IEEE trans. magn., 36(4):1600–1605, July 2000.
+&nbsp;&nbsp;  Patrick Dular, Nelson Sadowski, J.P.A. Bastos, and Willy Legros. <A HREF="https://ieeexplore.ieee.org/abstract/document/877746">
+Dual complete procedures to take stranded inductors into account in magnetic vector potential formulations</A>. 
+IEEE trans. magn., 36(4):1600–1605, July 2000.
 
-&nbsp;&nbsp;  H. D. Gersem and K. Hameyer. <A HREF="https://ieeexplore.ieee.org/abstract/document/952629">A finite element model for foil winding simulation</A>. IEEE trans. magn., 37(5):3427–3432, September 2001.
+&nbsp;&nbsp;  H. D. Gersem and K. Hameyer. 
+<A HREF="https://ieeexplore.ieee.org/abstract/document/952629">
+A finite element model for foil winding simulation</A>. 
+IEEE trans. magn., 37(5):3427–3432, September 2001.
 
 The module to couple and solve circuit-field problems is the CircuitAndDynamics
 Module. This module needs the stiffness and damping matrix definitions, for which the CircuitBuilder was created. For more information about the CircuitAndDynamics module:
