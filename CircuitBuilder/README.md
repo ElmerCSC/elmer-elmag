@@ -82,21 +82,21 @@ The steps can be easily spotted on the following template
 # Imported Libraries:
 import sys
 import os
-from elmer_circuitbuilder import *                                       # STEP 1
-# -----------------------------------------------------------------------------------------------------
+from elmer_circuitbuilder import *                                                 # STEP 1
+# -------------------------------------------------------------------------------
 
 def main(argv=None):
 
-    # name output file - do not remove                                   # STEP 2
+    # name output file - do not remove                                             # STEP 2
     output_file = ""
 
-    # initialize circuits: number of circuits - do not remove            # STEP 3
+    # initialize circuits: number of circuits - do not remove                      # STEP 3
     c = number_of_circuits(1)
 
-    # reference/ground node needed - do not remove.                      # STEP 4
+    # reference/ground node needed - do not remove.                                # STEP 4
     c[1].ref_node = 1
 
-    # ------------- Electrical Network Definition -------------          # STEP 5
+    # ----------------------- Electrical Network Definition ---------------------  # STEP 5
 
     # Components
 
@@ -104,13 +104,13 @@ def main(argv=None):
 
     # Define dimension related features if needed (closed, open)
 
-    # store components in array components = [comp1, comp2,...] - do not remove
-    c[1].components.append([])
+    # store components in array components = [comp1, comp2,...] - do not remove    # STEP 6
+    c[1].components.append([])                                 
 
-    # --------------------------------------------------
+    # ---------------------------------------------------------------------------
 
-    # generate elmer circuit.definitions - do not remove / do not edit   # STEP 6
-    generate_elmer_circuits(c, output_file)                              # STEP 7
+    # generate elmer circuit.definitions - do not remove / do not edit             # STEP 7
+    generate_elmer_circuits(c, output_file)                              
 
     return 0
 
