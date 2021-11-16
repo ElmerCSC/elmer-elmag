@@ -17,7 +17,11 @@ For information about massive, stranded and foil coil types
 
 
 
-More references can be found on page 128 of Elmer's Documentation: [Elmer Documentation](http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf)
+Elmer CircuitAndDynamics Module Documentation: [Elmer Documentation](<A HREF="http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf#page=128">)
+
+If you use the CircuitAndDynamics module or the CircuitBuilder, please make sure to cite the following reference:
+
+[9] Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Peter Råback. Parallel simula- tions of inductive components with elmer finite element software in cluster environments. Electromag- netics, 36(3):167–185, April 2016.
 
 
 # How to Download the CircuitBuilder
@@ -94,4 +98,7 @@ if __name__ == "__main__":
 
 Note that STEP 8 is not part of the template but rather on the .sif file itself as an include of the .definition file created by the CircuitBuilder
 
+```
 Include "<name_of_circuit>.definition"
+```
+
