@@ -17,7 +17,8 @@ For information about massive, stranded and foil coil types
 
 
 
-Elmer CircuitAndDynamics Module Documentation: [Elmer Documentation](<A HREF="http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf#page=128">)
+Elmer CircuitAndDynamics Module Documentation:
+<A HREF="http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf#page=128">
 
 If you use the CircuitAndDynamics module or the CircuitBuilder, please make sure to cite the following reference:
 
