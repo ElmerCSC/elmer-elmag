@@ -15,10 +15,10 @@ Global sources (e.g., Ideal Voltage and Current Sources) can be added using elec
 ## References
 For information about massive, stranded and foil coil types:
 
-&nbsp;&nbsp;  Patrick Dular, and Christophe Geuzaine. 
-&nbsp;&nbsp;  <A HREF="https://ieeexplore.ieee.org/abstract/document/996165/">
-&nbsp;&nbsp;  Spatially dependent global quantities associated with 2d and 3d &nbsp;&nbsp;  magnetic vector potential formulations for foil winding modeling</A>. 
-&nbsp;&nbsp;  IEEE trans. magn., 38(2):633–636, March 2002.
+<p>Patrick Dular, and Christophe Geuzaine. 
+<A HREF="https://ieeexplore.ieee.org/abstract/document/996165/">
+Spatially dependent global quantities associated with 2d and 3d &magnetic vector potential formulations for foil winding modeling</A>. 
+IEEE trans. magn., 38(2):633–636, March 2002. </p>
 
 &nbsp;&nbsp;  Patrick Dular, F. Henrotte, and W. Legros.
  <A HREF="https://ieeexplore.ieee.org/abstract/document/767310">
