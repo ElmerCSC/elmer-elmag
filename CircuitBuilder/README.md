@@ -20,7 +20,7 @@ The module to couple and solve circuit-field problems is the CircuitAndDynamics
 Module. This module needs the stiffness and damping matrix definitions, for which the CircuitBuilder was created. For more information about the CircuitAndDynamics module:
 <p>
 <A HREF="http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf#page=128">
-CircuitAndDynamics Module Documentation
+CircuitAndDynamics Module Documentation </A>
 </p>
 
 If you use the CircuitAndDynamics module or the CircuitBuilder, please don't forget to cite the following reference:
