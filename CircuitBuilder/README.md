@@ -15,16 +15,7 @@ Global sources (e.g., Ideal Voltage and Current Sources) can be added using elec
 ## References
 For information about massive, stranded and foil coil types
 
-@article{dular2002spatially,
-  title={Spatially dependent global quantities associated with 2-D and 3-D magnetic vector potential formulations for foil winding modeling},
-  author={Dular, Patrick and Geuzaine, Christophe},
-  journal={IEEE transactions on magnetics},
-  volume={38},
-  number={2},
-  pages={633--636},
-  year={2002},
-  publisher={IEEE}
-}
+
 
 More references can be found on page 128 of Elmer's Documentation: [Elmer Documentation](http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf)
 
@@ -57,4 +48,50 @@ Instructions: \
                8) Output file must be included in .sif file 
 
 
+The steps can be easily spotted on the following template
 
+```
+# Imported Libraries:
+import sys
+import os
+from elmer_circuitbuilder import *                                       # STEP 1
+# -----------------------------------------------------------------------------------------------------
+
+def main(argv=None):
+
+    # name output file - do not remove                                   # STEP 2
+    output_file = ""
+
+    # initialize circuits: number of circuits - do not remove            # STEP 3
+    c = number_of_circuits(1)
+
+    # reference/ground node needed - do not remove.                      # STEP 4
+    c[1].ref_node = 1
+
+    # ------------- Electrical Network Definition -------------          # STEP 5
+
+    # Components
+
+    # Define coil type: massive, stranded, foil
+
+    # Define dimension related features if needed (closed, open)
+
+    # store components in array components = [comp1, comp2,...] - do not remove
+    c[1].components.append([])
+
+    # --------------------------------------------------
+
+    # generate elmer circuit.definitions - do not remove / do not edit   # STEP 6
+    generate_elmer_circuits(c, output_file)                              # STEP 7
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main() or 0)
+
+```
+
+Note that STEP 8 is not part of the template but rather on the .sif file itself as an include of the .definition file created by the CircuitBuilder
+
+Include "<name_of_circuit>.definition"
