@@ -15,13 +15,13 @@ Global sources (e.g., Ideal Voltage and Current Sources) can be added using elec
 ## References
 For information about massive, stranded and foil coil types:
 
-  Patrick Dular, and Christophe Geuzaine. <A HREF="https://ieeexplore.ieee.org/abstract/document/996165/">Spatially dependent global quantities associated with 2d and 3d magnetic vector potential formulations for foil winding modeling</A>. IEEE trans. magn., 38(2):633–636, March 2002.
+&nbsp;&nbsp;  Patrick Dular, and Christophe Geuzaine. <A HREF="https://ieeexplore.ieee.org/abstract/document/996165/">Spatially dependent global quantities associated with 2d and 3d magnetic vector potential formulations for foil winding modeling</A>. IEEE trans. magn., 38(2):633–636, March 2002.
 
-  Patrick Dular, F. Henrotte, and W. Legros. <A HREF="https://ieeexplore.ieee.org/abstract/document/767310">A general and natural method to define circuit relations associated with magnetic vector potential formulations </A>. IEEE trans. magn., 35(3):1630–1633, May 1999.
+&nbsp;&nbsp;  Patrick Dular, F. Henrotte, and W. Legros. <A HREF="https://ieeexplore.ieee.org/abstract/document/767310">A general and natural method to define circuit relations associated with magnetic vector potential formulations </A>. IEEE trans. magn., 35(3):1630–1633, May 1999.
 
-  Patrick Dular, Nelson Sadowski, J.P.A. Bastos, and Willy Legros. <A HREF="https://ieeexplore.ieee.org/abstract/document/877746">Dual complete procedures to take stranded inductors into account in magnetic vector potential formulations</A>. IEEE trans. magn., 36(4):1600–1605, July 2000.
+&nbsp;&nbsp;  Patrick Dular, Nelson Sadowski, J.P.A. Bastos, and Willy Legros. <A HREF="https://ieeexplore.ieee.org/abstract/document/877746">Dual complete procedures to take stranded inductors into account in magnetic vector potential formulations</A>. IEEE trans. magn., 36(4):1600–1605, July 2000.
 
-  H. D. Gersem and K. Hameyer. <A HREF="https://ieeexplore.ieee.org/abstract/document/952629">A finite element model for foil winding simulation</A>. IEEE trans. magn., 37(5):3427–3432, September 2001.
+&nbsp;&nbsp;  H. D. Gersem and K. Hameyer. <A HREF="https://ieeexplore.ieee.org/abstract/document/952629">A finite element model for foil winding simulation</A>. IEEE trans. magn., 37(5):3427–3432, September 2001.
 
 The module to couple and solve circuit-field problems is the CircuitAndDynamics
 Module. This module needs the stiffness and damping matrix definitions, for which the CircuitBuilder was created. For more information about the CircuitAndDynamics module:
@@ -32,9 +32,9 @@ CircuitAndDynamics Module Documentation </A>
 
 If you use the CircuitAndDynamics module or the CircuitBuilder, please don't forget to cite the following references:
 
-  Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Tommi Peussa. <A HREF="https://www.tandfonline.com/doi/pdf/10.1080/02726343.2016.1187107?casa_token=XTTKx7uW-RYAAAAA:xO33zf8Rwi7UccLiGx9ZjY2GaCRPFHHxRXbY-oQ1n8f54vJdkrNu4J0EvZJL4zQ8E-1zHVgx9cS3zQ">Using reduced support to enhance parallel strong scalability in 3d finite element magnetic vector potential formulations with circuit equations</A>. Electromagnetics, 36(6):400–408, August 2016.
+&nbsp;&nbsp; Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Tommi Peussa. <A HREF="https://www.tandfonline.com/doi/pdf/10.1080/02726343.2016.1187107?casa_token=XTTKx7uW-RYAAAAA:xO33zf8Rwi7UccLiGx9ZjY2GaCRPFHHxRXbY-oQ1n8f54vJdkrNu4J0EvZJL4zQ8E-1zHVgx9cS3zQ">Using reduced support to enhance parallel strong scalability in 3d finite element magnetic vector potential formulations with circuit equations</A>. Electromagnetics, 36(6):400–408, August 2016.
 
-  Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Peter Råback. <A HREF="https://www.tandfonline.com/doi/pdf/10.1080/02726343.2016.1151616?casa_token=LQoOG9VNPsoAAAAA:OkFQpOERLVG9p14lAjhPtJinnoXdIFc6LgHk2ax411KZqqJPlQVfLxFUndwMCj9Mze5nTneC5sCFeA">Parallel simulations of inductive components with elmer finite element software in cluster environments</A>. Electromagnetics, 36(3):167–185, April 2016.
+&nbsp;&nbsp;  Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Peter Råback. <A HREF="https://www.tandfonline.com/doi/pdf/10.1080/02726343.2016.1151616?casa_token=LQoOG9VNPsoAAAAA:OkFQpOERLVG9p14lAjhPtJinnoXdIFc6LgHk2ax411KZqqJPlQVfLxFUndwMCj9Mze5nTneC5sCFeA">Parallel simulations of inductive components with elmer finite element software in cluster environments</A>. Electromagnetics, 36(3):167–185, April 2016.
 
 
 # How to Download the CircuitBuilder
