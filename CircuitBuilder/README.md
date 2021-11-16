@@ -16,13 +16,16 @@ Global sources (e.g., Ideal Voltage and Current Sources) can be added using elec
 For information about massive, stranded and foil coil types
 
 
-
-Elmer CircuitAndDynamics Module Documentation:
+The module to couple and solve circuit-field problems is the CircuitAndDynamics
+Module. This module needs the stiffness and damping matrix definitions, for which the CircuitBuilder was created. For more information about the CircuitAndDynamics module:
+<p>
 <A HREF="http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf#page=128">
+CircuitAndDynamics Module Documentation
+</p>
 
-If you use the CircuitAndDynamics module or the CircuitBuilder, please make sure to cite the following reference:
+If you use the CircuitAndDynamics module or the CircuitBuilder, please don't forget to cite the following reference:
 
-[9] Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Peter Råback. Parallel simula- tions of inductive components with elmer finite element software in cluster environments. Electromag- netics, 36(3):167–185, April 2016.
+Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Peter Råback. Parallel simula- tions of inductive components with elmer finite element software in cluster environments. Electromag- netics, 36(3):167–185, April 2016.
 
 
 # How to Download the CircuitBuilder
