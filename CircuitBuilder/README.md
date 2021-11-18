@@ -8,46 +8,6 @@ Global sources (e.g., Ideal Voltage and Current Sources) can be added using elec
 
 ![3D Stranded Closed Coil](readme_figures/TEAM7_current_source.png)
 
-# Coil Models: Massive, Stranded, and Foil
-
-
-
-## References
-For information about massive, stranded and foil coil types:
-
-<p>Patrick Dular, and Christophe Geuzaine. 
-<A HREF="https://ieeexplore.ieee.org/abstract/document/996165/">
-Spatially dependent global quantities associated with 2d and 3d &magnetic vector potential formulations for foil winding modeling</A>. 
-IEEE trans. magn., 38(2):633–636, March 2002. </p>
-
-&nbsp;&nbsp;  Patrick Dular, F. Henrotte, and W. Legros.
- <A HREF="https://ieeexplore.ieee.org/abstract/document/767310">
- A general and natural method to define circuit relations associated with magnetic vector potential formulations </A>. 
- IEEE trans. magn., 35(3):1630–1633, May 1999.
-
-&nbsp;&nbsp;  Patrick Dular, Nelson Sadowski, J.P.A. Bastos, and Willy Legros. <A HREF="https://ieeexplore.ieee.org/abstract/document/877746">
-Dual complete procedures to take stranded inductors into account in magnetic vector potential formulations</A>. 
-IEEE trans. magn., 36(4):1600–1605, July 2000.
-
-&nbsp;&nbsp;  H. D. Gersem and K. Hameyer. 
-<A HREF="https://ieeexplore.ieee.org/abstract/document/952629">
-A finite element model for foil winding simulation</A>. 
-IEEE trans. magn., 37(5):3427–3432, September 2001.
-
-The module to couple and solve circuit-field problems is the CircuitAndDynamics
-Module. This module needs the stiffness and damping matrix definitions, for which the CircuitBuilder was created. For more information about the CircuitAndDynamics module:
-<p>
-<A HREF="http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf#page=128">
-CircuitAndDynamics Module Documentation </A>
-</p>
-
-If you use the CircuitAndDynamics module or the CircuitBuilder, please don't forget to cite the following references:
-
-&nbsp;&nbsp; Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Tommi Peussa. <A HREF="https://www.tandfonline.com/doi/pdf/10.1080/02726343.2016.1187107?casa_token=XTTKx7uW-RYAAAAA:xO33zf8Rwi7UccLiGx9ZjY2GaCRPFHHxRXbY-oQ1n8f54vJdkrNu4J0EvZJL4zQ8E-1zHVgx9cS3zQ">Using reduced support to enhance parallel strong scalability in 3d finite element magnetic vector potential formulations with circuit equations</A>. Electromagnetics, 36(6):400–408, August 2016.
-
-&nbsp;&nbsp;  Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Peter Råback. <A HREF="https://www.tandfonline.com/doi/pdf/10.1080/02726343.2016.1151616?casa_token=LQoOG9VNPsoAAAAA:OkFQpOERLVG9p14lAjhPtJinnoXdIFc6LgHk2ax411KZqqJPlQVfLxFUndwMCj9Mze5nTneC5sCFeA">Parallel simulations of inductive components with elmer finite element software in cluster environments</A>. Electromagnetics, 36(3):167–185, April 2016.
-
-
 # How to Download the CircuitBuilder
 To use and take advantage of the models in this directory go to Terminal and enter:
 
@@ -59,7 +19,7 @@ $ pip install elmer-circuitbuilder
 After importing all the functions within the library into a fresh Python file (see main_template.py or main.py in each model), you can develop a circuit network 
 using a common two-terminal component approach. 
 
-The steps are simple. The idea is that following the main.py template on the examples in this directory you'd be able to create
+The steps are simple. The idea is that after following the main.py template on the examples in this directory you'll be able to create
 your own circuit to model coils with ElmerFEM. The steps are summarized below.
 
 Instructions: \
@@ -75,7 +35,7 @@ Instructions: \
                7) Write circuits generate_elmer_circuits(c, output_file) \
                8) Output file must be included in .sif file 
 
-##  The CircuibBuilder Template
+##  The CircuitBuilder Template
 The steps can be easily spotted on the following template
 
 ```
@@ -124,15 +84,206 @@ Note that STEP 8 is not part of the template but rather on the .sif file itself 
 ```
 Include "<name_of_circuit>.definition"
 ```
-##  How to create Components in STEP 5
+
+##  How to create Components (STEP 5)?
 
 The components are created as objects I, V, R, L, C and/or, ElmerComponent.
-The CircuitLibrary is docummented with DocStrings and should be easy to find 
-the arguments needed, depending on the type of component. 
+The code is documented using Docstrings, hence, it's encouraged to use an IDE. Below you can see how the documentation can be retrieved by hovering over the object on PyCharm:
 
-Lumped parameters such as I, V, R, L and C require the same input parameters: name, pin1, pin2, and component value.
-The code is documented using Docstrings, hence, it's encouraged to use an IDE. 
-Below you can see the documentation of the ElmerComponent class by hovering over the object on PyCharm:
+<p align="center">
+  <img src=readme_figures/elmer_component_doc.png width="550" height="190">
+</p>
 
-![ElmerComponent Documentation](readme_figures/elmer_component_doc.png)
+<p align="center">
+  <img src=readme_figures/volt_doc.png width="350" height="160">
+</p>
 
+##  How does the CircuitBuilder output look like?
+
+The CircuitBuilder produces a .definition-extension file that includes the basic blocks to use circuit networks in FEM models using ElmerFEM. 
+
+The output file is split into 4 sections: Parameters (1), Circuit matrices (2), Elmer Component Block (3), Elmer Body Force 1 (4) Block. The idea is that the user should only change the values in the Parameters block to modify coil parameters such as resistance, number of turns, etc., according to the coil type used.
+
+See sample of a CircuitBuilder output file of a single stranded coil (See Component 1) driven by an ideal Current Souce (see Body Force 1):
+
+```
+! -----------------------------------------------------------------------------
+! ElmerFEM Circuit Generated: November 02, 2021
+! -----------------------------------------------------------------------------
+
+! -----------------------------------------------------------------------------
+! Number of Circuits in Model
+! -----------------------------------------------------------------------------
+$ Circuits = 1
+
+! -----------------------------------------------------------------------------
+! Parameters                                                                (1)
+! -----------------------------------------------------------------------------
+
+! General Parameters 
+$ I1 = 10
+
+! Parameters in Component 1: Coil1
+$ N_Coil1 = 10	 ! Number of Turns
+$ R_Coil1 = 0.1	 ! Coil Resistance
+$ Ns_Coil1 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+! -----------------------------------------------------------------------------
+! Matrix Size Declaration and Matrix Initialization                         (2)
+! -----------------------------------------------------------------------------
+$ C.1.variables = 5
+$ C.1.perm = zeros(C.1.variables)
+$ C.1.A = zeros(C.1.variables,C.1.variables)
+$ C.1.B = zeros(C.1.variables,C.1.variables)
+
+! -----------------------------------------------------------------------------
+! Dof/Unknown Vector Definition
+! -----------------------------------------------------------------------------
+$ C.1.name.1 = "i_I1"
+$ C.1.name.2 = "i_component(1)"
+$ C.1.name.3 = "v_I1"
+$ C.1.name.4 = "v_component(1)"
+$ C.1.name.5 = "u_2_circuit_1"
+
+! -----------------------------------------------------------------------------
+! Source Vector Definition
+! -----------------------------------------------------------------------------
+$ C.1.source.5 = "I1_Source"
+
+! -----------------------------------------------------------------------------
+! KCL Equations
+! -----------------------------------------------------------------------------
+$ C.1.B(0,0) = -1
+$ C.1.B(0,1) = 1
+
+! -----------------------------------------------------------------------------
+! KVL Equations
+! -----------------------------------------------------------------------------
+$ C.1.B(1,2) = 1
+$ C.1.B(1,4) = -1
+$ C.1.B(2,3) = -1
+$ C.1.B(2,4) = 1
+
+! -----------------------------------------------------------------------------
+! Component Equations
+! -----------------------------------------------------------------------------
+$ C.1.B(4,0) = 1
+
+
+! -----------------------------------------------------------------------------
+! Additions in SIF file                                                     (3)
+! -----------------------------------------------------------------------------
+Component 1
+  Name = "Coil1"
+  Master Bodies Name = Coil
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Coil1
+  Resistance = Real $ R_Coil1
+ 
+  ! Additions for 3D Coil
+  Coil Use W Vector = Logical True
+  W Vector Variable Name = String CoilCurrent e
+  Electrode Area = Real $ Ae_Coil1
+End 
+
+! -----------------------------------------------------------------------------
+! Sources in SIF                                                            (4)
+! -----------------------------------------------------------------------------
+
+Body Force 1
+  I1_Source = Variable "time" 
+  	 Real MATC "I1"
+End
+
+! -----------------------------------------------------------------------------
+! End of Circuit
+! -----------------------------------------------------------------------------
+```
+
+Note that the input current source (I1_Source) under Body Force 1 is a constant value defined in the Parameter's section.
+
+## Time dependent sources
+We can add appropiate mathematical functions to include time-dependencies. See below how you can include a sinusoidal source by modifying the current source (I1_Source)
+
+```
+Body Force 1
+  I1_Source = Variable "time" 
+  	 Real MATC "I1*sin(omega*tx)"
+End
+```
+
+## Harmonic sources
+If you are working with sinusoidal sources you could benefit from defining your ideal sources as complex valued sources in your CircuitBuilder template
+```
+phase = np.radians(120)
+I1 = I("I1", 2, 1, 1*np.exp(phase*1j))
+```
+This will output the real and imaginary values necessary to setup the given source
+
+```
+Body Force 1
+  I1_Source re = Real $ re_I1*cos(phase_I1)
+  I1_Source im = Real $ im_I1*sin(phase_I1)
+End
+```
+# Understanding Vocabulary and Syntax
+
+
+## Coil Models: Massive, Stranded, and Foil
+
+
+
+<p align="center">
+  <img src=readme_figures/massive.png width="300" height="150">
+    <img src=readme_figures/stranded.png width="300" height="150">
+    <img src=readme_figures/foil.png width="300" height="150">
+</p>
+
+
+
+
+## What are Closed and Open Coils?
+
+<p align="center">
+  <img src=readme_figures/closed.png width="300" height="150"> 
+</p>
+
+<p align="center">
+    <img src=readme_figures/open.png width="300" height="130">
+</p>
+
+
+
+# References
+For information about massive, stranded and foil coil types:
+
+<p>Patrick Dular, and Christophe Geuzaine. 
+<A HREF="https://ieeexplore.ieee.org/abstract/document/996165/">
+Spatially dependent global quantities associated with 2d and 3d &magnetic vector potential formulations for foil winding modeling</A>. 
+IEEE trans. magn., 38(2):633–636, March 2002. </p>
+
+&nbsp;&nbsp;  Patrick Dular, F. Henrotte, and W. Legros.
+ <A HREF="https://ieeexplore.ieee.org/abstract/document/767310">
+ A general and natural method to define circuit relations associated with magnetic vector potential formulations </A>. 
+ IEEE trans. magn., 35(3):1630–1633, May 1999.
+
+&nbsp;&nbsp;  Patrick Dular, Nelson Sadowski, J.P.A. Bastos, and Willy Legros. <A HREF="https://ieeexplore.ieee.org/abstract/document/877746">
+Dual complete procedures to take stranded inductors into account in magnetic vector potential formulations</A>. 
+IEEE trans. magn., 36(4):1600–1605, July 2000.
+
+&nbsp;&nbsp;  H. D. Gersem and K. Hameyer. 
+<A HREF="https://ieeexplore.ieee.org/abstract/document/952629">
+A finite element model for foil winding simulation</A>. 
+IEEE trans. magn., 37(5):3427–3432, September 2001.
+
+The module to couple and solve circuit-field problems is the CircuitAndDynamics
+Module. This module needs the stiffness and damping matrix definitions, for which the CircuitBuilder was created. For more information about the CircuitAndDynamics module:
+<p>
+<A HREF="http://www.nic.funet.fi/pub/sci/physics/elmer/doc/ElmerModelsManual.pdf#page=128">
+CircuitAndDynamics Module Documentation </A>
+</p>
+
+If you use the CircuitAndDynamics module or the CircuitBuilder, please don't forget to cite the following references:
+
+&nbsp;&nbsp; Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Tommi Peussa. <A HREF="https://www.tandfonline.com/doi/pdf/10.1080/02726343.2016.1187107?casa_token=XTTKx7uW-RYAAAAA:xO33zf8Rwi7UccLiGx9ZjY2GaCRPFHHxRXbY-oQ1n8f54vJdkrNu4J0EvZJL4zQ8E-1zHVgx9cS3zQ">Using reduced support to enhance parallel strong scalability in 3d finite element magnetic vector potential formulations with circuit equations</A>. Electromagnetics, 36(6):400–408, August 2016.
+
+&nbsp;&nbsp;  Eelis Takala, Evren Yurtesen, Jan Westerholm, Juha Ruokolainen, and Peter Råback. <A HREF="https://www.tandfonline.com/doi/pdf/10.1080/02726343.2016.1151616?casa_token=LQoOG9VNPsoAAAAA:OkFQpOERLVG9p14lAjhPtJinnoXdIFc6LgHk2ax411KZqqJPlQVfLxFUndwMCj9Mze5nTneC5sCFeA">Parallel simulations of inductive components with elmer finite element software in cluster environments</A>. Electromagnetics, 36(3):167–185, April 2016.
