@@ -257,14 +257,23 @@ The stranded or foil winding can be modeled as a single material as shown below.
 
 In 3D we need to make a distinction between open and closed coils depending on the termination of the conductor. To the left you see that the closed coil has only one single (high) terminal, whereas the open coil has two: high and low terminals.
 
-This distinction is relevant when setting up the circuit network and the finite element model, as modifications will be required to assign these surfaces with the appropiate boundary conditions in the .sif file.
+This distinction is relevant when setting up the circuit network and the finite element model, as modifications will be required to assign these surfaces with the appropiate boundary conditions in the .sif file. 
+
+
 
 <p align="center">
   <img src=readme_figures/closed.png width="300" height="220">  
       <img src=readme_figures/open.png width="300" height="220">
 </p>
 
+When using the CoilSolver, some simplifications are made. In the case of a closed coil automatic cuts are made and no boundary conditions are needed (see image below). 
 
+<p align="center">
+      <img src=readme_figures/coil_solver_cut.png width="300" height="220">
+</p>
+
+
+If the coil is open, the boundary conditions need to be defined on each terminal of the conductor.
 
 
 # References
