@@ -91,12 +91,11 @@ The components are created as objects I, V, R, L, C and/or, ElmerComponent.
 The code is documented using Docstrings, hence, it's encouraged to use an IDE. Below you can see how the documentation can be retrieved by hovering over the object on PyCharm:
 
 <p align="center">
-  <img src=readme_figures/elmer_component_doc.png width="550" height="190">
+  <img src=readme_figures/elmer_component_doc.png width="400" height="150">
+  <img src=readme_figures/volt_doc.png width="280" height="150">
 </p>
 
-<p align="center">
-  <img src=readme_figures/volt_doc.png width="350" height="160">
-</p>
+
 
 ##  How does the CircuitBuilder output look like?
 
@@ -225,31 +224,46 @@ Body Force 1
   I1_Source im = Real $ im_I1*sin(phase_I1)
 End
 ```
-# Understanding Vocabulary and Syntax
+# Coil Models
 
 
-## Coil Models: Massive, Stranded, and Foil
+## Massive Conductors 
 
+Massive conductors/inductors are simply solid material conductors. The conducting domain $\Omega_c$ is fully discretized and solved using the magnetodynamics av formulation. Hence, skin effect and proximity effects can be observed. For further information about massive inductors, please see references below.
 
 
 <p align="center">
   <img src=readme_figures/massive.png width="300" height="150">
+
+</p>
+
+## Homogenization: Stranded, and Foil windings
+In the case of models that involve multiple conducting filaments (multi-turn coils, stranded coils, etc) or foils/laminations, it is difficult to solve the magnetodynamics problem at a reasonable computational cost. Particularly, at higher frequencies the solution becomes computationally prohibitive. For that reason homogenization methods enable reasonable accuracy in quasi-static problems without the need to fully discretize the conducting domains (i.e. each turn).
+
+<p align="center">
     <img src=readme_figures/stranded.png width="300" height="150">
     <img src=readme_figures/foil.png width="300" height="150">
 </p>
 
+The stranded or foil winding can be modeled as a single material as shown below. The stranded model is actually modeled as part of the non-conducting domain, whereas the foil case is modeled as a single conductor just as you would do in the massive case. The difference lies in the formulation, which takes account of the different phenomena occuring in the particular case. For more information about stranded and foil windings see references below.
+
+<p align="center">
+  <img src=readme_figures/homogenized.png width="300" height="150">
+</p>
 
 
 
 ## What are Closed and Open Coils?
 
-<p align="center">
-  <img src=readme_figures/closed.png width="300" height="150"> 
-</p>
+In 3D we need to make a distinction between open and closed coils depending on the termination of the conductor. To the left you see that the closed coil has only one single (high) terminal, whereas the open coil has two: high and low terminals.
+
+This distinction is relevant when setting up the circuit network and the finite element model, as modifications will be required to assign these surfaces with the appropiate boundary conditions in the .sif file.
 
 <p align="center">
-    <img src=readme_figures/open.png width="300" height="130">
+  <img src=readme_figures/closed.png width="300" height="220">  
+      <img src=readme_figures/open.png width="300" height="220">
 </p>
+
 
 
 
