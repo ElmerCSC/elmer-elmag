@@ -44,21 +44,14 @@ If you comply with the two requirements above:
 For example if you are using 2 processes, partition your mesh using ElmerGrid as follows
 
 ```
-ElmerGrid 2 2 TEAM7 -partdual -metiskway 2
+ElmerGrid 2 2 <mesh_directory> -partdual -metiskway 2
 ```
 This will create an partitioning directory within the mesh directory. There are other ways to partition your mesh. For more information you can always look into ElmerGrid's documentation.
 
-To run your model in parallel using MPI
-
-
-```
-$ ElmerSolver <name_of_model>.sif
+To run your model in parallel using 2 MPI processes
 
 ```
-
-Then run your model with opempi
-
-```
-$ ElmerSolver <name_of_model>.sif
+$ mpirun -np 2 ElmerSolver_mpi <name_of_model>.sif
 
 ```
+
