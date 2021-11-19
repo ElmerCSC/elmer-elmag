@@ -9,7 +9,10 @@ The foil winding is set-up as an axi-symmetric model, and surounded by air and m
 The model is solved for the transient and the harmonic case and are
 stored in their respective directories.
 
-![Foil 2D Coill](foil2D.png)
+
+<p align="center">
+  <img src=foil2D.png width="350" height="350">
+  </p>
 
 # How to create the circuit?
 The circuit is created using the CircuitBuilder and it's stored in the main.py file. To create or modify the circuit run the following command in terminal
