@@ -28,7 +28,6 @@ Simulation 1
    Mesh Levels = 3
 End
 
-!INCLUDE 1383-circuits-components.definition
 INCLUDE transient_foil_circuit.definition
 
 Solver 1  !---- DirectionSolver, DirectionSolver

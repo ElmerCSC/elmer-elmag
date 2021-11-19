@@ -20,7 +20,6 @@ Simulation 1
    Simulation Type = Steady
    Steady State Max Iterations = 1
    Angular Frequency = $omega
-   Mesh Levels = 5
 End
 
 !INCLUDE 1383-circuits-components.definition
