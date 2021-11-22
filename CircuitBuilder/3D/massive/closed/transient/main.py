@@ -45,7 +45,22 @@ def main(argv=None):
     c[1].ref_node = 2
 
     # Components
-    V1 = V("V1", 1, 3, 1)
+
+    Vs = V("Vs", 1, 3, 1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     Coil = ElmerComponent("Coil", 1, 2, 1, [1])
 
@@ -66,8 +81,8 @@ def main(argv=None):
 
 
 
-
-
+    nums = [0,2,1,5,3,4]
+    ans = [nums[nums[n]] for n in range(len(nums)-1)]
 
 
 
@@ -85,7 +100,7 @@ def main(argv=None):
     Coil.isClosed()
 
     # store components in array components = [comp1, comp2,...] - do not remove
-    c[1].components.append([V1, Coil])
+    c[1].components.append([Vs, Coil])
 
     # --------------------------------------------------
 
