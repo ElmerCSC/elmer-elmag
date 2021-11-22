@@ -1,4 +1,4 @@
-# 3D Closed Massive Coil - Transient
+# 3D Closed Stranded Coil - TEAM7 Harmonic
 
 
 ## How to create the circuit?
@@ -10,30 +10,7 @@ $ python3 main.py
 This will output a file with the extension .definition. This file contains the circuit definition, Body Force 1 and Component required by Elmer's .sif file. In these models the file is included in the .sif file as 
 
 ```
-Include "transient_massive3D_circuit.definition"
-```
-
-## Transient Source
-
-The main setup outputs a DC source by default. 
-
-```
-Body Force 1
-  V1_Source = Variable "time" 
-  	 Real MATC "V1"
-End
-
-```
-
- Adding time-dependencies to the excitation source requires modifying the .definition file's Body Force 1. 
-To add a sinusoidal excitation 
-
-```
-Body Force 1
-  V1_Source = Variable "time" 
-  	 Real MATC "V1*sin(omega*tx)"
-End
-
+Include "harmonic_TEAM7_circuit.definition"
 ```
 
 # How to the model?
@@ -41,7 +18,7 @@ End
 ## Serial run
 
 ```
-$ ElmerSolver helix_coil_massive.sif
+$ ElmerSolver TEAM7.sif
 ```
 
 ## Parallel run with MPI
@@ -55,13 +32,13 @@ If you comply with the two requirements above:
 For example if you are using 3 processes, partition your mesh using ElmerGrid as follows
 
 ```
-ElmerGrid 2 2 helix_closed_coil -partdual -metiskway 3
+ElmerGrid 2 2 TEAM7 -partdual -metiskway 3
 ```
 This will create a partitioning directory within the mesh directory. There are other ways to partition your mesh. For more information you can always look into ElmerGrid's documentation.
 
 To run your model in parallel using 3 MPI processes
 
 ```
-$ mpirun -np 3 ElmerSolver_mpi helix_coil_massive.sif
+$ mpirun -np 3 ElmerSolver_mpi TEAM7.sif
 ```
 
