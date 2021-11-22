@@ -25,8 +25,6 @@
 # Imported Libraries:
 import sys
 import os
-# add path to CircuitBuilder to import circuit_builder.py
-
 from elmer_circuitbuilder import *
 # -----------------------------------------------------------------------------------------------------
 
