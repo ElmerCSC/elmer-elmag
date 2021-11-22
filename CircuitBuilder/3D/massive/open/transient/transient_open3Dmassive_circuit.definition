@@ -80,7 +80,7 @@ End
 
 Body Force 1
   V1_Source = Variable "time" 
-  	 Real MATC "V1*cos(omega*tx)"
+  	 Real MATC "V1*sin(omega*tx)"
 End
 
 ! -----------------------------------------------------------------------------

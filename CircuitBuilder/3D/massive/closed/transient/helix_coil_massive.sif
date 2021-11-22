@@ -52,7 +52,7 @@ End
 !---------------------------------------------------------
 !Include Directories (Parameters and Circuit Sources)
 !---------------------------------------------------------
-Include "massive_helix_coil_circuit.definition"
+Include "transient_massive3D_circuit.definition"
 
 
 Constants
