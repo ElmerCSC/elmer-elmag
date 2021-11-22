@@ -275,7 +275,57 @@ When using the CoilSolver, some simplifications are made. In the case of a close
 
 If the coil is open, the boundary conditions need to be defined on each terminal of the conductor.
 
+# elmer-elmag/CircuitBuilder directory
 
+This directory includes general examples for classic coil types in frequency and time domain. 
+
+The 2D directory has two types of examples. First general examples on how to add lumped circuit parameters to be part of a circuit network including a FEM component, and the other examples focus on the setup of massive, stranded and foil windings. 
+
+```
+2D/
+├── circuit_examples
+│   ├── current_divider
+│   ├── current_source
+│   ├── voltage_divider
+│   └── voltage_source
+├── foil
+│   ├── harmonic
+│   └── transient
+├── massive
+│   ├── harmonic
+│   └── transient
+└── stranded
+    ├── harmonic
+    └── transient
+```
+
+
+Similarly, the 3D directory includes general examples on the setup of massive, stranded and foil windings in transient and time harmonic cases.
+```
+3D/
+├── foil
+│   ├── closed
+│   │   ├── harmonic
+│   │   └── transient
+│   └── open
+│       ├── harmonic
+│       └── transient
+├── massive
+│   ├── closed
+│   │   ├── harmonic
+│   │   └── transient
+│   └── open
+│       ├── harmonic
+│       └── transient
+└── stranded
+    ├── closed
+    │   ├── harmonic
+    │   └── transient
+    └── open
+        ├── harmonic
+        └── transient
+
+```
 # References
 For information about massive, stranded and foil coil types:
 
