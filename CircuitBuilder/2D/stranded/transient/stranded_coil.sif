@@ -86,8 +86,7 @@ End
 
 Boundary Condition 1
   Name = Infinity_Magnetic_Insulation
-  Az re = Real 0
-  Az im = Real 0
+  A = Real 0
 End
 
 !---------------------------------------------------------
