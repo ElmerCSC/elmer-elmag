@@ -62,9 +62,15 @@ Solver 1
 !  Linear System Symmetric = Logical True
   Linear System Solver = Iterative
   Linear System Preconditioning = none
-  Linear System Convergence Tolerance = 1e-7
+
+! We set this to zero to get exactly "max iterations" iterations
+  Linear System Convergence Tolerance = 0e-10
   Linear System Residual Output = 20
-  Linear System Max Iterations = 5000
+
+! This has been fixed to provide results that just show effects of communication
+! It may be that the convergence speed depends on the partitiong also since the
+! scaling is not exactly the same in parallel. 
+  Linear System Max Iterations = 200
   Linear System Iterative Method = BiCGStabL
   BiCGStabL Polynomial Degree = 4
   Idrs Parameter = 6
@@ -72,6 +78,8 @@ Solver 1
   Optimize Bandwidth = Logical False
   Linear System Row Equilibration = True
   Solver Timing = True
+
+  Linear System Abort Not Converged = False
 
 !  Linear System Remove Zeros = Logical True
 End
