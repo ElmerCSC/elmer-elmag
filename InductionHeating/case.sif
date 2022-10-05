@@ -1,13 +1,19 @@
+! Here we use CoilSolver to initialize a vector field which
+! has known total flux over the ends. This will be used in a hierarchical
+! manner and hence the conductivity of the coil is set to be very small
+! so that it would not generate challenges later on. Setting names to
+! entities so we can use the "vtu part collection" which is convenient. 
+
 Header
   CHECK KEYWORDS "Warn"
-  Mesh DB "." "."
+  Mesh DB "." "case"
 End
 
 Simulation
-  Max Output Level = 4
+  Max Output Level = 7
   Coordinate System = Cartesian
   Simulation Type = Steady
-  Steady State Max Iterations = 10
+  Steady State Max Iterations = 1  ! one-directinal coupling
   Angular Frequency = 84823.00164692441
 End
 
@@ -37,8 +43,14 @@ Solver 1
   Linear System Max Iterations = 2000
   Linear System Iterative Method = idrs
   Linear System Convergence Tolerance = 1e-9
+  Linear System Residual Output = 20
   Coil Closed = Logical False
-  Coil Normal(3) = 0 1 0
+
+  Calculate Elemental Fields = True
+  Fix Input Current Density = True
+
+  Normalize Coil Current = True
+  Desired Coil Current = 100.0
 End
 
 ! MGDynamics
@@ -48,12 +60,21 @@ Solver 2
   Procedure = "MagnetoDynamics" "WhitneyAVHarmonicSolver"
   Linear System Solver = Iterative
   Linear System Preconditioning = none
-  Linear System Residual Output = 1
-  Linear System Max Iterations = 10000
+  Linear System Residual Output = 20
+  Linear System Max Iterations = 500
   Linear System Iterative Method = BiCGStabl
   Linear System Convergence Tolerance = 1e-06
   BicgStabl Polynomial Degree = 4
+  Linear System GCR Restart = 100
+  Idrs Parameter = 4
+  Linear System Robust = True
+  Linear System Abort Not Converged = False
   Angular Frequency = 84823.00164692441
+
+! Automatically use "CoilCurrent e" as defined by Solver 1.
+  Use Elemental CoilCurrent = Logical True
+! As this is fixed already no need to double fix. 
+  Fix Input Current Density = False
 End
 
 ! MGDynamicsCalc
@@ -66,8 +87,12 @@ Solver 3
   Calculate Magnetic Field Strength = Logical True
   Calculate Joule Heating = True
   Steady State Convergence Tolerance = 1e-06
+
+  Calculate Nodal Fields = False
+  Calculate Elemental Fields = True
+
   Linear System Solver = Iterative
-  Linear System Preconditioning = None
+  Linear System Preconditioning = ILU0
   Linear System Residual Output = 0
   Linear System Max Iterations = 5000
   Linear System Iterative Method = CG
@@ -80,24 +105,21 @@ Solver 4
   Equation = Heat Equation
   Procedure = "HeatSolve" "HeatSolver"
   Variable = Temperature
-  Variable Dofs = 1
-  Calculate Loads = True
-  Exec Solver = Always
+
   Nonlinear System Convergence Tolerance = 1e-06
   Nonlinear System Max Iterations = 1000
   Nonlinear System Relaxation Factor = 0.7
+
   Steady State Convergence Tolerance = 1e-05
-  Stabilize = True
-  Optimize Bandwidth = True
   Linear System Solver = Iterative
   Linear System Iterative Method = Idrs
   Linear System Max Iterations = 10000
-  Linear System Preconditioning = ILU
+  Linear System Preconditioning = ILU1
   Linear System Precondition Recompute = 1
   Linear System Convergence Tolerance = 1e-08
   Linear System Abort Not Converged = True
-  Linear System Residual Output = 1
-  Smart Heater Control After Tolerance = 0.01
+  Linear System Residual Output = 20
+!  Smart Heater Control After Tolerance = 0.01
 End
 
 ! ResultOutputSolver
@@ -106,14 +128,20 @@ Solver 5
   Equation = "ResultOutput"
   Procedure = "ResultOutputSolve" "ResultOutputSolver"
   VTU Format = True
-  Save Geometry Ids = Logical True
+  Vtu Part collection = True
+
+  Save Bulk Only = True
+!Save Geometry Ids = True
+  Output Directory = results
+  Filename = case 
 End
 
 
-! copper
 Material 1
+  Name = "copper"
   Density = 8960.0
-  Electric Conductivity = 32300000.0
+! Nonzero but small
+  Electric Conductivity = 1.0 !32300000.0
   Emissivity = 0.2
   Heat Capacity = 415.0
   Heat Conductivity = 390.0
@@ -121,8 +149,8 @@ Material 1
   Relative Permittivity = 1
 End
 
-! graphite-CZ3R6300
 Material 2
+  Name = "graphite-CZ3R6300"
   Density = 1730.0
   Electric Conductivity = 58800.0
   Emissivity = 0.7
@@ -132,10 +160,10 @@ Material 2
   Relative Permittivity = 1
 End
 
-! air
 Material 3
+  Name = "air"
   Density = 1.1885
-  Electric Conductivity = 0.0
+  Electric Conductivity = 1.0 ! set to something
   Heat Capacity = 1006.4
   Heat Conductivity = 0.025873
   Relative Permeability = 1
@@ -143,39 +171,40 @@ Material 3
 End
 
 
-! inductor
 Body 1
+  Name = "inductor"
   Target Bodies(1) = 2
   Equation = 1  ! eqn_coil
   Material = 1  ! copper
+  Body Force = 1
 End
 
-! cylinder
 Body 2
+  Name = "cylinder"
   Target Bodies(1) = 1
   Equation = 2  ! eqn_main
   Material = 2  ! graphite-CZ3R6300
-  Body Force = 1  ! joule_heat
+  Body Force = 2  ! joule_heat
 End
 
-! surrounding
 Body 3
+  Name = "surrounding"
   Target Bodies(1) = 3
   Equation = 2  ! eqn_main
   Material = 3  ! air
 End
 
 
-! suf_inductor
 Boundary Condition 1
+  Name = "bc_inductor"
   Target Boundaries(1) = 8
   Temperature = 293.15
   Radiation = Idealized
   External Temperature = 293.15
 End
 
-! surf_surrounding
 Boundary Condition 2
+  Name = "bc_surrounding"
   Target Boundaries(1) = 5
   Temperature = 293.15
   AV re {e} 1 = Real 0.0
@@ -188,25 +217,38 @@ Boundary Condition 2
   AV im = Real 0.0
 End
 
-! inductor_end_bottom
 Boundary Condition 3
+  Name = "bc_inductor_end_bottom"
   Target Boundaries(1) = 6
   Coil Start = True
-  AV re = Real 10.0
+  AV re = Real 0.0
   AV im = Real 0.0
+  AV re {e} = Real 0.0
+  AV im {e} = Real 0.0
 End
 
-! inductor_end_top
 Boundary Condition 4
+  Name = "bc_inductor_end_top"
   Target Boundaries(1) = 7
   Coil End = True
-  AV re = Real -10.0
+  AV re = Real 0.0
   AV im = Real 0.0
+  AV re {e} = Real 0.0
+  AV im {e} = Real 0.0
 End
 
-
-! joule_heat
 Body Force 1
+  Name = "current source"
+! The "Use elemental coilcurrent" makes these not needed. 
+!  Current Density 1 = Equals "CoilCurrent e 1"
+!  Current Density 2 = Equals "CoilCurrent e 2"
+!  Current Density 3 = Equals "CoilCurrent e 3"
+End
+
+Body Force 2
+  Name = "heating"
+
+! This will automatically use "Joule heating e" when available. 
   Joule Heat = Logical True
 End
 
