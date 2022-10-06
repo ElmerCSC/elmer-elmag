@@ -1,16 +1,12 @@
 ! Here we assume that the frequency is such high that the current
 ! density in the inductor only recides on the boundary as the
-! skin depth is so small. We can even eliminate the inner elements
-! of the inductor. The downside is that currently there is no BC
-! that would allow to set Neumann conditions for the layer i.e.
-! this would mean setting 1D BCs in the 3D case. Hence this is
-! somewhat more difficult to use than the others and there seems
-! something fishy...
-!
-! Note that the layer thingy activates computation of surface currents.
-
-$cond=58.1e6
-$volt=1.0e2
+! skin depth is so small. In order to be able to set Neumann BCs for the end
+! of the skin we need to create line BCs on the fly as intersection
+! of two surface BCs. Note that the layer BCs activate the computation
+! of surface currents. No volume currents are postprocessed due to
+! the layer BCs. Unfortunately the convergence of the solution is not
+! too good. This should however provide a basis for critical comparison
+! between different methods. 
  
 Header
   CHECK KEYWORDS "Warn"
@@ -34,12 +30,6 @@ Equation 1
   Active Solvers(3) = 1 2 3    ! MGDynamics, MGDynamicsCalc, HeatSolver
 End
 
-Equation 2
-! We may actually eliminate inductor and only consider its boundaries.
-! Other alternative is to use properties of vacuum for it.
-  Name = "Eqn Inductor"
-End
-
 
 ! MGDynamics
 Solver 1
@@ -47,11 +37,15 @@ Solver 1
   Variable = AV[AV re:1 AV im:1]
   Procedure = "MagnetoDynamics" "WhitneyAVHarmonicSolver"
   Linear System Solver = Iterative
+
   Linear System Preconditioning = none
   Linear System Residual Output = 20
   Linear System Max Iterations = 1000
   Linear System Iterative Method = BiCGStabl
   Linear System Convergence Tolerance = 1e-06
+  Linear System Robust = True
+  Linear System Abort Not Converged = False
+
   BicgStabl Polynomial Degree = 4
   Angular Frequency = 84823.00164692441
 End
@@ -66,6 +60,7 @@ Solver 2
   Calculate Magnetic Field Strength = Logical True
 
   Calculate Joule Heating = True
+  Calculate Nodal Heating = True
 
   Steady State Convergence Tolerance = 1e-06
 
@@ -153,7 +148,7 @@ End
 Body 1
   Name = "inductor"
   Target Bodies(1) = 2
-  Equation = 2  ! eqn_inductor
+  Equation = 1  ! eqn_main
   Material = 1  ! copper
 End
 
@@ -176,11 +171,9 @@ End
 Boundary Condition 1
   Name = "bc_inductor"
   Target Boundaries(1) = 8
-  Layer Electric Conductivity = Real $cond
+  Layer Electric Conductivity = Real 58.1e6
   Layer Relative Permeability = Real 1
   Temperature = 293.15
-  AV re {e} = Real 0.0
-  AV im {e} = Real 0.0
 End
 
 Boundary Condition 2
@@ -196,8 +189,8 @@ End
 Boundary Condition 3
   Name = "bc_inductor_end_bottom"
   Target Boundaries(1) = 6
-  AV re = Real $volt/2
-  AV im = Real 0.0
+  AV re = 0.0
+  AV im = 0.0
   AV re {e} = Real 0.0
   AV im {e} = Real 0.0
 End
@@ -205,10 +198,19 @@ End
 Boundary Condition 4
   Name = "bc_inductor_end_top"
   Target Boundaries(1) = 7
-  AV re = Real $-volt/2
-  AV im = Real 0.0
   AV re {e} = Real 0.0
   AV im {e} = Real 0.0
+End
+
+
+! This is the end of the "layer bc" when presenting the coil with the
+! surface model. The entity for setting does not exist a priori and
+! hence is created on-the-fly and the electric current is divided
+! along the length of the line boundary with the "-distribute" flag. 
+Boundary Condition 5
+  Name = "bc_inductor_end_top_line"
+  Intersection BC(2) = Integer 1 4 
+  Electric Current Density = -distribute 100.0
 End
 
 
@@ -221,6 +223,6 @@ End
 
 
 ! Just for consistency
-Solver 1 :: Reference Norm = 2.97609582E+00
-Solver 3 :: Reference Norm = 2.93149291E+02
+Solver 1 :: Reference Norm = 1.12811060E-01
+Solver 3 :: Reference Norm = 5.72816185E+02
 
