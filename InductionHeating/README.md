@@ -41,3 +41,10 @@ In the setup [case_scaled-conductivity.sif](./case_scaled-conductivity.sif) we a
 In the setup [case_scaled-conductivity.sif](./case_scaled-conductivity.sif) we assume that the frequency is such high that the current density in the inductor only recides on the boundary as the skin depth is so small. In order to be able to set Neumann BCs for the end of the skin we need to create line BCs on the fly as intersection of two surface BCs. Note that the layer BCs activate the computation of surface currents. No volume currents are postprocessed due to the layer BCs. Unfortunately the convergence of the solution is not too good. This should however provide a basis for critical comparison between different methods.
 
 ![result layer conductivity](./images/result-layer-conductivity.png)
+
+### Circuit
+
+In the setup [case_circuit.sif](./case_circuit.sif) a circuit model is used to model a power supply of 20 V. The circuit is defined in [harmonic_open3Dmassive_circuit.definition](./harmonic_open3Dmassive_circuit.definition).
+Note, that this case would require a resolved skin layer to give a reliable result. Solving this case is computational very expensive.
+
+![result circuit](./images/result-circuit.png)
