@@ -55,6 +55,7 @@ $RECYCLE.BIN/
 *.lnk
 # paraview results
 *.vtu
+*.pvd
 TEST.PASSED
 # LaTeX output
 *.aux
@@ -63,3 +64,5 @@ TEST.PASSED
 *.out
 *.idx
 *.toc
+# IDE stuff
+*.vscode

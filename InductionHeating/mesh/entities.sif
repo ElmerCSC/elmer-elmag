@@ -1,0 +1,34 @@
+!------ Skeleton for body section -----
+Body 1
+  Name = cylinder
+End
+
+Body 2
+  Name = inductor 3D
+End
+
+Body 3
+  Name = surrounding
+End
+
+!------ Skeleton for boundary section -----
+Boundary Condition 1
+  Name = surf_cylinder
+End
+
+Boundary Condition 2
+  Name = surf_surrounding
+End
+
+Boundary Condition 3
+  Name = bnd_inductor_end_bottom
+End
+
+Boundary Condition 4
+  Name = bnd_inductor_end_top
+End
+
+Boundary Condition 5
+  Name = surf_inductor
+End
+

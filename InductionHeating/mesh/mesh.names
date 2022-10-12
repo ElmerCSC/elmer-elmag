@@ -1,0 +1,10 @@
+! ----- names for bodies -----
+$ cylinder = 1
+$ inductor 3D = 2
+$ surrounding = 3
+! ----- names for boundaries -----
+$ surf_cylinder = 4
+$ surf_surrounding = 5
+$ bnd_inductor_end_bottom = 6
+$ bnd_inductor_end_top = 7
+$ surf_inductor = 8

@@ -10,7 +10,7 @@
  
 Header
   CHECK KEYWORDS "Warn"
-  Mesh DB "." "case"
+  Mesh DB "." "mesh"
 End
 
 Simulation
@@ -40,7 +40,7 @@ Solver 1
 
   Linear System Preconditioning = none
   Linear System Residual Output = 20
-  Linear System Max Iterations = 1000
+  Linear System Max Iterations = 10000
   Linear System Iterative Method = BiCGStabl
   Linear System Convergence Tolerance = 1e-06
   Linear System Robust = True
@@ -223,6 +223,6 @@ End
 
 
 ! Just for consistency
-Solver 1 :: Reference Norm = 1.12811060E-01
-Solver 3 :: Reference Norm = 6.68111971E+02
+Solver 1 :: Reference Norm = 1.41878797E-01
+Solver 3 :: Reference Norm = 6.68410608E+02
 
