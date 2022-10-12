@@ -1,16 +1,16 @@
 # Induction heating
 
-Example for 3D steady-state induction heating modeling. ElmerSolver based on [this commit (Oct 7, 2022)](https://github.com/ElmerCSC/elmerfem/commit/0ff29c7213bfe81ab9f79de7650118d69bec1ab4) or newer is required to run all cases.
+Example for 3D steady-state induction heating modeling. ElmerSolver based on [this commit (Oct 7, 2022)](https://github.com/ElmerCSC/elmerfem/commit/0ff29c7213bfe81ab9f79de7650118d69bec1ab4) or later is required to run all cases.
 
 ## Setup
 
 ### Geometry
 
-The setup consists of a graphite cylinder in an open massive copper coil. The mesh is generated using Gmsh and consists of 228962 tetrahedra. The skin layer of the current on the coil surface is not resolved.
+The setup consists of a graphite cylinder in an open massive copper coil. The mesh is generated using Gmsh and consists of 228,962 tetrahedra. The skin layer of the current on the coil surface is not resolved.
 
 ![setup](./images/setup-inductionheating.png)
 
-The coil inner diameter is 140 mm, the graphite cylinder has a diameter of 120 mm and height of 50 mm. The surrounding domain has a diameter of 263 mm and height of 383 mm. The model is derived from the geometry shown in [this paper](https://doi.org/10.1016/j.jcrysgro.2022.126750).
+The coil inner diameter is 140 mm, the graphite cylinder has a diameter of 120 mm and height of 50 mm. The surrounding domain has a diameter of 263 mm and height of 383 mm. The model is similar to the geometry shown in [this paper](https://doi.org/10.1016/j.jcrysgro.2022.126750).
 
 ### Electromagnetical simulation parameters
 
@@ -26,7 +26,7 @@ There are various approaches to simulate induction heating in Elmer. The straigh
 
 ### CoilSolver
 
-In the setup [case_coil-solver.sif](./case_coil-solver.sif) we use *CoilSolver* to compute a current density vector field which has known total flux over the ends. It is then used to initialize the *WhitneyAVHarmonicSolver*. Note that this solver requires a reduced electric conductivity in the coil to avoid spurious self-induction. It is set to 1 S/m, as the coil solver does not allow for an electric conductivity of 0.
+In the setup [case_coil-solver.sif](./case_coil-solver.sif) we use *CoilSolver* to compute a current density vector field which has known total flux over the ends. It is then used to initialize the *WhitneyAVHarmonicSolver*. Note that this solver requires a reduced electric conductivity in the coil to avoid spurious self-induction. It is set to 1 S/m, as the coil solver does not allow for an electric conductivity of 0 S/m.
 
 ![result coilsolver](./images/result-coilsolver.png)
 
