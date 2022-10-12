@@ -6,7 +6,7 @@
 
 Header
   CHECK KEYWORDS "Warn"
-  Mesh DB "." "case"
+  Mesh DB "." "mesh"
 End
 
 Simulation
@@ -61,9 +61,9 @@ Solver 2
   Linear System Solver = Iterative
   Linear System Preconditioning = none
   Linear System Residual Output = 20
-  Linear System Max Iterations = 500
+  Linear System Max Iterations = 10000
   Linear System Iterative Method = BiCGStabl
-  Linear System Convergence Tolerance = 1e-06
+  Linear System Convergence Tolerance = 1e-06  ! diverges with 1e-08
   BicgStabl Polynomial Degree = 4
   Linear System GCR Restart = 100
   Idrs Parameter = 4
@@ -249,7 +249,7 @@ End
 ! This is just to check consistency between users so far.
 ! Does not imply correctness yet.
 Solver 1 :: Reference Norm = 5.78155074E-01
-Solver 2 :: Reference Norm = 1.42572481E-02
-Solver 4 :: Reference Norm = 6.58345520E+02
+Solver 2 :: Reference Norm = 1.45863590E-02
+Solver 4 :: Reference Norm = 6.58345530E+02
 
 

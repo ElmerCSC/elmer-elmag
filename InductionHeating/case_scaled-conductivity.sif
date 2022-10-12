@@ -9,7 +9,7 @@ $cond=1.0 ! 32300000.0
 
 Header
   CHECK KEYWORDS "Warn"
-  Mesh DB "." "case"
+  Mesh DB "." "mesh"
 End
 
 Simulation
