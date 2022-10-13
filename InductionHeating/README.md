@@ -36,9 +36,9 @@ In the setup [case_scaled-conductivity.sif](./case_scaled-conductivity.sif) we a
 
 ![result scaled conductivity](./images/result-scaled-conductivity.png)
 
-### Layer conductivity
+### Layer conductivity / impedance boundary condition
 
-In the setup [case_layer-conductivity.sif](./case_layer-conductivity.sif) we assume that the frequency is such high that the current density in the inductor only recides on the boundary as the skin depth is so small. In order to be able to set Neumann BCs for the end of the skin we need to create line BCs on the fly as intersection of two surface BCs. Note that the layer BCs activate the computation of surface currents. No volume currents are postprocessed due to the layer BCs. Unfortunately the convergence of the solution is not too good. This should however provide a basis for critical comparison between different methods.
+In the setup [case_layer-conductivity.sif](./case_layer-conductivity.sif) we assume that the frequency is such high that the current density in the inductor only recides on the boundary as the skin depth is so small. Therefore, we set the electic conductivity in the inductor to zero and model the surface current with a so-called impedance boundary condition on the inductor surface (keyword *Layer electric conductivity*). In order to be able to set Neumann BCs for the end of the skin we need to create line BCs on the fly as intersection of two surface BCs. Note that the layer BCs activate the computation of surface currents. No volume currents are postprocessed due to the layer BCs. Unfortunately the convergence of the solution is not too good. This should however provide a basis for critical comparison between different methods.
 
 ![result layer conductivity](./images/result-layer-conductivity.png)
 
