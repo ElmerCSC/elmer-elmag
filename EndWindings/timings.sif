@@ -178,18 +178,18 @@ Solver 6
   Operator 3 = nodes
 
 
-!  Variable 1 = Magnetic Flux Density 1
+!  Variable 1 = Magnetic Flux Density e 1
 !  Operator 1 = int mean
-!  Variable 2 = Magnetic Flux Density 2
+!  Variable 2 = Magnetic Flux Density e 2
 !  Operator 2 = int mean
-!  Variable 3 = Magnetic Flux Density 3
+!  Variable 3 = Magnetic Flux Density e 3
 !  Operator 3 = int mean
   
-!  Variable 4 = Magnetic Field Strength 1
+!  Variable 4 = Magnetic Field Strength e 1
 !  Operator 4 = int mean
-!  Variable 5 = Magnetic Field Strength 2
+!  Variable 5 = Magnetic Field Strength e 2
 !  Operator 5 = int mean
-!  Variable 6 = Magnetic Field Strength 3
+!  Variable 6 = Magnetic Field Strength e 3
 !  Operator 6 = int mean
 End
 
