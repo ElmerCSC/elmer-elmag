@@ -150,7 +150,7 @@ Solver 1
   !Fix Input Current Density = Logical False  ! Unclear when to use it
   !Static Conductivity = True                 ! Use when AV is selected as applied voltage border condition on wire terminal
 
-  Nonlinear System Max Iterations = 5 !00
+  Nonlinear System Max Iterations = 50
   Nonlinear System Convergence Tolerance = 1e-5
   Nonlinear System Newton After Iterations = 1  ! This is critical for convergence of non-linear systems
   Nonlinear System Newton After Tolerance = 1.0e-9
