@@ -53,7 +53,7 @@ For i In {0:N_ss-1}
 		Point(dP+4) = {b_4/2, R_sin-s+h_1+h_2, 0, m_sl_bot};
 
 		//h5-b5 top teeth point
-	  Point(dP+5) = {b_5/2, R_sin-s+h_1+h_2+h_5, 0, m_sl_top};
+	    Point(dP+5) = {b_5/2, R_sin-s+h_1+h_2+h_5, 0, m_sl_top};
 
 		// point of lower winding
 		Point(dP+6) = {b_4/2, R_sin-s+h_1+h_2+0.5, 0, m_sl_bot/2};
@@ -62,7 +62,7 @@ For i In {0:N_ss-1}
  		Point(dP+7) = {0, R_sin-s+h_1+h_2+0.5, 0, m_sl_bot};
 
 		// top slot point
- 		Point(dP+8) = {0, R_sin-s+h_1+h_2+h_5+b_5/2, 0, m_sl_top}
+ 		Point(dP+8) = {0, R_sin-s+h_1+h_2+h_5+b_5/2, 0, m_sl_top};
 
  		// outer stator sector
  		Point(dP+9) = {R_sout*Sin(Pi/Qs), R_sout*Cos(Pi/Qs), 0, m_s_out};
@@ -159,7 +159,7 @@ For i In {0:N_ss-1}
 	 	EndIf
  	EndIf
 
-	/if mirrorred, then the lines order is reversed
+	//if mirrorred, then the lines order is reversed
 	//direction is important defining the Line Loops
  	rev = (half ? -1 : 1);
 
