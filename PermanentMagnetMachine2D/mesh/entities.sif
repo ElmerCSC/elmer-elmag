@@ -1,0 +1,90 @@
+!------ Skeleton for body section -----
+Body 1
+  Name = STA-0_Lam
+End
+
+Body 2
+  Name = STA-0_Wind_R0-T0-S0
+End
+
+Body 3
+  Name = STA-0_Wind_R0-T0-S1
+End
+
+Body 4
+  Name = STA-0_Wind_R0-T0-S2
+End
+
+Body 5
+  Name = STA-0_Wind_R0-T0-S3
+End
+
+Body 6
+  Name = STA-0_Wind_R0-T0-S4
+End
+
+Body 7
+  Name = STA-0_Wind_R0-T0-S5
+End
+
+Body 8
+  Name = Airgap_Stator
+End
+
+Body 9
+  Name = Airbox
+End
+
+Body 10
+  Name = ROT-0_Lam
+End
+
+Body 11
+  Name = ROT-0_HV_R0-T0-S0
+End
+
+Body 12
+  Name = ROT-0_HM_R0-T0-S0
+End
+
+Body 13
+  Name = ROT-0_HV_R0-T1-S0
+End
+
+Body 14
+  Name = None_Shaft
+End
+
+Body 15
+  Name = Airgap_Rotor
+End
+
+!------ Skeleton for boundary section -----
+Boundary Condition 1
+  Name = SB_Rotor_BOUNDARY
+End
+
+Boundary Condition 2
+  Name = Rotor-Right_BOUNDARY
+End
+
+Boundary Condition 3
+  Name = Rotor-Left_BOUNDARY
+End
+
+Boundary Condition 4
+  Name = SB_Stator_BOUNDARY
+End
+
+Boundary Condition 5
+  Name = Domain_BOUNDARY
+End
+
+Boundary Condition 6
+  Name = Stator-Right_BOUNDARY
+End
+
+Boundary Condition 7
+  Name = Stator-Left_BOUNDARY
+End
+
