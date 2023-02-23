@@ -9,6 +9,7 @@ A transient simulation was run and torque and core losses were compared against 
 
 ![Torque comparison](plots/torque_comparison.png "Torque Comparison Elmer vs Maxwell")
 ![Core loss comparison](plots/core_loss_comparison.png "Core Loss Comparison Elmer vs Maxwell")
+![Flux density comparison](plots/flux_density_comparison.png "Flux Density Comparison Elmer vs Maxwell")
 
 The figure below shows how the core loss varies with the number of Fourier Series Components considered by the FourierLossSolver. It has to be set to at least half the number of stator slots to include the flux density fluctuations on the rotor caused by the stator slots.
 
