@@ -1,0 +1,24 @@
+! ----- names for bodies -----
+$ Stator-0_Lamination = 1
+$ Stator-0_Winding_R0-T0-S0 = 2
+$ Stator-0_Winding_R0-T0-S1 = 3
+$ Stator-0_Winding_R0-T0-S2 = 4
+$ Stator-0_Winding_R0-T0-S3 = 5
+$ Stator-0_Winding_R0-T0-S4 = 6
+$ Stator-0_Winding_R0-T0-S5 = 7
+$ Airgap_Stator = 8
+$ Airbox = 9
+$ Rotor-0_Lamination = 10
+$ Rotor-0_HoleVoid_R0-T0-S0 = 11
+$ Rotor-0_HoleMag_R0-T0-S0 = 12
+$ Rotor-0_HoleVoid_R0-T1-S0 = 13
+$ None_Shaft = 14
+$ Airgap_Rotor = 15
+! ----- names for boundaries -----
+$ SB_Rotor = 1
+$ Rotor-Right = 2
+$ Rotor-Left = 3
+$ SB_Stator = 4
+$ Domain = 5
+$ Stator-Right = 6
+$ Stator-Left = 7
