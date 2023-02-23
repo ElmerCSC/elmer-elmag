@@ -1,21 +1,13 @@
 $ WM = 2*pi*1500/60        ! Mechanical Frequency [rad/s]
 $ PP = 2                ! Pole pairs
-$ WE = PP*WM              ! Electrical Frequency [Hz]
 $ H_PM = 920000              ! Magnetization at 20 deg C [A/m]
-$ Shift = 2*pi/3        ! N-phase machine [rad]
-$ Gamma = -2*pi/180      ! Current Angle [rad]
-$ Ncond = 1             ! Conductors per coil
-$ Cp = 1                ! Parallel paths
-$ Is = 4.2425*35*sqrt(2)                ! Stator current [A]
-$ Aaxis = 0.0             ! Axis Coil A [deg]
+$ Is = 4.2425*35*sqrt(2)                ! Stator current * Number of turns [A]
 $ Carea = 5.749662468156698e-05             ! Coil Side Conductor Area [m2]
 $ Mangle1 = 45.0     ! Magnetization Angle [deg]
-$ Nsteps = 2            !
-$ StepDegrees = 1       !
 $ DegreesPerSec = WM*180.0/pi  !
-$ RotorInitPos = 0
-$ rpm = 1500
-$ f = rpm/60*PP
+$ RotorInitPos = 0 ! Initial Rotor Position
+$ rpm = 1500 ! Rotational speed (1/min)
+$ f = rpm/60*PP ! Electrical frequency (Hz)
 $ rot_dir = 1 ! Direction of rotation. 1: CCW, -1: CW
 $ dir_ph0 = 1 ! Current direction of Phase 0
 $ dir_ph1 = 1 ! Current direction of Phase 1
@@ -59,7 +51,7 @@ End
 
 Material 3
 	Name = "StatorMaterial"
-	Include "m350-50a_20c.pmf" !"stator_material.pmf"
+	Include "m350-50a_20c.pmf"
 
 	! C1 Hysteresis k_h
 	Harmonic Loss Coefficient 1 = Real 159.9615
@@ -71,7 +63,7 @@ End
 
 Material 4
 	Name = "RotorMaterial"
-	Include "m350-50a_20c.pmf" !"stator_material.pmf"
+	Include "m350-50a_20c.pmf"
 
 	! C1 Hysteresis k_h
 	Harmonic Loss Coefficient 1 = Real 159.9615
