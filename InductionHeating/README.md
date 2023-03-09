@@ -48,3 +48,9 @@ In the setup [case_circuit.sif](./case_circuit.sif) a circuit model is used to m
 Note, that this case would require a resolved skin layer to give a reliable result. Solving this case is computational very expensive.
 
 ![result circuit](./images/result-circuit.png)
+
+### Experimental: Circuit with impedance boundary condition
+
+In the setup [case_circuit_impedance-bc.sif](./case_circuit_impedance-bc.sif) a circuit model is used to model a power supply of 20 V in combination with an impedance boundary condition. The circuit is defined in [harmonic_open3Dmassive_circuit.definition](./harmonic_open3Dmassive_circuit.definition).
+
+A solver based on https://github.com/ElmerCSC/elmerfem/blob/circuit_driven_BC is required to solve this case.
