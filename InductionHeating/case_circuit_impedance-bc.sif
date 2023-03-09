@@ -6,7 +6,7 @@ End
 !---------------------------------------------------------
 !Include Directories (Voltage Source)
 !---------------------------------------------------------
-Include "harmonic_open3Dmassive_circuit.definition"
+Include "harmonic_open3Dibc_circuit.definition"
 
 !---------------------------------------------------------
 !Parameters
