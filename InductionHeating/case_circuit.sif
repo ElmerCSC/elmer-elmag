@@ -72,11 +72,12 @@ Solver 3  !---- MagnetoDynamics, WhitneyAVHarmonicSolver
    Angular Frequency = $omega
    Export Lagrange Multiplier = Logical True
    Linear System Symmetric = Logical True
-   Linear System Complex = Logical False
+   Linear System Complex = Logical True
    Linear System Solver = Iterative
-   Linear System Iterative Method = GCR
+   Linear System Iterative Method = BiCGstabL
    Linear System preconditioning = Circuit
-   Linear System Convergence Tolerance = 1.e-4
+   Linear System ILU Order = 0
+   Linear System Convergence Tolerance = 1.e-6
    Linear System Max Iterations = 3000
    Linear System Residual Output = 1000
    BicgStabL Polynomial Degree = 4
