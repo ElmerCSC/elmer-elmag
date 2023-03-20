@@ -1,0 +1,264 @@
+Header
+  CHECK KEYWORDS "Warn"
+  Mesh DB "." "mesh"
+End
+
+!---------------------------------------------------------
+!Include Directories (Voltage Source)
+!---------------------------------------------------------
+Include "harmonic_open3Dibc_circuit.definition"
+
+!---------------------------------------------------------
+!Parameters
+!---------------------------------------------------------
+$ omega = 84823.00164692441
+
+
+Simulation
+  Max Output Level = 7
+  Coordinate System = "Cartesian"
+  Simulation Type = "Steady"
+  !----------- Harmonic Simulation Parameters ------------
+  Angular Frequency = $omega
+  !-------------------------------------------------------
+  Output Intervals(1) = 1
+  Steady State Max Iterations = 1
+  Use Mesh Names = True
+End
+!---------------------------------------------------------
+
+Constants
+  Stefan Boltzmann = 5.6704e-08
+End
+
+! eqn_coil
+Equation 1
+  Active Solvers(8) = 1 2 3 4 5 6 7 8  ! WPotentialSolver, CircuisAndDynamics, MGDynamics, MGDynamicsCalc, HeatSolver, CircuitsAndDynamics, ResultOutputSolver, SaveScalars
+End
+
+! eqn_main
+Equation 2
+  Active Solvers(6) = 3 4 5 6 7 8  ! MGDynamics, MGDynamicsCalc, HeatSolver,  CircuitsAndDynamics, ResultOutputSolver, SaveScalars
+End
+
+
+Solver 1  !---- WPotentialSolver, Wsolve
+   Exec Solver = Before All
+   Procedure = "WPotentialSolver" "Wsolve"
+   Equation = "Wire direction"
+   Variable = W
+   Linear System Solver = Iterative
+   Linear System Iterative Method = CG
+   Linear System Max Iterations = 5000
+   Linear System Convergence Tolerance = 1.0e-10
+   Linear System Abort Not Converged = True
+   Linear System Residual Output = 1000
+End
+
+Solver 2  !---- CircuitsAndDynamics, CircuitsAndDynamicsHarmonic
+   Exec Solver = Always
+   Equation = Circuits
+   Variable = X
+   No Matrix = Logical True
+   Procedure = "CircuitsAndDynamics" "CircuitsAndDynamicsHarmonic"
+End
+
+
+! MGDynamics
+Solver 3  !---- MagnetoDynamics, WhitneyAVHarmonicSolver
+  Equation = "MGDynamics"
+  Variable = "AV[AV re:1 AV im:1]"
+  Procedure = "MagnetoDynamics" "WhitneyAVHarmonicSolver"
+  Angular Frequency = $omega
+  Export Lagrange Multiplier = Logical True
+  Linear System Symmetric = Logical True
+  Linear System Complex = Logical False
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BicgStabL
+  Linear System preconditioning = Circuit
+  Linear System Convergence Tolerance = 1.e-6
+  Linear System Max Iterations = 3000
+  Linear System Residual Output = 10
+  BicgStabL Polynomial Degree = 6
+  Linear System Abort not Converged = True
+  Steady State Convergence Tolerance = 1.e-4
+End
+
+! MGDynamicsCalc
+Solver 4
+  Equation = MGDynamicsCalc
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  Potential Variable = String "AV"
+  Calculate Current Density = Logical True
+  Calculate Electric Field = Logical True
+  Calculate Magnetic Field Strength = Logical True
+  Calculate Joule Heating = True
+  Steady State Convergence Tolerance = 1e-06
+  Linear System Solver = Iterative
+  Linear System Preconditioning = None
+  Linear System Residual Output = 0
+  Linear System Max Iterations = 5000
+  Linear System Iterative Method = CG
+  Linear System Convergence Tolerance = 1e-08
+  Angular Frequency = $omega
+End
+
+! HeatSolver
+Solver 5
+  Equation = Heat Equation
+  Procedure = "HeatSolve" "HeatSolver"
+  Variable = Temperature
+  Variable Dofs = 1
+  Calculate Loads = True
+  Exec Solver = Always
+  Nonlinear System Convergence Tolerance = 1e-06
+  Nonlinear System Max Iterations = 1000
+  Nonlinear System Relaxation Factor = 0.7
+  Steady State Convergence Tolerance = 1e-05
+  Stabilize = True
+  Optimize Bandwidth = True
+  Linear System Solver = Iterative
+  Linear System Iterative Method = Idrs
+  Linear System Max Iterations = 10000
+  Linear System Preconditioning = ILU
+  Linear System Precondition Recompute = 1
+  Linear System Convergence Tolerance = 1e-08
+  Linear System Abort Not Converged = True
+  Linear System Residual Output = 1
+  Smart Heater Control After Tolerance = 0.01
+End
+
+Solver 6  !---- CircuitsAndDynamics, CircuitsOutput
+   Exec Solver = Always
+   Equation = Circuits Output
+   Procedure = "CircuitsAndDynamics" "CircuitsOutput"
+End
+
+! ResultOutputSolver
+Solver 7
+  Exec Solver = after saving
+  Equation = "ResultOutput"
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Vtu Format = True
+  Vtu Part collection = True
+
+  Save Bulk Only = True
+!Save Geometry Ids = True
+  Output Directory = results
+  Output File name = circuit-ibc
+End
+
+Solver 8  !---- SaveData, SaveScalars
+   Exec Solver = After timestep
+   Equation = "sv"
+   Procedure = "SaveData" "SaveScalars"
+   Filename = open_wire.dat
+End
+
+! copper
+Material 1
+  Density = 8960.0
+  Electric Conductivity = 0.0 ! 32300000.0
+  Emissivity = 0.2
+  Heat Capacity = 415.0
+  Heat Conductivity = 390.0
+  Relative Permeability = 1
+  Relative Permittivity = 1
+End
+
+! graphite-CZ3R6300
+Material 2
+  Density = 1730.0
+  Electric Conductivity = 58800.0
+  Emissivity = 0.7
+  Heat Capacity = 1237.0
+  Heat Conductivity = 65
+  Relative Permeability = 1
+  Relative Permittivity = 1
+End
+
+! air
+Material 3
+  Density = 1.1885
+  Electric Conductivity = 0.0
+  Heat Capacity = 1006.4
+  Heat Conductivity = 0.025873
+  Relative Permeability = 1
+  Relative Permittivity = 1
+End
+
+
+! inductor
+Body 1
+  Name = inductor 3D
+  Equation = 1  ! eqn_coil
+  Material = 1  ! copper
+  Body Force = 1
+End
+
+! cylinder
+Body 2
+  Name = cylinder
+  Equation = 2  ! eqn_main
+  Material = 2  ! graphite-CZ3R6300
+  Body Force = 2  ! joule_heat
+End
+
+! surrounding
+Body 3
+  Name = surrounding
+  Equation = 2  ! eqn_main
+  Material = 3  ! air
+End
+
+
+! suf_inductor
+Boundary Condition 1
+  Name = surf_inductor
+  Layer Electric Conductivity = Real 58.1e6
+  Layer Relative Permeability = Real 1
+  Temperature = 293.15
+End
+
+! surf_surrounding
+Boundary Condition 2
+  Name = surf_surrounding
+  Temperature = 293.15
+  AV re {e} = Real 0.0
+  AV im {e} = Real 0.0
+End
+
+! inductor_end_bottom
+Boundary Condition 3
+   Name = bnd_inductor_end_bottom
+   AV re {e} = Real 0
+   AV im {e} = Real 0
+End
+
+! inductor_end_top
+Boundary Condition 4
+   Name = bnd_inductor_end_top
+   AV re {e} = Real 0
+   AV im {e} = Real 0
+End
+
+Boundary Condition 5
+  Name = "bc_inductor_end_bot_line"
+  Intersection BC(2) = Integer 1 3
+  W = Real 0
+End
+
+Boundary Condition 6
+  Name = "bc_inductor_end_top_line"
+  Intersection BC(2) = Integer 1 4 
+  W = Real 1
+End
+
+
+
+! joule_heat
+Body Force 2
+  Joule Heat = Logical True
+End
+
+
