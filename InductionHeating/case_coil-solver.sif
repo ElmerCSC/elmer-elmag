@@ -59,7 +59,7 @@ Solver 2
   Variable = AV[AV re:1 AV im:1]
   Procedure = "MagnetoDynamics" "WhitneyAVHarmonicSolver"
   Linear System Solver = Iterative
-  Linear System Preconditioning = none
+  Linear System Preconditioning = ILU
   Linear System Residual Output = 20
   Linear System Max Iterations = 10000
   Linear System Iterative Method = BiCGStabl
