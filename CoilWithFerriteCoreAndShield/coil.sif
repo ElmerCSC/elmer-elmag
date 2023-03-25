@@ -1,0 +1,216 @@
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "." "elmer"
+End
+
+Simulation
+  Coordinate System = Cartesian
+  Coordinate Mapping(3) = 1 2 3
+
+  Simulation Type = Steady
+  Steady State Max Iterations = 1
+
+  Max Output Level = 6
+
+  ! We have defined names for surfaces and volumes in
+  ! our mesh (see physical groups in generate-mesh.sh)
+  ! Rather than referencing physical elements by number
+  ! we may reference them by name which is much less
+  ! error prone.
+  Use Mesh Names = True
+End
+
+Constants
+  Gravity(4) = 0 -1 0 9.82
+  Stefan Boltzmann = 5.67e-08
+  Permittivity of Vacuum = 8.8542e-12
+  Boltzmann Constant = 1.3807e-23
+  Unit Charge = 1.602e-19
+End
+  
+! Names of bodies and boundaries corresponds to names of
+! physical groups in geometry/generate-mesh.py
+
+Body 1
+  Name = "Air"
+  Equation = 1
+  Material = 1
+End
+
+Body 2
+  Name = "Coil"
+  Equation = 2
+  Material = 2
+End
+
+Body 3
+  Name = "Core"
+  Equation = 1
+  Material = 3
+End
+
+Body 4
+  Name = "Metal Plate"
+  Equation = 1
+  Material = 3
+End
+
+Solver 1
+  Equation = "CoilSolver"
+
+  Procedure = "CoilSolver" "CoilSolver"
+
+  Linear System Solver = "Iterative"
+  Linear System Preconditioning = ILU1
+  Linear System Max Iterations = 1000
+  Linear System Convergence Tolerance = 1e-10
+  Linear System Iterative Method = BiCGStab
+  Linear System Residual Output = 10
+  Steady State Convergence Tolerance = 1e-06
+
+  Coil Closed = Logical True
+
+  Normalize Coil Current = Logical True
+  Nonlinear System Consistent Norm = Logical True
+
+  ! This will calculate elemental current density.
+  Calculate Elemental Fields = Logical True
+
+  ! We can make the current divergence free either here or within AV solver.
+  ! Here it is done locally for each element. This is computationally
+  ! more economical and therefore preferable - if it works.
+  Fix Input Current Density = Logical True
+End
+
+Solver 2
+  Equation = MGDynamics
+  Procedure = "MagnetoDynamics" "WhitneyAVSolver"
+  Variable = AV
+
+  ! Not active when using potential as source
+  Fix Input Current density = False
+
+  ! This eliminates the need for a separate body force section
+  ! The "CoilCurrent e" field is used directly.
+  Use Elemental CoilCurrent = Logical True
+
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Max Iterations = 1
+
+  Linear System Solver = iterative
+  Linear System Iterative Method = BiCGStabl ! GCR / Idrs
+
+  Linear System GCR Restart = 100
+  BiCGStabl Polynomial Degree = 6
+  Idrs Parameter = Integer 6
+
+  Linear System Robust = Logical True
+
+  Linear System Max Iterations = 1000
+  Linear System Convergence Tolerance = 1.0e-8
+  Linear System Preconditioning = none
+  Linear System Residual Output = 20
+  Linear System Abort Not Converged = False
+
+  ! Optionally one can use different scaling. Sometimes gives better results. 
+  ! Linear System Row Equilibration = Logical True
+  Nonlinear System Consistent Norm = Logical True
+End
+
+Solver 3
+  Equation = MGDynamicsCalc
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  Potential Variable = String "AV"
+
+  Linear System Solver = Iterative
+  Linear System Symmetric = True
+  Linear System Iterative Method = CG
+  Linear System Max Iterations = 5000
+  Linear System Convergence Tolerance = 1.0e-8
+  Linear System Preconditioning = ILU0
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 20
+  Linear System Precondition Recompute = 1
+
+  Nonlinear System Consistent Norm = Logical True
+
+  ! Elemental fields look nicer if you have jumps!
+  Calculate Nodal Fields = False
+  Calculate Elemental Fields = True
+  Discontinuous Bodies = True
+
+  Calculate Electric Field = True
+  Calculate Current Density = False
+  Calculate Magnetic Field Strength = True
+End
+
+Solver 4
+  Exec Solver = after all
+  Equation = "ResultOutput"
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = "coil-results"
+  Vtu format = Logical True
+  Discontinuous Bodies = Logical True
+  ! This depends on individual taste:
+  ! Do you want each part in a separate file
+  ! or a single result file?
+  ! We use a single file and filter on parts
+  ! (Geometry Ids) in ParaView where required.
+  Vtu Part Collection = False
+  Save Geometry Ids = True
+
+! Particularly with the previous it is usually sufficient to save just
+! the bulk elements.
+  Save Bulk Only = True
+End
+
+Equation 1
+  Name = "MGDyn for air and cores"
+  Active Solvers(2) = 2 3
+End
+
+Equation 2
+  Name = "MGDyn for coils"
+  Active Solvers(3) = 1 2 3
+End
+
+Material 1
+  Name = "Space"
+  Permeability = 1.0
+  Relative Permittivity = 1.0
+End
+
+Material 2
+  Name = "Conductor"
+  Permeability = 1.0
+  Relative Permittivity = 1.0
+  Electric Conductivity = 1.0
+End
+
+Material 3
+  Name = "Ferrite"
+  Permeability = 1500.0
+  Relative Permittivity = 10.0
+  Electric Conductivity = 10.0e-4
+End
+
+Component 1 
+  Name = String "Coil"
+  Coil Type = String "stranded"
+  Master Bodies(1) = Integer 2
+  Desired Current Density = Real 1.0
+
+  ! This is needed in our case as our coil is non-trivial in shape
+  ! and the coil solver would determine the wrong normal.
+  Coil Normal(3) = 0 0 1
+End 
+
+Boundary Condition 1
+  Name = "Infinity"
+  AV {e} = real 0
+End
+
+! Mesh dependent
+Solver 1 :: Reference Norm = 5.31943303E+02
+Solver 2 :: Reference Norm = 1.46382219E-08
