@@ -39,7 +39,7 @@ End
 Solver 1
   Equation = Vector Helmholtz Equation
   Procedure = "VectorHelmholtz" "VectorHelmholtzSolver"
-  Variable = E[E re:1 E:1]
+  Variable = E[E re:1 E im:1]
   Linear System Preconditioning Damp Coefficient im = 1.0
   Exec Solver = Always
   Stabilize = True
