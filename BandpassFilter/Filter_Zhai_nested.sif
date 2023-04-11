@@ -15,7 +15,7 @@ Simulation
   Timestepping Method = BDF
   BDF Order = 1
   $ te = 151
-  Timestep intervals = 1 !$ te
+  Timestep intervals = $ te
   Timestep Sizes = 1
 End
 
