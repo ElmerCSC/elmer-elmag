@@ -1,0 +1,152 @@
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "mesh"
+  Include Path ""
+  Results Directory "results"
+End
+
+Simulation
+  Max Output Level = 5
+  Coordinate System = Cartesian
+  Coordinate Mapping(3) = 1 2 3
+  Simulation Type = Steady state
+  Steady State Max Iterations = 1
+  Output Intervals(1) = 1
+  Coordinate Scaling = 1e-3
+  Solver Input File = case.sif
+  Post File = case.vtu
+End
+
+Constants
+  Gravity(4) = 0 -1 0 9.82
+  Stefan Boltzmann = 5.670374419e-08
+  Permittivity of Vacuum = 8.85418781e-12
+  Permeability of Vacuum = 1.25663706e-6
+  Boltzmann Constant = 1.380649e-23
+  Unit Charge = 1.6021766e-19
+End
+
+Body 1
+  Target Bodies(1) = 1
+  Name = "Body 1"
+  Equation = 1
+  Material = 2
+End
+
+Body 2
+  Target Bodies(1) = 2
+  Name = "Body 2"
+  Equation = 1
+  Material = 3
+End
+
+Body 3
+  Target Bodies(1) = 3
+  Name = "Body 3"
+  Equation = 1
+  Material = 1
+End
+
+Solver 1
+  Equation = MgDyn
+  Procedure = "MagnetoDynamics" "WhitneyAVSolver"
+  Exec Solver = Always
+  Stabilize = True
+  Optimize Bandwidth = True
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Convergence Tolerance = 1.0e-10
+  Nonlinear System Max Iterations = 50
+  Nonlinear System Newton After Iterations = 3
+  Nonlinear System Newton After Tolerance = 1.0e-3
+  Nonlinear System Relaxation Factor = 1
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations = 500
+  Linear System Convergence Tolerance = 1.0e-10
+  BiCGstabl polynomial degree = 2
+  Linear System Preconditioning = ILU0
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+  Linear System Precondition Recompute = 1
+End
+
+Solver 2
+  Equation = MgDynPost
+  Calculate Magnetic Field Strength = True
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  Exec Solver = Always
+  Stabilize = True
+  Optimize Bandwidth = True
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Convergence Tolerance = 1.0e-7
+  Nonlinear System Max Iterations = 50
+  Nonlinear System Newton After Iterations = 3
+  Nonlinear System Newton After Tolerance = 1.0e-3
+  Nonlinear System Relaxation Factor = 1
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations = 500
+  Linear System Convergence Tolerance = 1.0e-10
+  BiCGstabl polynomial degree = 2
+  Linear System Preconditioning = ILU0
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+  Linear System Precondition Recompute = 1
+End
+
+Solver 3
+  Exec Solver = after timestep
+  Equation = "ResultOutput"
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = f
+  Vtu format = True
+  Discontinuous Bodies = True
+  ! bloated alternative for the above maintaining all discontinuities
+  ! Discontinuous Galerkin = True 
+  Save Geometry Ids = True
+  ! use this only in conjunction with quadratic mesh   
+  Save Linear Elements = True  
+  ! Save Bulk Only = True 
+  ! Save Boundaries Only = True 
+End
+
+Equation 1
+  Name = "Equation 1"
+  Active Solvers(3) = 1 2 3
+End
+
+Material 1
+  Name = "Air (room temperature)"
+  Heat Conductivity = 0.0257
+  Heat expansion Coefficient = 3.43e-3
+  Heat Capacity = 1005.0
+  Density = 1.205
+  Relative Permittivity = 1.00059
+  Sound speed = 343.0
+  Viscosity = 1.983e-5
+  Relative Permeability = 1.0
+End
+
+Material 2
+  Name = "N"
+  Relative Permeability = Real 1.0997785406
+  Magnetization 1 = Real 890e3
+  Magnetization 2 = Real 0
+  Magnetization 3 = Real 0
+End
+
+Material 3
+  Name = "S"
+  Relative Permeability = Real 1.0997785406
+  Magnetization 1 = Real -890e3
+  Magnetization 2 = Real 0
+  Magnetization 3 = Real 0
+End
+
+Boundary Condition 1
+  Target Boundaries(6) = 13 14 15 16 17 18 
+  Name = "BoundaryCondition 1"
+  AV {e} = Real 0
+End
