@@ -24,12 +24,12 @@ We list here some features that have been considered:
 * Only half space is saved of the mesh for pretty visualization
 
 To run the cases say:
->ElmerGrid 14 2 balls.msh -autoclean -out mesh
+>ElmerGrid 14 2 balls.msh -autoclean -out mesh   
 >ElmerSolver case.sif
 
-For reference this is the CapacitanceMatrix.dat with these settings
-   5.0418163384591788        1.6712518805801200     
-   1.6712518805801200        5.0419774005713753     
+For reference this is the CapacitanceMatrix.dat with these settings:  
+   5.0418163384591788        1.6712518805801200       
+   1.6712518805801200        5.0419774005713753       
 
 What could be further studied
 * What is the optiomal p for obtaining the most accurate results in given time
