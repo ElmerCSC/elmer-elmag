@@ -21,7 +21,7 @@ Simulation
   Output Intervals = 1
   Timestepping Method = BDF
   BDF Order = 1
-  $ te = 151
+  $ te = 3
   Timestep intervals = $ te
   Timestep Sizes = 1
 End
@@ -56,9 +56,9 @@ Solver 1
   Linear System Solver = Iterative
   Linear System Iterative Method = BiCGStabl ! gcr ! idrs
   Linear System Max Iterations = 1000
-  Linear System Convergence Tolerance = 1.0e-7
+  Linear System Convergence Tolerance = 1.0e-8
   BiCGstabl polynomial degree = 8 ! 4...8
-  Linear System Preconditioning = none !ILU2 !vanka
+  Linear System Preconditioning = vanka2
   Linear System ILUT Tolerance = 1.0e-3
   Linear System Abort Not Converged = False
   Linear System Residual Output = 1
@@ -87,10 +87,12 @@ Solver 2
   Linear System Max Iterations = 1000
   Linear System Convergence Tolerance = 1.0e-10
   BiCGstabl polynomial degree = 2
-  Linear System Preconditioning = none 
+  Linear System Preconditioning = vanka2 !none 
   Linear System ILUT Tolerance = 1.0e-3
   Linear System Abort Not Converged = False
   Linear System Residual Output = 10
+
+  Exec Solver = never
 End
 
 Solver 3
