@@ -68,14 +68,14 @@ def plot_circuit(c: Circuit, fname: Path):
     pins = list(set(pins))
     for pin in pins:
         graph.add_node(
-            pydot.Node(f"Node_{pin}", style="filled", fillcolor="red", shape="box")
+            pydot.Node(f"{pin}", style="filled", fillcolor="red", shape="circle")
         )
 
     # Connect components and nodes/pins
     for comp in c[1].components[0]:
-        edge = pydot.Edge(f"Node_{comp.pin1}", comp.name)
+        edge = pydot.Edge(f"{comp.pin1}", comp.name)
         graph.add_edge(edge)
-        edge = pydot.Edge(comp.name, f"Node_{comp.pin2}")
+        edge = pydot.Edge(comp.name, f"{comp.pin2}")
         graph.add_edge(edge)
 
     save = getattr(graph, f"write_{fname.suffix.replace('.', '')}")
