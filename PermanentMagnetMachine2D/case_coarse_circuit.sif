@@ -21,7 +21,7 @@ Header
 End
 
 !Include circuit
-include "circuit_adjusted.definition"
+include "circuit_adjusted_delta.definition"
 
 Constants
 	Permittivity of Vacuum = 8.8542e-12
@@ -35,7 +35,7 @@ Simulation
 	Timestepping Method = BDF
 	BDF Order = 2
 	Timestep Sizes = 3.33e-04 
-	Timestep Intervals = 121
+	Timestep Intervals = 30
 	Use Mesh Names = Logical True
 End
 
