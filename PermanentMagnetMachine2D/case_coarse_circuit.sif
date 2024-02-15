@@ -21,7 +21,7 @@ Header
 End
 
 !Include circuit
-include "circuit_adjusted_delta.definition"
+include "circuit_adjusted.definition"
 
 Constants
 	Permittivity of Vacuum = 8.8542e-12
