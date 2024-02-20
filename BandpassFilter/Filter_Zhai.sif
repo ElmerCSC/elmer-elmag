@@ -9,10 +9,10 @@ Header
 End
 
 Simulation
-  Max Output Level = 5
+  Max Output Level = 6
   Coordinate System = Cartesian
 
-! When using the filter.grd file that is in different cordinate system
+! When using the filter.grd file that is in different coordinate system
 !  Coordinate Mapping(3) = 2 3 1
 !  Coordinate Scaling = 1.0e-3
 
@@ -45,7 +45,8 @@ Solver 1
   Equation = Vector Helmholtz Equation
   Procedure = "VectorHelmholtz" "VectorHelmholtzSolver"
   Variable = E[E re:1 E im:1]
-!  Linear System Preconditioning Damp Coefficient im = 1.0
+  Mass-proportional Damping = True
+  Linear System Preconditioning Damp Coefficient im = -1.0
   Optimize Bandwidth = True
   Steady State Convergence Tolerance = 1.0e-5
   Nonlinear System Convergence Tolerance = 1.0e-7
@@ -56,17 +57,18 @@ Solver 1
   Linear System Solver = Iterative
   Linear System Iterative Method = BiCGStabl ! gcr ! idrs
   Linear System Max Iterations = 1000
-  Linear System Convergence Tolerance = 1.0e-8
-  BiCGstabl polynomial degree = 8 ! 4...8
-  Linear System Preconditioning = vanka2
-  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Convergence Tolerance = 1.0e-7
+  BiCGstabl polynomial degree = 4 ! 4...8
+  Linear System Preconditioning = ILUT
+!  Linear System Preconditioning = vanka3 ! vanka2 is poor for quadratic elements
+  Linear System ILUT Tolerance = 9.0e-3
   Linear System Abort Not Converged = False
   Linear System Residual Output = 1
   Linear System Precondition Recompute = 1
   Idrs Parameter = 6
   
 !  Linear System Row Equilibration = True
-!  Quadratic Approximation = Logical True ! piola automatically follows 2nd order
+  Quadratic Approximation = True ! piola automatically follows 2nd order
 End
 
 Solver 2
