@@ -17,7 +17,7 @@ Header
 	CHECK KEYWORDS Warn
 	Mesh DB "mesh_coarse"
 	Include Path "."
-	Results Directory "results_coarse"
+	Results Directory "results_coarse_circuit"
 End
 
 !Include circuit
@@ -35,7 +35,7 @@ Simulation
 	Timestepping Method = BDF
 	BDF Order = 2
 	Timestep Sizes = 3.33e-04 
-	Timestep Intervals = 30
+	Timestep Intervals = 121
 	Use Mesh Names = Logical True
 End
 

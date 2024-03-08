@@ -1,7 +1,6 @@
 import os
 from pathlib import Path
 
-import pydot
 from elmer_circuitbuilder import (
     Circuit,
     ElmerComponent,
@@ -116,44 +115,7 @@ def create_circuit_star(dir_out: Path):
     return c
 
 
-def plot_circuit(circuits: dict[int, Circuit], fname: Path):
-    """Plots the circuit."""
-    # TODO: Show reference Node
-    graph = pydot.Dot(graph_type="digraph")
-    pins = []
-
-    # Add components as graph nodes
-    for key, circuit in circuits.items():
-        for comp in circuit.components[0]:
-            pins.append(f"{key}_{comp.pin1}")
-            pins.append(f"{key}_{comp.pin2}")
-            graph.add_node(
-                pydot.Node(
-                    comp.name, style="filled", fillcolor="turquoise", shape="box"
-                )
-            )
-
-    # Add nodes/pins as graph nodes
-    pins = list(set(pins))
-    for pin in pins:
-        graph.add_node(
-            pydot.Node(f"{pin}", style="filled", fillcolor="red", shape="circle")
-        )
-
-    # Connect components and nodes/pins
-    for key, circuit in circuits.items():
-        for comp in circuit.components[0]:
-            edge = pydot.Edge(f"{key}_{comp.pin1}", comp.name)
-            graph.add_edge(edge)
-            edge = pydot.Edge(comp.name, f"{key}_{comp.pin2}")
-            graph.add_edge(edge)
-
-    save = getattr(graph, f"write_{fname.suffix.replace('.', '')}")
-    save(fname)
-
-
 if __name__ == "__main__":
     # Change path to your case directory
     path = Path(__file__).parent
     circuits = create_circuit_star(Path(path))
-    plot_circuit(circuits, path / "circuit.png")
