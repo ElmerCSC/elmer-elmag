@@ -1,0 +1,26 @@
+!------ Skeleton for body section -----
+Body 1
+  Name = Box
+End
+
+Body 2
+  Name = Winding
+End
+
+Body 3
+  Name = Air
+End
+
+!------ Skeleton for boundary section -----
+Boundary Condition 1
+  Name = SurfInfinity
+End
+
+Boundary Condition 2
+  Name = SurfWinding
+End
+
+Boundary Condition 3
+  Name = SurfBox
+End
+

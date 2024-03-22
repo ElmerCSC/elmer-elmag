@@ -1,0 +1,8 @@
+! ----- names for bodies -----
+$ Box = 1
+$ Winding = 2
+$ Air = 3
+! ----- names for boundaries -----
+$ SurfInfinity = 1
+$ SurfWinding = 2
+$ SurfBox = 3
