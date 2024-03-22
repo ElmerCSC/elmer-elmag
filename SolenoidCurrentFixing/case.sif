@@ -1,0 +1,167 @@
+Header
+  CHECK KEYWORDS "Warn"
+  Mesh DB mesh
+  Include Path "."
+  Results Directory results
+End
+
+Simulation
+  Simulation Type = Steady state
+  Random Number Seed = 42
+End
+
+Constants
+  Permeability of Vacuum = 1.25663706212e-06
+End
+
+! EqCoil
+Equation 1
+  Active Solvers(4) = 1 2 3 4   ! CoilSolver, WhitneyAVSolver, CalculateFields, OutputSolver, 
+End
+
+! EqPassive
+Equation 2
+  Active Solvers(3) = 2 3 4   ! WhitneyAVSolver, CalculateFields, OutputSolver, 
+End
+
+
+! CoilSolver
+Solver 1
+  Equation = CoilSolver
+  Procedure = "CoilSolver" "CoilSolver"
+  Fix Input Current Density = Logical True
+  Normalize Coil Current = Logical True
+  Coil Closed = Logical True
+  Save Coil Set = Logical True
+  Save Coil Index = Logical True
+  Calculate Elemental Fields = Logical True
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations = 5000
+  Linear System Convergence Tolerance = 1e-09
+End
+
+! WhitneyAVSolver
+Solver 2
+  Equation = WhitneySolver
+  Exec Solver = always
+  Procedure = "MagnetoDynamics" "WhitneyAVSolver"
+  Variable = A
+  Use Elemental CoilCurrent = Logical True
+  Fix Input Current Density = False
+  Automated Source Projection BCs = True
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab2
+  Linear System Max Iterations = 5000
+  Linear System Convergence Tolerance = 1e-09
+  Linear System Abort Not Converged = Logical True
+  Nonlinear System Convergence Tolerance = 1e-09
+  Nonlinear System Max Iterations = 10
+  Newton-Raphson Iteration = Logical True
+End
+
+! CalculateFields
+Solver 3
+  Equation = CalcFields
+  Exec Solver = always
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  Potential Variable = A
+  Calculate Nodal Forces = Logical True
+  Calculate Nodal Fields = Logical False
+  Calculate Elemental Fields = Logical True
+  Calculate Magnetic Vector Potential = Logical True
+  Calculate Winding Voltage = Logical True
+  Calculate Current Density = Logical True
+  Calculate Maxwell Stress = Logical True
+  Calculate JxB = Logical True
+  Calculate Magnetic Field Strength = Logical True
+  Separate Magnetic Energy = Logical True
+  Impose Body Force Current = Logical True
+End
+
+! OutputSolver
+Solver 4
+  Exec Solver = after saving
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = step
+  Vtu Format = Logical True
+  Binary Output = Logical True
+  Single Precision = Logical True
+  Save Geometry Ids = Logical True
+  Show Variables = Logical True
+  Discontinuous Bodies = Logical True
+  Eigen Analysis = Logical False
+End
+
+
+! db931dce-3c34-4216-b17d-972a766e299e
+Material 1
+  Relative Permeability = Real 1.0
+  Reference Temperature = Real 20.0
+End
+
+! 5d9d8083-0f29-4d07-a692-02009d3a44d8
+Material 2
+  Relative Permeability = Real 5000.0
+  Reference Temperature = Real 20.0
+End
+
+! 1f382e85-0baa-49d5-8f3f-d4c877733532
+Material 3
+  Relative Permeability = Real 1.0
+  Reference Temperature = Real 20.0
+End
+
+
+! Winding
+Body 1
+  Target Bodies(1) = 2
+  Equation = 1
+  Material = 1
+End
+
+! Box
+Body 2
+  Target Bodies(1) = 1
+  Equation = 2
+  Material = 2
+End
+
+! Air
+Body 3
+  Target Bodies(1) = 3
+  Equation = 2
+  Material = 3
+End
+
+
+! SurfInfinity
+Boundary Condition 1
+  Target Boundaries(1) = 1
+  A = Real 0.0
+  A {e} = Real 0.0
+End
+
+! SurfBox
+Boundary Condition 2
+  Target Boundaries(1) = 3
+  jfix = Real 0.0
+End
+
+! SurfWinding
+Boundary Condition 3
+  Target Boundaries(1) = 2
+End
+
+
+
+! moo
+Component 1
+  Name = moo
+  Master Bodies(1) = 1  ! Winding,
+  Coil Type = String Stranded
+  Coil Normal (3) = Real 1.0 0.0 0.0
+  Desired Coil Current = Real 1.0
+End
+
+
