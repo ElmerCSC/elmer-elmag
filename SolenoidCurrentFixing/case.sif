@@ -6,7 +6,11 @@ Header
 End
 
 Simulation
-  Simulation Type = Steady state
+  Max Output Level = 7
+  Coordinate System = Cartesian
+  Simulation Type = Steady State
+  Steady State Max Iterations = 1
+  Output Intervals = 1
   Random Number Seed = 42
 End
 
@@ -25,7 +29,6 @@ Equation 2
 End
 
 
-! CoilSolver
 Solver 1
   Equation = CoilSolver
   Procedure = "CoilSolver" "CoilSolver"
@@ -39,9 +42,10 @@ Solver 1
   Linear System Iterative Method = BiCGStab
   Linear System Max Iterations = 5000
   Linear System Convergence Tolerance = 1e-09
+  Linear System Residual Output = 20
+  Linear System Preconditioning = ILU0
 End
 
-! WhitneyAVSolver
 Solver 2
   Equation = WhitneySolver
   Exec Solver = always
@@ -55,42 +59,43 @@ Solver 2
   Linear System Max Iterations = 5000
   Linear System Convergence Tolerance = 1e-09
   Linear System Abort Not Converged = Logical True
+  Linear System Residual Output = 20
   Nonlinear System Convergence Tolerance = 1e-09
-  Nonlinear System Max Iterations = 10
-  Newton-Raphson Iteration = Logical True
+  Nonlinear System Max Iterations = 1
 End
 
-! CalculateFields
 Solver 3
   Equation = CalcFields
   Exec Solver = always
   Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
   Potential Variable = A
-  Calculate Nodal Forces = Logical True
-  Calculate Nodal Fields = Logical False
-  Calculate Elemental Fields = Logical True
-  Calculate Magnetic Vector Potential = Logical True
+  Calculate Nodal Forces = True
+  Calculate Nodal Fields = False
+  Calculate Elemental Fields = True
+  Calculate Magnetic Vector Potential = True
   Calculate Winding Voltage = Logical True
-  Calculate Current Density = Logical True
-  Calculate Maxwell Stress = Logical True
-  Calculate JxB = Logical True
-  Calculate Magnetic Field Strength = Logical True
-  Separate Magnetic Energy = Logical True
-  Impose Body Force Current = Logical True
+  Calculate Current Density = True
+  Calculate Maxwell Stress = True
+  Calculate JxB = True
+  Calculate Magnetic Field Strength = True
+  Separate Magnetic Energy = True
+  Impose Body Force Current = True
 End
 
-! OutputSolver
 Solver 4
+  Equation = "VtuOutput"
   Exec Solver = after saving
   Procedure = "ResultOutputSolve" "ResultOutputSolver"
   Output File Name = step
   Vtu Format = Logical True
-  Binary Output = Logical True
   Single Precision = Logical True
   Save Geometry Ids = Logical True
   Show Variables = Logical True
   Discontinuous Bodies = Logical True
-  Eigen Analysis = Logical False
+  Vtu Part Collection = True  
+  Save Bulk Only = True 
+!Save Boundaries Only = True
+  Ascii Output = Logical True
 End
 
 
@@ -113,47 +118,44 @@ Material 3
 End
 
 
-! Winding
 Body 1
+  Name = "Winding"
   Target Bodies(1) = 2
   Equation = 1
   Material = 1
 End
 
-! Box
 Body 2
+  Name = "Box"
   Target Bodies(1) = 1
   Equation = 2
   Material = 2
 End
 
-! Air
 Body 3
+  Name = "Air"
   Target Bodies(1) = 3
   Equation = 2
   Material = 3
 End
 
-
-! SurfInfinity
 Boundary Condition 1
+  Name = "SurfInfinity"
   Target Boundaries(1) = 1
   A = Real 0.0
   A {e} = Real 0.0
-End
-
-! SurfBox
-Boundary Condition 2
-  Target Boundaries(1) = 3
   jfix = Real 0.0
 End
 
-! SurfWinding
-Boundary Condition 3
-  Target Boundaries(1) = 2
+Boundary Condition 2
+  Name = "SurfBox"
+  Target Boundaries(1) = 3
 End
 
-
+Boundary Condition 3
+  Name = "SurfWinding"
+  Target Boundaries(1) = 2
+End
 
 ! moo
 Component 1
