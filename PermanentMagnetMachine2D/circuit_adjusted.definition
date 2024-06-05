@@ -1,0 +1,208 @@
+! -----------------------------------------------------------------------------
+! ElmerFEM Circuit Generated: February 15, 2024
+! -----------------------------------------------------------------------------
+
+! -----------------------------------------------------------------------------
+! Number of Circuits in Model
+! -----------------------------------------------------------------------------
+$ Circuits = 1
+
+! -----------------------------------------------------------------------------
+! Parameters
+! -----------------------------------------------------------------------------
+
+! General Parameters 
+$ I_0 = Is / 35
+$ I_1 = Is / 35
+$ I_2 = Is / 35
+
+! Parameters in Component 1: Phase_0_0
+$ N_Phase_0_0 = 35	 ! Number of Turns
+$ R_Phase_0_0 = 0.022857142857142857	 ! Coil Resistance
+$ Ns_Phase_0_0 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+! Parameters in Component 2: Phase_0_1
+$ N_Phase_0_1 = 35	 ! Number of Turns
+$ R_Phase_0_1 = 0.022857142857142857	 ! Coil Resistance
+$ Ns_Phase_0_1 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+! Parameters in Component 3: Phase_1_0
+$ N_Phase_1_0 = 35	 ! Number of Turns
+$ R_Phase_1_0 = 0.022857142857142857	 ! Coil Resistance
+$ Ns_Phase_1_0 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+! Parameters in Component 4: Phase_1_1
+$ N_Phase_1_1 = 35	 ! Number of Turns
+$ R_Phase_1_1 = 0.022857142857142857	 ! Coil Resistance
+$ Ns_Phase_1_1 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+! Parameters in Component 5: Phase_2_0
+$ N_Phase_2_0 = 35	 ! Number of Turns
+$ R_Phase_2_0 = 0.022857142857142857	 ! Coil Resistance
+$ Ns_Phase_2_0 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+! Parameters in Component 6: Phase_2_1
+$ N_Phase_2_1 = 35	 ! Number of Turns
+$ R_Phase_2_1 = 0.022857142857142857	 ! Coil Resistance
+$ Ns_Phase_2_1 = 1	 ! Sector/Symmetry Coefficient (e.g. 4 is 1/4 of the domain)
+
+! -----------------------------------------------------------------------------
+! Matrix Size Declaration and Matrix Initialization
+! -----------------------------------------------------------------------------
+$ C.1.variables = 24
+$ C.1.perm = zeros(C.1.variables)
+$ C.1.A = zeros(C.1.variables,C.1.variables)
+$ C.1.B = zeros(C.1.variables,C.1.variables)
+
+! -----------------------------------------------------------------------------
+! Dof/Unknown Vector Definition
+! -----------------------------------------------------------------------------
+$ C.1.name.1 = "i_I_0"
+$ C.1.name.2 = "i_I_1"
+$ C.1.name.3 = "i_I_2"
+$ C.1.name.4 = "i_component(1)"
+$ C.1.name.5 = "i_component(2)"
+$ C.1.name.6 = "i_component(3)"
+$ C.1.name.7 = "i_component(4)"
+$ C.1.name.8 = "i_component(5)"
+$ C.1.name.9 = "i_component(6)"
+$ C.1.name.10 = "v_I_0"
+$ C.1.name.11 = "v_I_1"
+$ C.1.name.12 = "v_I_2"
+$ C.1.name.13 = "v_component(1)"
+$ C.1.name.14 = "v_component(2)"
+$ C.1.name.15 = "v_component(3)"
+$ C.1.name.16 = "v_component(4)"
+$ C.1.name.17 = "v_component(5)"
+$ C.1.name.18 = "v_component(6)"
+$ C.1.name.19 = "u_2_circuit_1"
+$ C.1.name.20 = "u_4_circuit_1"
+$ C.1.name.21 = "u_6_circuit_1"
+$ C.1.name.22 = "u_3_circuit_1"
+$ C.1.name.23 = "u_5_circuit_1"
+$ C.1.name.24 = "u_7_circuit_1"
+
+! -----------------------------------------------------------------------------
+! Source Vector Definition
+! -----------------------------------------------------------------------------
+$ C.1.source.22 = "I_0_Source"
+$ C.1.source.23 = "I_1_Source"
+$ C.1.source.24 = "I_2_Source"
+
+! -----------------------------------------------------------------------------
+! KCL Equations
+! -----------------------------------------------------------------------------
+$ C.1.B(0,0) = -1
+$ C.1.B(0,3) = 1
+$ C.1.B(1,3) = -1
+$ C.1.B(1,4) = 1
+$ C.1.B(2,1) = -1
+$ C.1.B(2,5) = 1
+$ C.1.B(3,5) = -1
+$ C.1.B(3,6) = 1
+$ C.1.B(4,2) = -1
+$ C.1.B(4,7) = 1
+$ C.1.B(5,7) = -1
+$ C.1.B(5,8) = 1
+
+! -----------------------------------------------------------------------------
+! KVL Equations
+! -----------------------------------------------------------------------------
+$ C.1.B(6,9) = 1
+$ C.1.B(6,18) = -1
+$ C.1.B(7,10) = 1
+$ C.1.B(7,20) = -1
+$ C.1.B(8,11) = 1
+$ C.1.B(8,22) = -1
+$ C.1.B(9,12) = -1
+$ C.1.B(9,18) = 1
+$ C.1.B(9,19) = -1
+$ C.1.B(10,13) = -1
+$ C.1.B(10,19) = 1
+$ C.1.B(11,14) = -1
+$ C.1.B(11,20) = 1
+$ C.1.B(11,21) = -1
+
+! -----------------------------------------------------------------------------
+! Component Equations
+! -----------------------------------------------------------------------------
+$ C.1.B(18,15) = -1
+$ C.1.B(18,21) = 1
+$ C.1.B(19,16) = -1
+$ C.1.B(19,22) = 1
+$ C.1.B(19,23) = -1
+$ C.1.B(20,17) = -1
+$ C.1.B(20,23) = 1
+$ C.1.B(21,0) = 1
+$ C.1.B(22,1) = 1
+$ C.1.B(23,2) = 1
+
+
+! -----------------------------------------------------------------------------
+! Additions in SIF file
+! -----------------------------------------------------------------------------
+Component 1
+  Name = "Phase_0_0"
+  Master Bodies(1) = 2
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Phase_0_0
+  Resistance = Real $ R_Phase_0_0
+  Symmetry Coefficient = Real $ 1/(Ns_Phase_0_0)
+End 
+
+Component 2
+  Name = "Phase_0_1"
+  Master Bodies(1) = 3
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Phase_0_1
+  Resistance = Real $ R_Phase_0_1
+  Symmetry Coefficient = Real $ 1/(Ns_Phase_0_1)
+End 
+
+Component 3
+  Name = "Phase_1_0"
+  Master Bodies(1) = 6
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Phase_1_0
+  Resistance = Real $ R_Phase_1_0
+  Symmetry Coefficient = Real $ 1/(Ns_Phase_1_0)
+End 
+
+Component 4
+  Name = "Phase_1_1"
+  Master Bodies(1) = 7
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Phase_1_1
+  Resistance = Real $ R_Phase_1_1
+  Symmetry Coefficient = Real $ 1/(Ns_Phase_1_1)
+End 
+
+Component 5
+  Name = "Phase_2_0"
+  Master Bodies(1) = 4
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Phase_2_0
+  Resistance = Real $ R_Phase_2_0
+  Symmetry Coefficient = Real $ 1/(Ns_Phase_2_0)
+End 
+
+Component 6
+  Name = "Phase_2_1"
+  Master Bodies(1) = 5
+  Coil Type = "Stranded"
+  Number of Turns = Real $ N_Phase_2_1
+  Resistance = Real $ R_Phase_2_1
+  Symmetry Coefficient = Real $ 1/(Ns_Phase_2_1)
+End 
+
+! -----------------------------------------------------------------------------
+! Sources in SIF 
+! -----------------------------------------------------------------------------
+
+Body Force 1
+  I_0_Source = Variable time, timestep size
+  	 Real MATC "dir_ph0*I_0*sin((tx(0)-tx(1))*2*pi*f-0*2*pi/3)"
+  I_1_Source = Variable time, timestep size
+  	 Real MATC "dir_ph1*I_1*sin((tx(0)-tx(1))*2*pi*f-1*2*pi/3)" 
+  I_2_Source = Variable time, timestep size
+  	 Real MATC "dir_ph2*I_2*sin((tx(0)-tx(1))*2*pi*f-2*2*pi/3)" 
+End
+
+! -----------------------------------------------------------------------------
+! End of Circuit
+! -----------------------------------------------------------------------------
