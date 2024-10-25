@@ -135,6 +135,7 @@ Solver 2
   Linear System Solver = Iterative
   Linear System Iterative Method = GCR
   Linear System GCR Restart = 100
+  Linear System Residual Output = 20
   Linear System preconditioning = Circuit
   Linear System Convergence Tolerance = 1.e-6
   Linear System Max Iterations = 300
@@ -148,6 +149,9 @@ Solver 3
   Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
   Calculate Current Density = Logical True 
   Calculate Magnetic Vector Potential = Logical True
+
+  Calculate Elemental Fields = True
+  Calculate Nodal Fields = False
 End
 
 
@@ -159,6 +163,8 @@ Solver 4
   Save Geometry Ids = Logical True
   Vtu Format = Logical True
   Output Format = Gmsh
+
+  ascii output = true
 End 
 
 Solver 5
@@ -172,4 +178,6 @@ Solver 6
    Filename = res/f1.dat
 End
 
-
+! Just to check consistency
+Solver 1 :: Reference Norm = 1.38726879E+01
+Solver 2 :: Reference Norm = 4.36144455E-01
