@@ -1,0 +1,6 @@
+! ----- names for bodies -----
+$ material = 1
+$ air = 2
+! ----- names for boundaries -----
+$ airBoundary = 3
+$ fixedTemperature = 4

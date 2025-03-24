@@ -1,0 +1,175 @@
+! F. Trillaud <ftrillaudp@gmail.com>
+! Created on 08/10/2020
+
+Include "./MESH/mesh.names"
+
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "." "MESH"
+  Results Directory "RESU"
+End
+
+Simulation
+  Coordinate System = String "Cartesian 3D"
+  Coordinate Mapping(3) = 1 2 3
+
+  Simulation Type = String "Transient"
+
+  Steady State Max Iterations = 1
+
+  TimeStepping Method = BDF
+  BDF Order = 2
+
+  Timestep Sizes(1) = Real 0.001
+  TimeStep Intervals(1) = Integer 100
+  Output Intervals(1) = Integer 1
+
+  Max Output Level = 5
+End
+
+! -- CONSTANTS --
+Constants
+  Gravity(4) = 0 0 -1 9.82
+  Stefan Boltzmann = 5.67e-08
+  Permittivity of Vacuum = 8.8542e-12
+  Permeability of Vacuum = 1.256e-6
+  Boltzmann Constant = 1.3807e-23
+  Unit Charge = 1.602e-19
+End
+
+!-- LUA FUNCTIONS --
+!-- Snusoidal
+#function h_a(x) f = 50; ba = 1.0; mu_0 = 1.256e-6; y = (ba / mu_0)*math.sin(2*math.pi*f*x) return y end
+
+! -- BODIES --
+Body 1
+  Name = "material"
+  Target Bodies(1) = $ material
+  Equation = 1
+  Material = 1
+  Initial Condition = 1
+End
+
+Body 2
+  Name = "air"
+  Target Bodies(1) = $ air
+  Equation = 1
+  Material = 2
+  Initial Condition = 1
+End
+
+! -- MATERIAL PROPERTIES --
+Material 1
+  Name = "REBCO"
+  Relative Permeability = Real 1.0
+  Electric Resistivity = Real 1.0e-8
+End
+
+Material 2
+  Name = "Air"
+  Relative Permeability = Real 1.0
+  Electric Resistivity = Real 1.0
+End
+
+!-- BOUNDARY CONDITIONS --
+Boundary Condition 1
+  Name = "Air boundary"
+  Target Boundaries(1) = $ airBoundary
+  H {e} 1 = Real 0.0
+  H {e} 2 = Real 0.0
+  H {e} 3 = Variable Time; Real lua "h_a(tx[0])"
+End
+
+!-- INITIAL CONDITIONS --
+Initial Condition 1
+  Name = "Initial state: thermo-magnetodynamics"
+  H {e} 1 = Real 0.0
+  H {e} 2 = Real 0.0
+  H {e} 3 = Real 0.0
+End
+
+
+!-- EQUATIONS --
+Equation 1
+  Name = "H Whitney"
+  Active Solvers(3) = 1 2 3
+End
+
+
+Solver 1
+  Equation = "H formulaiton"
+  Variable = H
+
+  Optimize Bandwidth = True
+  Linear System Symmetric = False
+  Procedure = "./Fortran90/hWhitneySolver"  "HWhitneySolver"
+
+  Quadratic Approximation = Logical False
+
+  ! Linear System Scaling = True
+  ! Linear System Solver = String "Iterative"
+  ! Linear System Iterative Method = String "bicgstabl"
+  ! BiCGstabl polynomial degree = Integer 6
+  ! Linear System Preconditioning = String "none"
+  ! Linear System ILUT Tolerance = Real 1e-4
+  ! Linear System Max Iterations = 1000
+  ! Linear System Convergence Tolerance = 1.0e-4
+  ! Linear System Abort Not Converged = True
+  ! Linear System Residual Output = 1
+
+  Linear System Solver = Direct
+  Linear System Direct Method = MUMPS
+
+  Nonlinear System Convergence Tolerance = 1.0e-4
+  Nonlinear System Max Iterations = 1
+  Nonlinear System Newton After Iterations = 3
+  Nonlinear System Newton After Tolerance = 1.0e-3
+  Nonlinear System Relaxation Factor = 1
+
+! Only global matrices work for constant bulk matrix currently.
+! Constant bulk matrix saves ~20% for the test problem.
+  Use Global Mass Matrix = True
+  Constant Bulk Matrix = True
+End
+
+Solver 2
+  Equation = "calcfields"
+
+  Procedure = "./Fortran90/hWhitneySolver" "HWhitneyCalcFields"
+  Linear System Symmetric = False
+
+  Calculate Time Derivatives = Logical False
+  Calculate Elemental Fields = Logical True
+  Calculate Nodal Fields = Logical True
+  Calculate Current Density = Logical True
+
+  Steady State Convergence Tolerance = 1
+  Linear System Solver = "Iterative"
+  Linear System Preconditioning = None
+  Linear System Residual Output = 10
+  Linear System Max Iterations = 1000
+  Linear System Iterative Method = CG
+  Linear System Convergence Tolerance = 1.0e-8
+
+! Not much effect as we need to assembly the many r.h.s vectors anyways
+  Constant Bulk Matrix = True
+
+  Exec Solver = before saving
+End
+
+
+Solver 3
+  Exec Solver = After timestep
+  Equation = "ResultOutput"
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+
+  Vtu Format = Logical True
+  Gmsh Format = Logical True
+  Binary Output = Logical True
+  Discontinuous Bodies = Logical True
+
+  Output File Name = File "case"
+
+  Save Geometry Ids = Logical True ! to get the identifying numbers for paraview visualization (Threshold on GeomtryIds)
+
+End
