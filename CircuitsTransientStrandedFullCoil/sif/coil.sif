@@ -24,7 +24,7 @@ Simulation
   Timestep Sizes(1) = Real 0.1
   TimeStep Intervals(1) = Integer 3
   Output Intervals(1) = Integer 1
-  Max Output Level = 5
+  Max Output Level = 10
 End
 Constants
   Gravity(4) = 0 0 -1 9.82
@@ -96,9 +96,11 @@ Solver 1  !---- CoilSolver, CoilSolver
   Linear System Solver = "Iterative"
   Linear System Preconditioning = ILU1
   Linear System Max Iterations = 500
-  Linear System Convergence Tolerance = 1e-6
+  Linear System Convergence Tolerance = 1e-10
   Linear System Iterative Method = BiCGStab
   Linear System Residual Output = 1
+  Fix Input Current Density = True
+
   ! When we normalize, we introduce propably some divergence that
   ! does not impress the solver very much... Helmholtz projection needed?
   Normalize Coil Current = Logical True
@@ -141,21 +143,12 @@ Solver 4  !---- MagnetoAndDynamics, MagnetoDynamicsCalcFields
   Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
   
   Potential Variable = String "A"
-  Steady State Convergence Tolerance = 1.0e-6
   
-  Linear System Solver = Iterative
-  Linear System Symmetric = True
-  Linear System Iterative Method = CG
-  Linear System Max Iterations = 5000
-  Linear System Convergence Tolerance = 1.0e-6
-  Linear System Preconditioning = ILU0
-  Linear System ILUT Tolerance = 1.0e-3
-  Linear System Abort Not Converged = False
-  Linear System Residual Output = 1
   Linear System Precondition Recompute = 1
   Discontinuous Bodies = Logical True
-  
-  Calculate Elemental Fields = Logical True
+
+  Calculate Nodal Fields = False
+  Calculate Elemental Fields = True
 End
 Solver 5  !---- CircuitsAndDynamics, CircuitsOutput
    Exec Solver = Always
@@ -164,16 +157,18 @@ Solver 5  !---- CircuitsAndDynamics, CircuitsOutput
 End
 Solver 6  !---- ResultOuputSolve, ResultOuputSolver
 !   Exec Solver = After timestep
-   Exec Solver = Never
+!   Exec Solver = Never
    Equation = "ResultOutput"
    Procedure = "ResultOutputSolve" "ResultOutputSolver"
    
    Vtu Format = Logical True
-   Binary Output = Logical True
-!   Discontinuous Bodies = Logical True
+   ! If you have the expat bug in paraview use False
+   Binary Output = Logical False
+   Discontinuous Bodies = Logical True
    
    Output File Name = File "coil"
-   
+   Vtu Part Collection = True
+   Save Bulk Only = Logical True
    Save Geometry Ids = Logical True 
 End
 Solver 7  !---- SaveData, SaveScalars (Write circuit variables to file)
@@ -195,9 +190,3 @@ Solver 3 :: Reference Norm = Real 3.55250580E-03
 Solver 3 :: Reference Norm Tolerance = Real 1E-03
 Solver 4 :: Reference Norm = Real 1.06341356E-05
 Solver 4 :: Reference Norm Tolerance = Real 1E-03
-$fprintf( stderr, "TEST CASE 1\n");
-RUN
-
-WARNING:: CompareToReferenceSolution: Solver 3 FAILED:  Norm = 3.55250580E-03  RefNorm = 8.82413861E-04
-CompareToReferenceSolution: Relative Error to reference norm: 3.025895E+00
-WARNING:: CompareToReferenceSolution: Solver 4 FAILED:  Norm = 1.06341356E-05  RefNorm = 4.71459285E-01
