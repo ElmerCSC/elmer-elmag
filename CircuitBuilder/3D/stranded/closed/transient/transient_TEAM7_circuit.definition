@@ -76,6 +76,7 @@ Component 1
   Coil Use W Vector = Logical True
   W Vector Variable Name = String CoilCurrent e
   Electrode Area = Real $ Ae_Coil1
+  Coil Normal(3) = Real 0. 0. 1.
 End 
 
 ! -----------------------------------------------------------------------------
