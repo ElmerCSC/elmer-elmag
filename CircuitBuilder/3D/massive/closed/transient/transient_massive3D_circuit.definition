@@ -84,6 +84,10 @@ Component 1
 ! Number of Turns = Real $ N_Coil1
 ! Electrode Area = Real $ Ae_Coil1
 
+  Coil Normal(3) = 0 1 0
+  Coil Tangent(3) = Real 0 0 1 
+
+
   Activate Constraint = Logical True
 End 
 

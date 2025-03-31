@@ -176,8 +176,6 @@ Solver 1  !---- CoilSolver, CoilSolver
 ! These enable better control. The coil tangent direction defines the cuts.
 ! We don't want to cut the vertical coils. In parallel it is more difficult 
 ! to define a smart strategy. 
-  Coil Normal(3) = 0 1 0
-  Coil Tangent(3) = Real 0 0 1 
   Single Coil Cut = Logical True
 
 ! Just compute the coil cuts but not the potentials
@@ -231,19 +229,8 @@ Solver 4  !---- MagnetoAndDynamics, MagnetoDynamicsCalcFields
   Potential Variable = String "A"
   Steady State Convergence Tolerance = 1.0e-6
   
-  Linear System Convergence Tolerance = 1.0e-6
-  Linear System Iterative Method = CG
-  Linear System Max Iterations = 5000
-  Linear System Solver = Iterative
-  Linear System Symmetric = True
-  Linear System Residual Output = 1
-  Linear System Preconditioning = ILU0
-  Linear System Precondition Recompute = 1
-  Linear System Abort Not Converged = False
-
-  Discontinuous Bodies = Logical True
-  
-  Calculate Nodal Fields = Logical True
+  Discontinuous Bodies = Logical True  
+  Calculate Nodal Fields = Logical False
   Calculate Elemental Fields = Logical True
   !Exec Solver = never
 End
@@ -261,7 +248,6 @@ Solver 6  !---- ResultOuputSolve, ResultOuputSolver
    Equation = "ResultOutput"
    Procedure = "ResultOutputSolve" "ResultOutputSolver"
    Vtu Format = Logical True
-!   Output Format =  Elmerpost
    Binary Output = Logical True
    Discontinuous Bodies = Logical True
    Output File Name = File "coil"
