@@ -46,14 +46,14 @@ End
 Solver 1
   Equation = MgDyn
   Procedure = "MagnetoDynamics" "WhitneyAVSolver"
-  Exec Solver = Always
   Optimize Bandwidth = True
-  Steady State Convergence Tolerance = 1.0e-5
+
   Nonlinear System Convergence Tolerance = 1.0e-10
   Nonlinear System Max Iterations = 50
   Nonlinear System Newton After Iterations = 3
   Nonlinear System Newton After Tolerance = 1.0e-3
   Nonlinear System Relaxation Factor = 1
+
   Linear System Solver = Iterative
 ! Bicgstabl is usually performing well for AV solver
   Linear System Iterative Method = BiCGStabl
@@ -70,22 +70,13 @@ End
 
 Solver 2
   Equation = MgDynPost
-  Calculate Magnetic Field Strength = True
   Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
-  Exec Solver = Always
   Optimize Bandwidth = True
-  Steady State Convergence Tolerance = 1.0e-5
-  Linear System Solver = Iterative
-  Linear System Iterative Method = BiCGStab
-  Linear System Max Iterations = 500
-  Linear System Convergence Tolerance = 1.0e-10
-  Linear System Preconditioning = ILU0
-  Linear System Abort Not Converged = False
-  Linear System Residual Output = 10
-  Linear System Precondition Recompute = 1
 
   Calculate Nodal Fields = False
   Calculate Elemental Fields = True
+
+  Calculate Magnetic Field Strength = True
 
 ! Perform the averaging within this solver
   Average Within Materials = Logical True
