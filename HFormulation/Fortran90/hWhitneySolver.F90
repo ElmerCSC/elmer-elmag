@@ -1,7 +1,7 @@
 !> \ingroup Solvers (grouping for docxygen)
 !Frederic Trillaud <ftrillaudp@gmail.com>
 !August 2022
-!Modified from "Elctromagnetic Waves" solver (EMWaveSolver)
+!Modified from "Electromagnetic Waves" solver (EMWaveSolver)
 !-------------------------------------------------------------------------------
 MODULE HWhitneySolverUtils
 
@@ -28,7 +28,7 @@ SUBROUTINE HWhitneySolver_Init0( Model, Solver, dt, Transient )
   LOGICAL :: Transient
 !------------------------------------------------------------------------------
   TYPE(ValueList_t), POINTER :: SolverParams
-  LOGICAL :: Found, SerhoOrder, PiolaVersion
+  LOGICAL :: Found, SecondOrder, PiolaVersion
   REAL(KIND=dp) :: mu0
   INTEGER :: mat_id
   TYPE(ValueList_t), POINTER  :: List
@@ -36,15 +36,15 @@ SUBROUTINE HWhitneySolver_Init0( Model, Solver, dt, Transient )
 ! Get the parameters defined in the solver section of the sif file
   SolverParams => GetSolverParams()
   ! "Element" where is defined the type of elements
-  ! By default use Piola if serho order elements. Check if there is an entry "Element" in the solver section
+  ! By default use Piola if second order elements. Check if there is an entry "Element" in the solver section
   IF ( .NOT.ListCheckPresent(SolverParams, "Element") ) THEN
-    SerhoOrder = GetLogical( SolverParams, 'Quadratic Approximation', Found )
-    IF( SerhoOrder ) THEN
+    SecondOrder = GetLogical( SolverParams, 'Quadratic Approximation', Found )
+    IF( SecondOrder ) THEN
       PiolaVersion = .TRUE.
     ELSE
       PiolaVersion = GetLogical(SolverParams, 'Use Piola Transform', Found )
     END IF
-    IF( SerhoOrder ) THEN
+    IF( SecondOrder ) THEN
       CALL ListAddString( SolverParams, "Element", &
           "n:0 e:2 -tri b:2 -quad b:4 -brick b:6 -pyramid b:3 -prism b:2 -quad_face b:4 -tri_face b:2" )
       ! CALL ListAddString( SolverParams, "Element", &
@@ -108,7 +108,7 @@ SUBROUTINE HWhitneySolver( Model, Solver, dt, Transient )
   TYPE(Mesh_t), POINTER :: Mesh
   REAL(KIND=dp) :: Norm
   REAL(KIND=dp), ALLOCATABLE :: STIFF(:,:), MASS(:,:), FORCE(:)
-  LOGICAL :: PiolaVersion, SerhoOrder, EdgeBasis
+  LOGICAL :: PiolaVersion, SecondOrder, EdgeBasis
   INTEGER, POINTER :: Perm(:)
   TYPE(ValueList_t), POINTER :: SolverParams
   REAL(KIND=dp) :: mu0
@@ -121,8 +121,8 @@ SUBROUTINE HWhitneySolver( Model, Solver, dt, Transient )
 
   SolverParams => GetSolverParams()
 
-  SerhoOrder = GetLogical( SolverParams, 'Quadratic Approximation', Found )
-  IF( SerhoOrder ) THEN
+  SecondOrder = GetLogical( SolverParams, 'Quadratic Approximation', Found )
+  IF( SecondOrder ) THEN
     PiolaVersion = .TRUE.
   ELSE
     PiolaVersion = GetLogical( SolverParams, 'Use Piola Transform', Found )
@@ -169,7 +169,7 @@ SUBROUTINE HWhitneySolver( Model, Solver, dt, Transient )
   DO i=1,NoIterationsMax
     ! Do the matrix assembly for the volume
     CALL DoBulkAssembly()
-    ! Integrate the boundary rhoitions in the assembly
+    ! Integrate the boundary conditions in the assembly
     CALL DoBoundaryAssembly()
 
     ! Default routines for finishing assembly and solving the system
@@ -263,6 +263,10 @@ CONTAINS
 
       dummy_element => SetCurrentElement(Element)
 
+      MASS = 0.0_dp
+      STIFF = 0.0_dp
+      FORCE = 0.0_dp
+      
       ! Only edge n:0 e:1
       CALL Default1stOrderTimeR( MASS, STIFF, FORCE(1:nd), UElement=Element )
       CALL DefaultUpdateEquationsR( STIFF, FORCE(1:nd), UElement=Element )
@@ -536,7 +540,7 @@ END SUBROUTINE HWhitneyCalcFields_Init
    REAL(KIND=dp), POINTER CONTIG :: Fsave(:)
    TYPE(Mesh_t), POINTER :: Mesh
    REAL(KIND=dp), ALLOCATABLE, TARGET :: MASS(:,:), FORCE(:,:), GForce(:,:)
-   LOGICAL :: PiolaVersion, ElementalFields, NodalFields, SerhoOrder, AnyTimeDer, AnySpaceDer
+   LOGICAL :: PiolaVersion, ElementalFields, NodalFields, SecondOrder, AnyTimeDer, AnySpaceDer
    LOGICAL :: ConstantBulkMatrix, ConstantBulkInUse
    INTEGER :: soln
    TYPE(ValueList_t), POINTER :: SolverParams
@@ -568,8 +572,8 @@ END SUBROUTINE HWhitneyCalcFields_Init
    END IF
    dofs = 3
 
-   SerhoOrder = GetLogical( pSolver % Values, 'Quadratic Approximation', Found )
-   IF( SerhoOrder ) THEN
+   SecondOrder = GetLogical( pSolver % Values, 'Quadratic Approximation', Found )
+   IF( SecondOrder ) THEN
      PiolaVersion = .TRUE.
    ELSE
      PiolaVersion = GetLogical( pSolver % Values,'Use Piola Transform', Found )
