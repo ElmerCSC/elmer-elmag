@@ -338,6 +338,7 @@ Solver 4
 !  Calculate Magnetic Field Strength = Logical True
   Calculate Magnetic Vector Potential = Logical True
 
+  Linear System Solver = Direct
 End
 
 Solver 5
