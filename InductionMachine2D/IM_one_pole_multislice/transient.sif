@@ -334,13 +334,15 @@ Solver 4
 !  Calculate Electric Field = Logical True
 !  Calculate Magnetic Field Strength = Logical True
   Calculate Magnetic Vector Potential = Logical True
-
+ 
+  Linear System Solver = Direct
 End
 
 Solver 5
   Exec Solver = Always
   Equation = CircOutput
   Procedure = "CircuitsAndDynamics" "CircuitsOutput"
+  Linear System Solver = Direct
 End
 
 
