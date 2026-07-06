@@ -1,0 +1,9 @@
+! ----- names for bodies -----
+$ yoke = 1
+$ magnet = 2
+$ top_plate = 3
+$ vc = 4
+$ air-domain = 5
+! ----- names for boundaries -----
+$ symmetry_line = 6
+$ far-field_line = 7
