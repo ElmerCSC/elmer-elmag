@@ -1,3 +1,6 @@
+! Instead of this sif consider using Filter_Zhai_pmg.sif together with
+! the second-order approximation
+
 Header
   CHECK KEYWORDS Warn
   Mesh DB "mesh" "Hl_Filter_Zhai_a08"
@@ -69,6 +72,7 @@ Solver 1
   
 !  Linear System Row Equilibration = True
   Quadratic Approximation = True ! piola automatically follows 2nd order
+  Gradient Basis Functions = True
 End
 
 Solver 2

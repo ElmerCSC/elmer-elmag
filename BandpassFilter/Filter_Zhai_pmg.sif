@@ -1,0 +1,170 @@
+! Here multigrid preconditioning is applied. This might be the best way to
+! solve the linear systems arising from the second-order approximation
+
+
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "mesh" "Hl_Filter_Zhai_a08"
+! This is an alternative mesh
+! >ElmerGrid 1 2 filter.grd
+! Mesh DB "." "filter"
+  Include Path ""
+  Results Directory "res"
+End
+
+Simulation
+  Max Output Level = 6
+  Coordinate System = Cartesian
+
+! When using the filter.grd file that is in different coordinate system
+!  Coordinate Mapping(3) = 2 3 1
+!  Coordinate Scaling = 1.0e-3
+
+  Simulation Type = Scanning
+  Steady State Max Iterations = 1
+  Output Intervals = 1
+  Timestepping Method = BDF
+  BDF Order = 1
+  $ te = 10
+  Timestep intervals = $ te
+  Timestep Sizes = 1
+End
+
+Constants
+  Gravity(4) = 0 -1 0 9.82
+  Stefan Boltzmann = 5.67e-08
+  Permittivity of Vacuum = 8.8542e-12
+  Boltzmann Constant = 1.3807e-23
+  Unit Charge = 1.602e-19
+End
+
+Body 1
+  Target Bodies(1) = 1
+  Name = "Body 1"
+  Equation = 1
+  Material = 1
+End
+
+Solver 1
+  Equation = Vector Helmholtz Equation
+  Procedure = "VectorHelmholtz" "VectorHelmholtzSolver"
+
+  Optimize Bandwidth = True
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Convergence Tolerance = 1.0e-7
+! The equation is linear!
+  Nonlinear System Max Iterations = 1
+
+  Quadratic Approximation = True  ! Use Piola Transform automatically follows from picking the 2nd order
+  Gradient Basis Functions = True ! Select a special version of basis functions
+
+! Parameters for the outer iteration: 
+  Linear System Solver = iterative 
+  Linear System Iterative Method = GCR 
+  Linear System Max Iterations = 200
+  Linear System GCR Restart = 50
+  Linear System Convergence Tolerance = 1.0e-6
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 1
+  Linear System Scaling = True
+
+  Linear System Preconditioning = multigrid
+
+! Parameters for MG preconditioning
+  Edge Basis = True
+  MG Method = p
+  MG Levels = 2
+  MG Max Iterations = 1
+  MG Smoother = cjacobi
+  MG Pre Smoothing iterations = 6
+  MG Post Smoothing Iterations = 6
+  MG Smoother Relaxation Factor = 0.16667
+
+  MG Lowest Linear Solver = Direct
+  mglowest: Linear System Scaling = True
+  mglowest: Linear System Direct Method = umfpack
+!  mglowest: Linear System Direct Method = MUMPS
+  
+!  Linear System Row Equilibration = True
+
+End
+
+Solver 2
+  Equation = Vector Helmholtz Post Process
+  Calculate Magnetic Field Strength = True
+  Calculate Electric Field = True
+!  Field Variable = E
+  Calculate Poynting Vector = True
+  Calculate Energy Functional = True
+  Procedure = "VectorHelmholtz" "VectorHelmholtzCalcFields"
+  Optimize Bandwidth = True
+  Steady State Convergence Tolerance = 1.0e-5
+
+  Nonlinear System Max Iterations = 1
+
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations = 1000
+  Linear System Convergence Tolerance = 1.0e-10
+  BiCGstabl polynomial degree = 2
+  Linear System Preconditioning = diagonal
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+
+  Exec Solver = never
+End
+
+Solver 3
+  Filename = "data.txt"
+  Exec Solver = after timestep
+  Equation = SaveScalars
+  Procedure = "SaveData" "SaveScalars"
+End
+
+Solver 4
+  Exec Solver = after timestep
+  Equation = "result output"
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = "str"
+  Vtu Format = Logical True
+  Ascii Output = True
+  Save geometry Ids = True
+End
+	
+Equation 1
+  Name = "Equation 1"
+  Angular Frequency = Variable time
+      Real Procedure "EMParam_WR28" "omega"
+  Active Solvers(4) = 1 2 3 4
+End
+
+Material 1
+  Name = "Material 1"
+  Relative Permittivity = 1
+  Relative Permeability = Real 1
+End
+
+Boundary Condition 1
+! The BCs 4 & 5 are only for the filter.grd
+  Target Boundaries(3) = 3 4 5
+  Name = "PEC"
+  E re {e} = 0
+  E im {e} = 0
+End
+
+Boundary Condition 2
+  Target Boundaries(1) = 1
+  Name = "Inport"
+  Magnetic Boundary Load 2 = Variable Coordinate 1, time
+    Real Procedure "EMParam_WR28" "MagnBndLoad"
+  Electric Robin Coefficient im = Variable time
+    Real Procedure "EMParam_WR28" "betaNull"
+End
+
+Boundary Condition 3
+  Target Boundaries(1) = 2
+  Name = "Outport"
+  Electric Robin Coefficient im = Variable time
+    Real Procedure "EMParam_WR28" "betaNull"
+End

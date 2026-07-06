@@ -1,6 +1,8 @@
+! Instead of this sif consider using Filter_Zhai_pmg.sif
+
 Header
   CHECK KEYWORDS Warn
-  Mesh DB "mesh" "Hl_Filter_Zhai_a16"
+  Mesh DB "mesh" "Hl_Filter_Zhai_a08"
   Include Path ""
   Results Directory "res"
 End
@@ -15,7 +17,7 @@ Simulation
   Timestepping Method = BDF
   BDF Order = 1
   $ te = 151
-  Timestep intervals = $ te
+  Timestep intervals = 1 !$ te
   Timestep Sizes = 1
 End
 
@@ -63,22 +65,24 @@ Solver 1
   Outer: Linear System Iterative Method = GCR
   Outer: Linear System GCR Restart =  50
   Outer: Linear System Residual Output =  1
-  Outer: Linear System Max Iterations =  30
+  Outer: Linear System Max Iterations =  50
   Outer: Linear System Pseudo Complex = Logical True
 
   $blocktol = 1.0e-2
 
   block 11: Linear System Solver = "iterative"
-  block 11: Linear System Preconditioning = ILU0
+  block 11: Linear System Preconditioning = ILUT
+  block 11: Linear System ILUT Tolerance = 1.0e-3
   block 11: Linear System Residual Output = 10
   block 11: Linear System Max Iterations = 100
-  block 11: Linear System Iterative Method = GCR !bicgstabl
+  block 11: Linear System Iterative Method = GCR
   block 11: Linear System Convergence Tolerance = $blocktol
-  block 11: Linear System GCR Restart = 20
-!  block 11: BicgStabl Polynomial Degree = 4
+  block 11: Linear System GCR Restart = 50
+  block 11: BicgStabl Polynomial Degree = 4
   block 11: Linear System Complex = True
 
-!  Quadratic Approximation = Logical True ! piola automatically follows 2nd order
+  Quadratic Approximation = Logical True ! piola automatically follows 2nd order
+  Gradient Basis Functions = True
 End
 
 Solver 2
