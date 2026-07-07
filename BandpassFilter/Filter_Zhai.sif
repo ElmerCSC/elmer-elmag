@@ -1,5 +1,6 @@
-! Instead of this sif consider using Filter_Zhai_pmg.sif together with
-! the second-order approximation
+! Instead of this sif consider using Filter_Zhai_pmg.sif or
+! Filter_Zhai_hierarchic.sif (these alternatives need the second-order
+! approximation)
 
 Header
   CHECK KEYWORDS Warn
