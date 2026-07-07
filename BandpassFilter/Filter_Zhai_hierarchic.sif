@@ -1,0 +1,184 @@
+! Here preconditioning is based on organizing the system
+! matrix in the block form corresponding to the polynomial order.
+! The block structure is then employed in the preconditioning iterations.
+! A similar idea is employed in the solution with p-multigrid, see
+! Filter_Zhai_pmg.sif, and the effectivity of the two methods seems
+! to be nearly the same.
+
+
+Header
+  CHECK KEYWORDS Warn
+  Mesh DB "mesh" "Hl_Filter_Zhai_a08"
+  Include Path ""
+  Results Directory "res"
+End
+
+Simulation
+  Max Output Level = 5
+  Coordinate System = Cartesian
+  Coordinate Mapping(3) = 1 2 3
+  Simulation Type = Scanning
+  Steady State Max Iterations = 1
+  Output Intervals = 1
+  Timestepping Method = BDF
+  BDF Order = 1
+  $ te = 151
+  Timestep intervals = 10 !$ te
+  Timestep Sizes = 1
+End
+
+Constants
+  Gravity(4) = 0 -1 0 9.82
+  Stefan Boltzmann = 5.67e-08
+  Permittivity of Vacuum = 8.8542e-12
+  Boltzmann Constant = 1.3807e-23
+  Unit Charge = 1.602e-19
+End
+
+Body 1
+  Target Bodies(1) = 1
+  Name = "Body 1"
+  Equation = 1
+  Material = 1
+End
+
+Solver 1
+  Equation = Vector Helmholtz Equation
+  Procedure = "VectorHelmholtz" "VectorHelmholtzSolver"
+  
+  Steady State Convergence Tolerance = 1.0e-5
+  Nonlinear System Convergence Tolerance = 1.0e-7
+
+! The equation is linear!
+  Nonlinear System Max Iterations = 1
+
+  Quadratic Approximation = Logical True
+  Gradient Basis Functions = True
+
+!  Linear System Abort Not Converged = False
+  Linear System Complex = true
+  Linear System Block Mode = Logical True
+  Block Quadratic Hcurl System = Logical True
+  Block Gauss-Seidel = Logical True
+  Block Preconditioner = Logical True
+  Block Scaling = Logical True
+
+
+! Linear system solver for outer loop
+!-----------------------------------------
+  Outer: Linear System Solver = "Iterative"
+  Outer: Linear System Convergence Tolerance = 1e-7
+  Outer: Linear System Iterative Method = GCR
+  Outer: Linear System GCR Restart =  50
+  Outer: Linear System Residual Output =  1
+  Outer: Linear System Max Iterations =  50
+  Outer: Linear System Pseudo Complex = Logical True
+  Outer: Linear System Abort Not Converged = False
+
+  $blocktol = 1.0e-2
+
+  block 11: Linear System Solver = direct !"iterative"
+  block 11: Linear System direct method = "umfpack"
+!  block 11: Linear System Convergence Tolerance = 1e-4
+!  block 11: Linear System Iterative Method = GCR
+!  block 11: Linear System GCR Restart = 50
+!  block 11: Linear System Preconditioning = ILUT
+  block 11: Linear System Residual Output = 10
+  block 11: Linear System Max Iterations = 100
+!  block 11: Linear System ILUT Tolerance = 5.0e-1
+!  block 11: BicgStabl Polynomial Degree = 4
+  block 11: Linear System Complex = True
+  block 11: Linear System Abort Not Converged = False
+  block 11: Linear System Scaling = True
+
+  block 22: Linear System Solver = "Iterative"
+  block 22: Linear System Convergence Tolerance = 1e-2
+  block 22: Linear System Iterative Method = GCR !bicgstabl
+  block 22: Linear System GCR Restart = 20
+  block 22: Linear System Preconditioning = diagonal
+  block 22: Linear System Residual Output = 20
+  block 22: Linear System Max Iterations = 100
+  block 22: Linear System Complex = True
+  block 22: Linear System Abort Not Converged = False
+  block 22: Linear System Scaling = True
+
+End
+
+Solver 2
+  Equation = Vector Helmholtz Post Process
+  Calculate Magnetic Field Strength = True
+  Calculate Electric Field = True
+!  Field Variable = E
+  Calculate Poynting Vector = True
+  Calculate Energy Functional = True
+  Procedure = "VectorHelmholtz" "VectorHelmholtzCalcFields"
+  Optimize Bandwidth = True
+  Steady State Convergence Tolerance = 1.0e-5
+
+  Nonlinear System Max Iterations = 1
+
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStab
+  Linear System Max Iterations = 1000
+  Linear System Convergence Tolerance = 1.0e-10
+  BiCGstabl polynomial degree = 2
+  Linear System Preconditioning = diagonal
+  Linear System ILUT Tolerance = 1.0e-3
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+  
+  Exec Solver = never
+End
+
+Solver 3
+  Filename = "data.txt"
+  Exec Solver = after timestep
+  Equation = SaveScalars
+  Procedure = "SaveData" "SaveScalars"
+End
+
+Solver 4
+  Exec Solver = after timestep
+  Equation = "result output"
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = "run"
+  Vtu Format = Logical True
+  Ascii Output = True
+  Save geometry Ids = True
+End
+	
+Equation 1
+  Name = "Equation 1"
+  Angular Frequency = Variable time
+      Real Procedure "EMParam_WR28" "omega"
+  Active Solvers(4) = 1 2 3 4
+End
+
+Material 1
+  Name = "Material 1"
+  Relative Permittivity = 1
+  Relative Permeability = Real 1
+End
+
+Boundary Condition 1
+  Target Boundaries(1) = 3
+  Name = "PEC"
+  E re {e} = 0
+  E im {e} = 0
+End
+
+Boundary Condition 2
+  Target Boundaries(1) = 1
+  Name = "Inport"
+  Magnetic Boundary Load 2 = Variable Coordinate 1, time
+    Real Procedure "EMParam_WR28" "MagnBndLoad"
+  Electric Robin Coefficient im = Variable time
+    Real Procedure "EMParam_WR28" "betaNull"
+End
+
+Boundary Condition 3
+  Target Boundaries(1) = 2
+  Name = "Outport"
+  Electric Robin Coefficient im = Variable time
+    Real Procedure "EMParam_WR28" "betaNull"
+End

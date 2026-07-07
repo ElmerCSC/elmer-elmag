@@ -1,5 +1,6 @@
 ! Here multigrid preconditioning is applied. This might be the best way to
-! solve the linear systems arising from the second-order approximation
+! solve the linear systems arising from the second-order approximation.
+! For another method with similar effectivity see Filter_Zhai_hierarchic.sif.
 
 
 Header

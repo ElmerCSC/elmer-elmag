@@ -1,5 +1,10 @@
 ! Instead of this sif consider using Filter_Zhai_pmg.sif
 
+! Here preconditioning is based on creating a perturbated
+! coefficient matrix which is employed in the preconditioning
+! iterations. For more effective ways to solve the second-order
+! approximations see Filter_Zhai_pmg.sif or Filter_Zhai_hierarchic.sif
+
 Header
   CHECK KEYWORDS Warn
   Mesh DB "mesh" "Hl_Filter_Zhai_a08"
