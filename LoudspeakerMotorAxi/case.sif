@@ -1,0 +1,156 @@
+Header
+  CHECK KEYWORDS "Warn"
+  Mesh DB "." "loudspeaker_axi"
+End
+
+Simulation
+  Coordinate System = axi symmetric
+  Max Output Level = 2
+  Simulation Type = Steady state
+  Steady State Max Iterations = 1
+  Coordinate Scaling = 0.001
+End
+
+Constants
+  Permeability of Vacuum = 1.2566370614359173e-06
+  Permittivity of vacuum = 8.8542e-12
+End
+
+! main
+Equation 1
+  Active Solvers(2) = 1 2   ! mag_analysis, mag_post, 
+End
+
+
+! mag_analysis
+Solver 1
+  Equation = MgDyn2D
+  Procedure = "MagnetoDynamics2D" "MagnetoDynamics2D"
+  Variable = Potential
+  exec solver = always
+  Steady State Convergence Tolerance = 1e-08
+  Linear System Solver = Iterative
+  Linear System Iterative Method = BiCGStabl
+  Linear System Max Iterations = 1000
+  Linear System Convergence Tolerance = 1e-10
+  BiCGstabl polynomial degree = 2
+  Element = p:2
+  Linear System Preconditioning = ILU1
+  Linear System ILUT Tolerance = 1e-05
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+  Linear System Precondition Recompute = 1
+End
+
+! mag_post
+Solver 2
+  Equation = MgDynPost
+  Procedure = "MagnetoDynamics" "MagnetoDynamicsCalcFields"
+  Potential Variable = String "Potential"
+  Calculate Magnetic Flux Density = True
+  Calculate Magnetic Field Strength = True
+  Calculate Nodal Fields = True
+  Calculate Elemental Fields = True
+  Calculate Nodal Forces = True
+  Nonlinear System Max Iterations = 1
+  Linear System Solver = Iterative
+  Linear System Iterative Method = CG
+  Linear System Max Iterations = 1000
+  Linear System Convergence Tolerance = 1e-10
+  Linear System Preconditioning = ILU0
+  Linear System Abort Not Converged = False
+  Linear System Residual Output = 10
+End
+
+! output
+Solver 3
+  Exec Solver = After All
+  Equation = ResultOutput
+  Procedure = "ResultOutputSolve" "ResultOutputSolver"
+  Output File Name = case
+  Output Format = vtu
+  Save Geometry Ids = True
+End
+
+
+! 1010 steel
+Material 1
+  Electrical Conductivity = 5800000.0
+!  Relative Permeability = 902.6
+  H-B Curve = Variable "bhCurve"
+  Real
+    include HB_curve_1010.dat
+  End
+End
+
+! magnet
+Material 2
+  Electrical Conductivity = 1e-09
+  Relative Permeability = 1.075
+  Magnetization 2 = 303505
+End
+
+! vc_copper
+Material 3
+  Electrical Conductivity = 58000000.0
+  Relative Permeability = 1.0
+End
+
+! air-domain
+Material 4
+  Electrical Conductivity = 1e-10
+  Relative Permeability = 1.0
+End
+
+
+! yoke
+Body 1
+  Target Bodies(1) = 1
+  Equation = 1  ! main
+  Material = 1  ! 1010 steel
+End
+
+! magnet
+Body 2
+  Target Bodies(1) = 2
+  Equation = 1  ! main
+  Material = 2  ! magnet
+End
+
+! top_plate
+Body 3
+  Target Bodies(1) = 3
+  Equation = 1  ! main
+  Material = 1  ! 1010 steel
+End
+
+! vc
+Body 4
+  Target Bodies(1) = 4
+  Equation = 1  ! main
+  Material = 3  ! vc_copper
+  Body Force = 1  ! vc
+End
+
+! air-domain
+Body 5
+  Target Bodies(1) = 5
+  Equation = 1  ! main
+  Material = 4  ! air-domain
+End
+
+
+! far-field
+Boundary Condition 1
+  Target Boundaries(1) = 7
+  Infinity BC = True
+End
+
+
+! vc
+Body Force 1
+  Current Density = 39789
+End
+
+
+
