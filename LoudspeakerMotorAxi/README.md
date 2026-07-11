@@ -7,5 +7,4 @@ The geometry is inspired by the COMSOL presentation [Modeling the Electrical Par
 
 Post-processing is done in Python using [PyVista](https://docs.pyvista.org/) to generate streamlines and extracts the magnetic field in the airgap, as well as resulting force-factor.
 
-![flux density](images/flux_density.png "Flux density")
-![B-field in airgap](images/flux_airgap.png "Flux in airgap")
+![flux density](images/group.png "Flux density")
