@@ -231,6 +231,8 @@ Solver 3
   Calculate Magnetic Vector Potential = Logical True
 
   Skip Compute Nonlinear Change = Logical True
+
+  Linear System Solver = Direct
 End
 
 
